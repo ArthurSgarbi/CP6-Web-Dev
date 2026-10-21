@@ -1,0 +1,110 @@
+import { useEffect, useRef, useState } from 'react';
+import Icon from './Icon';
+
+const links = [
+  { id: 'work', label: 'Work', index: '01' },
+  { id: 'exploration', label: 'Exploration', index: '02' },
+  { id: 'journal', label: 'Journal', index: '03' },
+];
+
+export default function Header({ activeSection, onNavigate }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef(null);
+  const toggleRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    const dismissOutside = (event) => {
+      if (!headerRef.current?.contains(event.target)) setMenuOpen(false);
+    };
+    const dismissWithEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      setMenuOpen(false);
+      toggleRef.current?.focus();
+    };
+
+    document.addEventListener('pointerdown', dismissOutside);
+    document.addEventListener('keydown', dismissWithEscape);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside);
+      document.removeEventListener('keydown', dismissWithEscape);
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(width > 800px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) setMenuOpen(false);
+    };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
+
+  const followAnchor = (event, id) => {
+    setMenuOpen(false);
+    onNavigate(event, id);
+  };
+
+  return (
+    <header className={`site-header${menuOpen ? ' is-open' : ''}`} ref={headerRef}>
+      <div className="header-inner">
+        <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Design explorations — back to top">
+          <svg className="brand-symbol" viewBox="0 0 36 36" fill="none" aria-hidden="true" focusable="false">
+            <path d="M2 2h14v14H2zM20 2h14v14H20zM2 20h14v14H2z" fill="currentColor" />
+            <circle cx="27" cy="27" r="7" fill="currentColor" />
+          </svg>
+          <span className="brand-name">DESIGN<br />EXPLORATIONS</span>
+        </a>
+
+        <nav className="desktop-nav" aria-label="Main navigation">
+          {links.map(({ id, label, index }) => (
+            <a
+              className="nav-link"
+              key={id}
+              href={`#${id}`}
+              aria-current={activeSection === id ? 'location' : undefined}
+              onClick={(event) => followAnchor(event, id)}
+            >
+              <span className="nav-index" aria-hidden="true">{index}</span>
+              {label}
+            </a>
+          ))}
+        </nav>
+
+        <a className="header-cta" href="#work" onClick={(event) => followAnchor(event, 'work')}>
+          Explore the studies <Icon />
+        </a>
+
+        <button
+          className="menu-toggle"
+          type="button"
+          ref={toggleRef}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span>{menuOpen ? 'Close' : 'Menu'}</span>
+          <span className="menu-toggle-lines" aria-hidden="true"><span /><span /></span>
+        </button>
+      </div>
+
+      <nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation" hidden={!menuOpen}>
+        {links.map(({ id, label, index }) => (
+          <a
+            className="mobile-nav-link"
+            key={id}
+            href={`#${id}`}
+            aria-current={activeSection === id ? 'location' : undefined}
+            onClick={(event) => followAnchor(event, id)}
+          >
+            <span className="mobile-nav-index">{index}</span>
+            <span>{label}</span>
+            <Icon />
+          </a>
+        ))}
+      </nav>
+    </header>
+  );
+}
