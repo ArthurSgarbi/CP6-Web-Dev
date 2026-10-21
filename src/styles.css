@@ -334,6 +334,14 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   .dialog-navigation { margin-top: 18px; padding-top: 15px; }
   .dialog-counter { font-size: 9px; white-space: nowrap; }
 }
+.hero-title.hero-title-business { font-size: clamp(28px, 8.3vw, 136px); letter-spacing: -.06em; line-height: 1.05; }
+.hero-title-business + .hero-support { position: static; width: 100%; display: flex; justify-content: space-between; gap: 24px; margin-top: 29px; }
+.hero-title-business + .hero-support .hero-index { display: block; }
+.hero-title-business + .hero-support .hero-description { width: 47%; }
+.hero-title-business + .hero-support .hero-description > p { max-width: 480px; }
+@media (max-width: 600px) {
+  .hero-title-business + .hero-support .hero-description { width: 66%; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   [data-reveal-state] { opacity: 1 !important; transform: none !important; }

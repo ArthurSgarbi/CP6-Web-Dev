@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
 
 const links = [
-  { id: 'work', label: 'Work', index: '01' },
-  { id: 'exploration', label: 'Exploration', index: '02' },
-  { id: 'journal', label: 'Journal', index: '03' },
+  { id: 'work', label: 'Trabalhos', index: '01' },
+  { id: 'exploration', label: 'Exploração', index: '02' },
+  { id: 'journal', label: 'Diário', index: '03' },
 ];
 
 export default function Header({ activeSection, onNavigate }) {
@@ -49,15 +49,15 @@ export default function Header({ activeSection, onNavigate }) {
   return (
     <header className={`site-header${menuOpen ? ' is-open' : ''}`} ref={headerRef}>
       <div className="header-inner">
-        <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Design explorations — back to top">
+        <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Explorações de design — voltar ao topo">
           <svg className="brand-symbol" viewBox="0 0 36 36" fill="none" aria-hidden="true" focusable="false">
             <path d="M2 2h14v14H2zM20 2h14v14H20zM2 20h14v14H2z" fill="currentColor" />
             <circle cx="27" cy="27" r="7" fill="currentColor" />
           </svg>
-          <span className="brand-name">DESIGN<br />EXPLORATIONS</span>
+          <span className="brand-name">EXPLORAÇÕES<br />DE DESIGN</span>
         </a>
 
-        <nav className="desktop-nav" aria-label="Main navigation">
+        <nav className="desktop-nav" aria-label="Navegação principal">
           {links.map(({ id, label, index }) => (
             <a
               className="nav-link"
@@ -73,7 +73,7 @@ export default function Header({ activeSection, onNavigate }) {
         </nav>
 
         <a className="header-cta" href="#work" onClick={(event) => followAnchor(event, 'work')}>
-          Explore the studies <Icon />
+          Explore os estudos <Icon />
         </a>
 
         <button
@@ -82,15 +82,15 @@ export default function Header({ activeSection, onNavigate }) {
           ref={toggleRef}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-label={menuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span>{menuOpen ? 'Close' : 'Menu'}</span>
+          <span>{menuOpen ? 'Fechar' : 'Menu'}</span>
           <span className="menu-toggle-lines" aria-hidden="true"><span /><span /></span>
         </button>
       </div>
 
-      <nav className="mobile-navigation" id="mobile-navigation" aria-label="Mobile navigation" hidden={!menuOpen}>
+      <nav className="mobile-navigation" id="mobile-navigation" aria-label="Navegação móvel" hidden={!menuOpen}>
         {links.map(({ id, label, index }) => (
           <a
             className="mobile-nav-link"
