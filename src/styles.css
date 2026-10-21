@@ -44,7 +44,8 @@ button, input, a { touch-action: manipulation; }
 .text-link:hover .icon { transform: translate(3px, -3px); }
 
 /* Navigation: real anchor links, with a separate compact mobile disclosure. */
-.site-header { position: relative; z-index: 20; }
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--paper); transform: translateY(0); transition: transform .25s var(--ease); }
+.site-header.is-hidden { transform: translateY(-100%); pointer-events: none; }
 .header-inner { width: min(calc(100% - var(--gutter) * 2), 1480px); min-height: 100px; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 28px; border-bottom: 1px solid var(--line); }
 .brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
 .brand-symbol { width: 33px; height: 33px; }

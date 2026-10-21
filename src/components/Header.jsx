@@ -9,8 +9,39 @@ const links = [
 
 export default function Header({ activeSection, onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const headerRef = useRef(null);
   const toggleRef = useRef(null);
+
+  useEffect(() => {
+    let previousY = Math.max(0, window.scrollY);
+    let accumulatedDelta = 0;
+
+    const updateVisibility = () => {
+      const currentY = Math.max(0, Math.min(window.scrollY,
+        document.documentElement.scrollHeight - window.innerHeight));
+      const delta = currentY - previousY;
+      previousY = currentY;
+
+      if (currentY <= 0) {
+        accumulatedDelta = 0;
+        setHeaderHidden(false);
+        return;
+      }
+
+      // Ignore small scroll jitter, but react promptly when direction changes.
+      if (Math.sign(delta) !== Math.sign(accumulatedDelta)) accumulatedDelta = 0;
+      accumulatedDelta += delta;
+      if (Math.abs(accumulatedDelta) < 6) return;
+
+      setHeaderHidden(accumulatedDelta > 0 && !menuOpen
+        && !headerRef.current?.contains(document.activeElement));
+      accumulatedDelta = 0;
+    };
+
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    return () => window.removeEventListener('scroll', updateVisibility);
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -47,7 +78,11 @@ export default function Header({ activeSection, onNavigate }) {
   };
 
   return (
-    <header className={`site-header${menuOpen ? ' is-open' : ''}`} ref={headerRef}>
+    <header
+      className={`site-header${menuOpen ? ' is-open' : ''}${headerHidden ? ' is-hidden' : ''}`}
+      ref={headerRef}
+      onFocusCapture={() => setHeaderHidden(false)}
+    >
       <div className="header-inner">
         <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Explorações de design — voltar ao topo">
           <svg className="brand-symbol" viewBox="0 0 36 36" fill="none" aria-hidden="true" focusable="false">
