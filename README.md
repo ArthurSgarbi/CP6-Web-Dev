@@ -1,147 +1,199 @@
-# Digital Excellence
+# Digital Excellence — portfólio React
 
-Landing page anônima de exploração visual, desenvolvida com **React, JavaScript (JSX), Vite e CSS puro**. A interface reúne um hero tipográfico, uma galeria assimétrica de estudos, uma composição geométrica, uma seção editorial e um rodapé minimalista.
+Portfólio em **React 19, Vite 7, JavaScript/JSX e CSS puro**. A seção Projetos carrega repositórios públicos reais do GitHub, sem cadastro manual, preservando a composição editorial assimétrica, o fundo escuro e os detalhes verdes. O restante da landing page mantém seu conteúdo anterior.
 
-A referência de composição e experiência é [grigoletti.ch/en](https://grigoletti.ch/en/). Este projeto é uma interpretação original: não reproduz a identidade, os textos, os trabalhos ou os dados pessoais da referência. Os estudos são ilustrativos, e os parágrafos da página usam Lorem Ipsum.
+## Executar
 
-![Prévia desktop da interface](./docs/preview-desktop.png)
-
-## Requisitos
-
-- Node.js **20.19+ ou 22.12+**, conforme a exigência do Vite 7; versões posteriores compatíveis também podem ser utilizadas.
-- npm, incluído na instalação do Node.js.
-- Navegador moderno com suporte a `<dialog>` e Intersection Observer.
-
-## Instalar
-
-No PowerShell:
+Requisitos: Node.js **20.19+ ou 22.12+** e npm. Navegador moderno com suporte a `<dialog>` e Intersection Observer.
 
 ```powershell
-git clone --branch funcionalidade/pagina-inicial-react https://github.com/ArthurSgarbi/CP6-Web-Dev.git
-cd CP6-Web-Dev
-npm install
-```
-
-Se você baixou o ZIP, extraia os arquivos e abra a pasta que contém `package.json` antes de executar `npm install`.
-
-## Executar localmente
-
-```powershell
+npm ci
+Copy-Item .env.example .env
 npm run dev
 ```
 
-Abra o endereço exibido pelo Vite no terminal, normalmente `http://127.0.0.1:5173`. O servidor utiliza somente a interface local do computador. Alterações nos arquivos são refletidas durante o desenvolvimento.
+Copie o exemplo somente se ainda não tiver um `.env`. O arquivo contém:
 
-## Gerar o build
-
-```powershell
-npm run build
+```env
+VITE_GITHUB_USERNAME=ArthurSgarbi
 ```
 
-O resultado é criado em `dist/`, com HTML, JavaScript, CSS, imagens e fonte. Essa pasta pode ser servida por uma hospedagem estática. Não é necessário configurar variáveis de ambiente para esta interface.
+O endereço padrão é `http://127.0.0.1:5173/`. Reinicie o Vite depois de mudar a variável. Ela é pública, incluída durante o build; configure-a também no ambiente de build da Vercel. Sem ela, o desenvolvimento apresenta uma mensagem explicando como configurar a integração.
 
-Para conferir o build localmente:
+`.env`, `.env.*`, `node_modules/` e `dist/` continuam ignorados pelo Git; `.env.example` é a exceção versionável. Não há credenciais no exemplo.
+
+## API e dados reais
+
+Listagem principal:
+
+```http
+GET https://api.github.com/users/${username}/repos?type=owner&sort=updated&direction=desc&per_page=100
+```
+
+Detalhes para acesso direto sem cache:
+
+```http
+GET https://api.github.com/repos/${username}/${repositoryName}
+```
+
+O service segue a paginação indicada pelo header `Link`, acrescentando `page=2`, `page=3` etc. Só entrega a lista depois que todas as páginas forem validadas; uma falha em qualquer página gera erro explícito, sem publicar uma lista parcial.
+
+Cada projeto utiliza `id`, `name`, `description`, `language`, `html_url`, `homepage`, `updated_at`, `stargazers_count`, `topics`, `fork` e `archived`. A interface exibe nome, descrição, linguagem, data, estrelas, tópicos e links. O ID identifica o item no React e na seleção do modal; o nome gera o slug; forks e arquivados são excluídos da listagem. Por escolha do proprietário, a seção exibe somente `meu-caixa`, `site-projeto-shopee`, `anninha-site-novo` e `ArthurSgarbi`, definidos em `formatRepository.js`. Essa seleção controla a visibilidade; os dados continuam vindo automaticamente da API. O número visual é calculado pela posição atual.
+
+Campos ausentes usam “Descrição ainda não informada no GitHub” e “Tecnologia não informada”. O botão “Acessar projeto” aparece apenas para homepage válida em HTTP/HTTPS. Um domínio sem protocolo recebe HTTPS; protocolos inseguros e URLs com credenciais não viram links. Datas são apresentadas em pt-BR/UTC para evitar mudar o dia pela conversão de fuso.
+
+A API foi escolhida porque os repositórios públicos já representam a fonte dos projetos: publicar ou atualizar um repositório elegível atualiza o portfólio na próxima consulta após a expiração do cache.
+
+## Fluxo e separação de responsabilidades
+
+```mermaid
+flowchart TD
+    API[GitHub REST API] --> Service[githubApi.js: requisição e validação]
+    Service --> Hook[useGitHubProjects.js]
+    Hook --> Cache[TanStack Query: estado e cache]
+    Cache --> App[App.jsx: lista e seleção por ID]
+    App --> Cards[SelectedWorks.jsx: cards]
+    App --> Modal[StudyDialog.jsx: modal]
+    Cache --> Details[useGitHubProject.js: consulta individual]
+    Details --> Page[ProjectDetailsPage.jsx]
+```
+
+- `githubApi.js` verifica `response.ok`, valida os campos, pagina, limita cada requisição a 15 segundos e lança `GitHubApiError` com códigos compreensíveis.
+- `formatRepository.js` adapta dados reais à interface, aplica os fallbacks e filtra a lista. `formatDate.js` centraliza datas.
+- `useGitHubProjects.js` centraliza a consulta da listagem. `useGitHubProject.js` reutiliza os dados brutos da mesma lista como dados iniciais de uma consulta individual.
+- `App.jsx` seleciona pelo ID, calcula anterior/próximo na lista atual e fecha o modal se o item desaparecer após atualização.
+- `HomePage.jsx` reúne as seções existentes. Os componentes de apresentação não fazem `fetch`.
+- `ProjectInfo.jsx` compartilha informações e links entre modal e página individual; `ProjectImage.jsx` concentra o fallback de imagens.
+
+### TanStack Query e estratégia de cache
+
+Um único `QueryClient` fica fora da árvore React e é fornecido em `main.jsx`, junto ao `BrowserRouter`.
+
+- Chaves estáveis por proprietário e nome, normalizados para minúsculas.
+- `staleTime`: **10 minutos**; dados ainda recentes são reutilizados.
+- `gcTime`: **30 minutos** após a consulta ficar sem observadores. Cache apenas em memória; recarregar o navegador inicia um novo cache.
+- Sem consulta periódica ou refetch ao focar a janela. Trocar de seção e abrir o modal não dispara chamadas.
+- Remontar ou reconectar pode atualizar dados vencidos. Uma consulta na rota individual usa o horário original do cache da listagem, preservando sua validade.
+- No máximo **uma tentativa automática extra**, somente para falha de rede, timeout ou HTTP 5xx. 403/404, limite, configuração e resposta inválida não têm repetição automática.
+- O service administra seu próprio timeout. A consulta não consome o sinal de cancelamento do TanStack, permitindo compartilhar a requisição em andamento durante a remontagem do StrictMode.
+- Nova tentativa manual com `refetch()`. Dados já disponíveis continuam visíveis se uma atualização falhar.
+
+## Estados da interface
+
+| Estado | Comportamento |
+| --- | --- |
+| Carregamento | Quatro skeletons com a geometria da grade, fundo escuro, dimensões reservadas e anúncio por `role=status` |
+| Sucesso | Cards dos quatro repositórios selecionados, quando originais e não arquivados, ordenados por atualização |
+| Lista vazia | “Nenhum projeto público foi encontrado.”, inclusive quando todos os resultados forem filtrados |
+| Erro | Mensagem amigável com “Tentar novamente”; falhas técnicas não são exibidas diretamente ao visitante |
+| Limite da API | Mensagem específica pedindo para aguardar; sem repetição automática |
+| Repositório inexistente | Página 404 própria, distinta da indisponibilidade da API |
+
+403 por limite é identificado por `x-ratelimit-remaining: 0`, `retry-after` ou indicação no corpo; 429 também representa limite. Outros 403 representam acesso indisponível. 404 diferencia perfil ausente na listagem e repositório ausente no detalhe. Respostas inesperadas ou incompletas falham explicitamente.
+
+### Limites e ausência de token
+
+Requisições públicas sem autenticação têm um limite primário de **60 por hora por IP**; limites secundários também podem ocorrer. Cada página consultada conta como uma requisição. O cache reduz o consumo, mas não elimina a dependência do GitHub.
+
+O frontend envia somente `Accept: application/vnd.github+json`, com `credentials: 'omit'`. Não utiliza header de autorização. **Não crie `VITE_GITHUB_TOKEN`**: variáveis com prefixo VITE são expostas ao navegador. Se futuramente for necessário autenticar, o token deve ficar numa função de backend com controle próprio de uso.
+
+## Modal, rotas e acessibilidade
+
+- Clique na imagem/botão abre os detalhes no `<dialog>` nativo.
+- Nome e link “Página do projeto” navegam para `/projetos/:repositoryName`.
+- O modal mantém fechamento por Escape, botão e clique no fundo; foco inicial no botão fechar; retorno ao acionador; Tab/Shift+Tab incluindo links externos; anterior/próximo e setas do teclado.
+- Ao desaparecer o acionador após uma atualização, o foco retorna à seção Projetos.
+- Links externos usam `target="_blank"` e `rel="noopener noreferrer"`.
+- Títulos semânticos, foco visível, anúncios de estado, textos alternativos e `prefers-reduced-motion` foram mantidos.
+- A navegação por âncoras usa o histórico do Router; as animações também observam os cards carregados de forma assíncrona.
+
+Abrir ou atualizar uma URL individual funciona sem cache: apenas o endpoint de detalhes é consultado. A listagem fica desabilitada nessa rota. Se o repositório já estiver no cache recente da lista, nenhuma consulta extra é necessária. As páginas de detalhes e 404 têm carregamento de código sob demanda.
+
+Na Vercel, `vercel.json` verifica primeiro o filesystem e depois encaminha rotas da SPA a `index.html`. Arquivos existentes, como imagens, fontes e assets do build, continuam sendo servidos diretamente. O erro 404 de uma rota desconhecida é apresentado pelo React; por ser uma SPA estática, a hospedagem pode responder HTTP 200 ao entregar o HTML.
+
+## Imagens por convenção
+
+Adicione um PNG com **o nome exato do repositório**:
+
+```text
+Repositório: sistema-de-gastos
+Arquivo: public/images/sistema-de-gastos.png
+URL: /images/sistema-de-gastos.png
+```
+
+Considere maiúsculas/minúsculas, especialmente no deploy Linux. As imagens apenas apresentam o projeto; seus metadados vêm do GitHub.
+
+Se a imagem não carregar, `ProjectImage` troca uma única vez para `/images/hero-abstract.jpg`, sem loop de `onError`. O texto alternativo identifica a composição de fallback. Todas as imagens dos projetos mantêm lazy loading e dimensões explícitas; o CSS reserva sua proporção antes do carregamento.
+
+As imagens existentes no hero permanecem como apresentação anterior da landing page. Não determinam quais projetos são carregados da API. Origens dos assets e licenças: [ASSETS.md](ASSETS.md).
+
+## Testar e gerar o build
 
 ```powershell
+npm test
+npm run test:watch
+npm run build
 npm run preview
 ```
 
-Abra o endereço exibido no terminal, normalmente `http://127.0.0.1:4173`. O comando de preview serve para inspeção local do build.
+`npm test` executa a suíte uma vez; `test:watch` acompanha alterações. Os testes usam **Vitest, React Testing Library, user-event, jest-dom e jsdom**, simulando `fetch`. Não fazem chamadas reais ao GitHub.
 
-## Organização
+Cobertura funcional: loading, sucesso, vazio, erros, nova tentativa, filtros, dados ausentes, paginação e falha em página posterior, contrato inválido, links seguros, seleção correta, foco, fechamento ao remover um projeto, rotas diretas/404, remontagem sem cache e compartilhamento da consulta inclusive no StrictMode.
 
-```text
-CP6-Web-Dev/
-├── docs/
-│   ├── preview-desktop.png
-│   ├── preview-mobile.png
-│   └── VERIFICATION.md
-├── public/
-│   ├── favicon.svg
-│   ├── fonts/
-│   │   ├── manrope-latin.woff2
-│   │   └── OFL-Manrope.txt
-│   └── images/
-│       ├── hero-abstract.jpg
-│       ├── study-architecture.jpg
-│       ├── study-form.jpg
-│       ├── study-space.jpg
-│       └── study-color.jpg
-├── src/
-│   ├── components/
-│   │   ├── Exploration.jsx
-│   │   ├── Footer.jsx
-│   │   ├── Header.jsx
-│   │   ├── Hero.jsx
-│   │   ├── Icon.jsx
-│   │   ├── Journal.jsx
-│   │   ├── SectionLabel.jsx
-│   │   ├── SelectedWorks.jsx
-│   │   ├── StudyDialog.jsx
-│   │   └── TextLink.jsx
-│   ├── data/
-│   │   └── studies.js
-│   ├── hooks/
-│   │   ├── useAnchorNavigation.js
-│   │   └── useReveal.js
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── styles.css
-├── .gitignore
-├── ASSETS.md
-├── index.html
-├── package.json
-├── package-lock.json
-├── README.md
-└── vite.config.js
-```
+**Não há lint configurado neste repositório.** O build gera `dist/`; o preview normalmente usa `http://127.0.0.1:4173/`.
 
-O npm gera `package-lock.json` ao instalar as dependências. `node_modules/` contém os pacotes instalados e é ignorada pelo Git; `dist/` contém a saída do build e também é ignorada.
+### Cenários visuais reproduzíveis
 
-## Decisões de interface
+Com o servidor de desenvolvimento, abra `/src/test/browser/index.html`. Esse harness mostra uma faixa “Verificação local · API simulada” e permite selecionar carregamento, sucesso, vazio, filtragem, indisponibilidade, limite e 404. No carregamento, “Liberar resposta” conclui a requisição. Após um erro, “recuperar API” seguido de “Tentar novamente” comprova a recuperação. Um contador mostra as requisições.
 
-- **Composição:** linguagem editorial inspirada no Design Suíço Moderno, com alinhamentos precisos, bastante espaço vazio, linhas finas e alternância entre imagens amplas e blocos menores. A galeria evita uma sequência uniforme de cartões.
-- **Tipografia:** Manrope variável, servida localmente, com títulos expressivos, espaçamento compacto nas letras e hierarquia entre títulos, corpo e legendas.
-- **Cor:** base clara e contraste escuro, com detalhes de verde e a cor concentrada nas imagens abstratas. A seção de exploração altera o ritmo visual da página.
-- **Responsividade:** dimensões fluidas e mudanças na grade para reorganizar o conteúdo em celular, tablet e desktop. A navegação compacta entra nas larguras de até 800 px.
-- **Dependências:** React para componentes, estado e eventos; Vite para desenvolvimento e build. Ícones vetoriais e animações são implementados no próprio projeto, sem bibliotecas adicionais de interface ou movimento.
+Esse ponto de entrada existe somente para testes locais e **não é incluído no build de produção**, cujo único HTML de entrada é `index.html`.
 
-## Componentes e comportamento
+Resultados e limitações efetivamente observados estão em [docs/GITHUB_VERIFICATION.md](docs/GITHUB_VERIFICATION.md). O relatório anterior `docs/VERIFICATION.md` é histórico, referente à versão com estudos ilustrativos.
 
-`App.jsx` organiza as seções e mantém o estudo selecionado. Os arquivos `Hero.jsx`, `SelectedWorks.jsx`, `Exploration.jsx`, `Journal.jsx`, `Footer.jsx`, `SectionLabel.jsx` e `TextLink.jsx` separam responsabilidades de apresentação e evitam repetir elementos equivalentes. O componente `Study` permanece interno a `SelectedWorks.jsx`, onde é utilizado pela galeria.
+## Decisão arquitetural
 
-- `Header.jsx` controla o menu mobile com estado do React, atualiza `aria-expanded`, fecha após selecionar uma seção, com Escape ou ao clicar fora e acompanha o indicador da seção atual.
-- `StudyDialog.jsx` usa o elemento nativo `<dialog>`. Permite abrir cada estudo, navegar pelos botões anterior/próximo ou pelas setas do teclado e fechar pelo botão, Escape ou clique no fundo. Ao fechar, devolve o foco ao elemento que abriu o estudo.
-- `Icon.jsx` centraliza os SVGs reutilizáveis; ícones decorativos ficam fora da leitura assistiva.
-- `studies.js` concentra título, categoria, imagem, texto alternativo e Lorem Ipsum de cada estudo ilustrativo.
-- `useAnchorNavigation.js` controla a rolagem por âncoras, move o foco para o destino e mantém a URL correspondente. Um Intersection Observer acompanha a seção visível para atualizar a navegação.
-- `useReveal.js` usa Intersection Observer para revelar elementos durante a rolagem. O conteúdo começa visível; a animação é aplicada somente aos elementos fora da tela e é dispensada quando há preferência por movimento reduzido.
-- A seção editorial é um accordion controlado pelo React, com botões semânticos e relações `aria-expanded`/`aria-controls`.
+### Escolha
 
-O CSS fornece foco visível, estados de hover e regras para `prefers-reduced-motion`. Há um link para pular diretamente ao conteúdo principal. A navegação e os controles utilizam links e botões nativos para permitir operação por teclado.
+GitHub REST API com TanStack Query.
 
-## Escopo e recursos
+### Alternativas comparadas
 
-Esta entrega contém somente o frontend da experiência visual. Não há cadastro, autenticação, API de projetos, formulário de contato ou persistência. Nenhum nome, retrato, biografia, cliente, depoimento, resultado ou contato pessoal foi inserido.
+| Alternativa | Avaliação |
+| --- | --- |
+| Lista manual de projetos | Simples, mas desatualiza e não atende ao carregamento automático exigido |
+| GraphQL API do GitHub | Seleciona campos com precisão, mas acrescenta autenticação e complexidade desnecessárias para esta consulta pública |
+| `fetch` com estado manual | Evita uma dependência, porém exige implementar cache, repetição, sincronização e compartilhamento |
+| SWR | Também resolve cache e revalidação; TanStack Query foi escolhido pelo controle explícito de estados, chaves e políticas por consulta |
 
-As cinco imagens públicas do Unsplash e a fonte Manrope estão incluídas localmente. A lista de origens, dimensões e informações de licença está em [ASSETS.md](./ASSETS.md). A licença SIL Open Font da Manrope está em `public/fonts/OFL-Manrope.txt`. Os recursos não dependem de requisições ao Unsplash ou ao Google Fonts durante o uso da página.
+### Justificativa
 
-## Validação realizada
+A REST API oferece integração mais direta para listar repositórios públicos. O TanStack Query centraliza cache e estados assíncronos, permitindo compartilhar os mesmos dados entre componentes e evitar requisições repetidas.
 
-O build de produção foi gerado e conferido no navegador. O relatório com os fluxos verificados, tamanhos de tela, evidências e limites da inspeção está em [docs/VERIFICATION.md](./docs/VERIFICATION.md). As capturas desktop e mobile estão na mesma pasta.
+### Trade-offs aceitos
 
-## Verificação manual
+- Dependência da disponibilidade do GitHub.
+- Limite de requisições e custo adicional por página.
+- Necessidade de tratar dados ausentes ou respostas inválidas.
+- Maior quantidade de estados na interface.
+- Duas dependências de produção adicionais para cache e rotas.
+- Cache em memória, com nova consulta após recarregar a página.
+- Sem backend para ampliar a cota ou gerar HTML/HTTP 404 por repositório.
+- Imagens opcionais dependem da convenção local; fallback pode se repetir entre projetos.
 
-Checklist para executar após iniciar o servidor. Os itens abaixo descrevem verificações; não representam resultados de testes já realizados.
+## Arquivos da integração
 
-- [ ] Conferir o layout em celular, tablet e desktop, incluindo uma largura de 320 px, sem rolagem horizontal inesperada.
-- [ ] Abrir o menu mobile; seguir cada âncora; verificar o fechamento com Escape e clique fora.
-- [ ] Percorrer os links e botões com Tab e Shift+Tab, conferindo o foco visível e a ausência de controles ocultos na sequência.
-- [ ] Usar o link “Skip to content” e conferir o foco no conteúdo principal.
-- [ ] Abrir todos os estudos; conferir imagem, título e texto; navegar com os botões e setas do teclado.
-- [ ] Fechar o estudo com o botão, Escape e clique no fundo; conferir o retorno do foco ao botão de origem.
-- [ ] Expandir e recolher os itens editoriais com mouse e teclado.
-- [ ] Navegar pelas âncoras e testar voltar/avançar no navegador.
-- [ ] Ativar a preferência de movimento reduzido e conferir a leitura do conteúdo sem as animações de entrada.
-- [ ] Conferir as imagens, os textos alternativos e a indicação de que os estudos são ilustrativos.
-- [ ] Gerar o build, executá-lo com `npm run preview` e conferir o console do navegador.
+**Criados:** `.env.example`, `vercel.json`, `vitest.config.js`; `src/services/githubApi.js`; `src/hooks/useGitHubProjects.js` e `useGitHubProject.js`; `src/utils/formatRepository.js` e `formatDate.js`; componentes `ProjectImage`, `ProjectInfo`, `ProjectSkeleton`, `ProjectsError` e `ProjectsEmpty`; páginas `HomePage`, `ProjectDetailsPage` e `NotFoundPage`; testes e harness em `src/test/`; relatório e capturas de validação em `docs/`.
+
+**Alterados:** `package.json`, `package-lock.json`, `index.html`, `src/main.jsx`, `src/App.jsx`, `src/components/SelectedWorks.jsx`, `src/components/StudyDialog.jsx`, `src/hooks/useAnchorNavigation.js`, `src/hooks/useReveal.js`, `src/styles.css` e `README.md`.
+
+**Removido:** `src/data/studies.js`, que continha os projetos fictícios. `.gitignore` já tinha as regras corretas e foi preservado.
+
+Dependências adicionadas em produção: `@tanstack/react-query` e `react-router-dom`. Desenvolvimento: `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `@testing-library/user-event` e `jsdom`. Nenhuma biblioteca visual foi adicionada.
+
+## Referências oficiais
+
+- [Endpoints de repositórios do GitHub](https://docs.github.com/en/rest/repos/repos#list-repositories-for-a-user).
+- [Limites da REST API](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api).
+- [TanStack Query: políticas de cache e revalidação](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults).
+- [React Router: rotas declarativas](https://reactrouter.com/7.18.4/start/declarative/routing).
+- [Vercel: configuração de rotas](https://vercel.com/docs/project-configuration/vercel-json#routes).

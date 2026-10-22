@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SECTION_IDS = ['work', 'exploration', 'journal'];
 
 export default function useAnchorNavigation() {
   const [activeSection, setActiveSection] = useState('');
+  const navigateRoute = useNavigate();
+  const { hash } = useLocation();
 
   const navigate = useCallback((event, targetId) => {
     if (
@@ -19,6 +22,12 @@ export default function useAnchorNavigation() {
     if (!target) return;
 
     event?.preventDefault();
+    // Router owns history entries; the hash effect performs scrolling and focus.
+    const nextHash = `#${id}`;
+    if (hash !== nextHash) {
+      navigateRoute({ pathname: '/', hash: nextHash });
+      return;
+    }
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     target.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' });
 
@@ -30,20 +39,21 @@ export default function useAnchorNavigation() {
       target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
     }
 
-    const hash = `#${id}`;
-    if (window.location.hash !== hash) window.history.pushState(null, '', hash);
     setActiveSection(SECTION_IDS.includes(id) ? id : '');
-  }, []);
+  }, [navigateRoute, hash]);
 
   useEffect(() => {
-    const syncHash = () => {
-      const id = window.location.hash.slice(1);
-      setActiveSection(SECTION_IDS.includes(id) ? id : '');
-    };
-    syncHash();
-    window.addEventListener('hashchange', syncHash);
-    window.addEventListener('popstate', syncHash);
+    const id = hash.slice(1);
+    const target = document.getElementById(id);
+    if (target) {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' });
+      target.focus({ preventScroll: true });
+    }
+    setActiveSection(SECTION_IDS.includes(id) ? id : '');
+  }, [hash]);
 
+  useEffect(() => {
     const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean);
     const visibleSections = new Set();
     let observer;
@@ -65,8 +75,6 @@ export default function useAnchorNavigation() {
 
     return () => {
       observer?.disconnect();
-      window.removeEventListener('hashchange', syncHash);
-      window.removeEventListener('popstate', syncHash);
     };
   }, []);
 

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 /** Content starts visible; only offscreen elements receive an entrance animation. */
-export default function useReveal() {
+export default function useReveal(contentKey) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function useReveal() {
       preference.removeEventListener('change', observe);
       revealAll();
     };
-  }, []);
+  }, [contentKey]);
 
   return containerRef;
 }

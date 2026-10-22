@@ -1,8 +1,12 @@
 import { useEffect, useRef } from 'react';
 import Icon from './Icon';
+import { Link } from 'react-router-dom';
+import ProjectImage from './ProjectImage.jsx';
+import ProjectInfo from './ProjectInfo.jsx';
 
-export default function StudyDialog({ study, onClose, onPrevious, onNext, totalCount }) {
+export default function StudyDialog({ study, onClose, onPrevious, onNext, totalCount, position }) {
   const dialogRef = useRef(null);
+  const closeRef = useRef(null);
   const isOpen = Boolean(study);
 
   useEffect(() => {
@@ -13,12 +17,15 @@ export default function StudyDialog({ study, onClose, onPrevious, onNext, totalC
     const previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     if (!dialog.open) dialog.showModal();
+    closeRef.current?.focus({ preventScroll: true });
 
     return () => {
       if (dialog.open) dialog.close();
       document.documentElement.style.overflow = previousOverflow;
       if (previousFocus instanceof HTMLElement && previousFocus.isConnected) {
         previousFocus.focus({ preventScroll: true });
+      } else {
+        document.getElementById('work')?.focus({ preventScroll: true });
       }
     };
   }, [isOpen]);
@@ -32,7 +39,7 @@ export default function StudyDialog({ study, onClose, onPrevious, onNext, totalC
 
   const changeWithKeyboard = (event) => {
     if (event.key === 'Tab') {
-      const controls = [...dialogRef.current.querySelectorAll('button:not([disabled])')];
+      const controls = [...dialogRef.current.querySelectorAll('button:not([disabled]), a[href]')];
       const first = controls[0];
       const last = controls[controls.length - 1];
       if (event.shiftKey && document.activeElement === first) {
@@ -66,26 +73,27 @@ export default function StudyDialog({ study, onClose, onPrevious, onNext, totalC
       {study && (
         <div className="study-dialog-inner">
           <div className="dialog-topline">
-            <span className="dialog-kicker">Visual study / {study.category}</span>
-            <button className="dialog-close" type="button" onClick={onClose} aria-label="Close visual study" autoFocus>
+            <span className="dialog-kicker">Projeto de desenvolvimento / GitHub</span>
+            <button className="dialog-close" type="button" ref={closeRef} onClick={onClose} aria-label="Fechar detalhes do projeto">
               <Icon name="close" />
             </button>
           </div>
 
           <div className="dialog-image-wrap">
-            <img className="dialog-image" src={study.image} alt={study.alt} width="1600" height="1100" />
+            <ProjectImage project={study} className="dialog-image" width={1600} height={1100} />
           </div>
 
           <div className="dialog-copy">
             <div className="dialog-title-row">
               <h2 className="dialog-title" id="dialog-study-title" aria-live="polite">{study.title}</h2>
-              <span className="dialog-counter">{String(study.index).padStart(2, '0')}{totalCount ? ` / ${String(totalCount).padStart(2, '0')}` : ''}</span>
+              <span className="dialog-counter">{String(position).padStart(2, '0')}{totalCount ? ` / ${String(totalCount).padStart(2, '0')}` : ''}</span>
             </div>
-            <p className="dialog-description" id="dialog-study-description">{study.description}</p>
-            {(onPrevious || onNext) && (
+            <ProjectInfo project={study} descriptionId="dialog-study-description" />
+            <Link className="text-link project-permalink" to={study.detailsUrl}>Abrir página individual <Icon /></Link>
+            {totalCount > 1 && (onPrevious || onNext) && (
               <div className="dialog-navigation">
-                {onPrevious && <button className="dialog-nav-button" type="button" onClick={onPrevious}><Icon name="arrow-left" /> Previous study</button>}
-                {onNext && <button className="dialog-nav-button" type="button" onClick={onNext}>Next study <Icon name="arrow-right" /></button>}
+                {onPrevious && <button className="dialog-nav-button" type="button" onClick={onPrevious}><Icon name="arrow-left" /> Projeto anterior</button>}
+                {onNext && <button className="dialog-nav-button" type="button" onClick={onNext}>Próximo projeto <Icon name="arrow-right" /></button>}
               </div>
             )}
           </div>
