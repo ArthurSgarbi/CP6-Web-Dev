@@ -33,8 +33,7 @@ export default function Hero({ navigate }) {
     <section className="hero page-width" aria-labelledby="hero-title">
       <div className="hero-overline">
         <span className="status-label">
-          <span className="status-dot" />
-          Um estudo sobre conhecimento e carreira
+          Feito por Arthur Sgarbi
         </span>
       </div>
 
