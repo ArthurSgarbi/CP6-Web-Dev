@@ -50,18 +50,16 @@ export default function SelectedWorks({ onSelect }) {
       tabIndex="-1"
       aria-labelledby="work-title"
     >
-      <SectionLabel number="01">Selected works</SectionLabel>
+      <SectionLabel number="01">Selecionador de trabalhos</SectionLabel>
 
       <div className="section-heading" data-reveal>
         <h2 id="work-title">
-          A different<br />
-          <span className="muted">point of view.</span>
+          PROJETOS
         </h2>
         <div className="section-intro">
-          <span className="collection-tag">Visual studies — 01 / 04</span>
+          <span className="collection-tag">etapa 01/04</span>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad
-            minim veniam, quis nostrud exercitation.
+            Diversos clientes satisfeitos com meus produtos feitos com a mais alta qualidade e esforço
           </p>
         </div>
       </div>

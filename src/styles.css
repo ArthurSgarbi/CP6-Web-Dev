@@ -125,9 +125,10 @@ button, input, a { touch-action: manipulation; }
 .work { padding-bottom: clamp(65px, 7vw, 110px); }
 .section-heading { display: grid; grid-template-columns: 1.2fr .8fr; align-items: end; gap: 12%; margin-top: 38px; }
 h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; letter-spacing: -.065em; }
+#work-title { font-size: clamp(48px, 5.9vw, 92px); }
 .section-intro { max-width: 285px; padding-bottom: 7px; justify-self: end; }
-.collection-tag { display: block; margin-bottom: 15px; font-size: 9px; text-transform: uppercase; letter-spacing: .045em; }
-.section-intro p { font-size: 12px; line-height: 1.9; color: var(--muted); }
+.collection-tag { display: block; margin-bottom: 15px; font-size: 10px; text-transform: uppercase; letter-spacing: .045em; }
+.section-intro p { font-size: 13px; line-height: 1.9; color: var(--muted); }
 .work-grid { display: grid; grid-template-columns: 1.22fr 1fr; column-gap: 10%; row-gap: 80px; align-items: start; margin-top: 65px; }
 .study { min-width: 0; }
 .study-02 { margin-top: 140px; }
@@ -308,9 +309,10 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   .section-number { font-size: 8px; }
   .section-heading { grid-template-columns: 1fr; gap: 27px; margin-top: 30px; }
   h2 { font-size: 45px; }
+  #work-title { font-size: 49px; }
   .section-intro { justify-self: end; width: 73%; padding: 0; }
-  .collection-tag { margin-bottom: 9px; font-size: 8px; }
-  .section-intro p { font-size: 11px; }
+  .collection-tag { margin-bottom: 9px; font-size: 9px; }
+  .section-intro p { font-size: 12px; }
   .work-grid { grid-template-columns: 1fr; row-gap: 38px; margin-top: 35px; }
   .study-02, .study-03, .study-04 { margin-top: 0; }
   .study-02 { width: 84%; justify-self: end; }
