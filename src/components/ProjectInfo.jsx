@@ -6,7 +6,7 @@ export default function ProjectInfo({ project, descriptionId }) {
     <>
       <p className="dialog-description" id={descriptionId}>{project.description}</p>
       <dl className="project-facts">
-        <div><dt>Linguagem principal</dt><dd>{project.language}</dd></div>
+        <div><dt>Linguagens e tecnologias</dt><dd><ul className="project-technologies" aria-label="Linguagens e tecnologias">{(project.technologies ?? [project.language]).map((technology) => <li key={technology}>{technology}</li>)}</ul></dd></div>
         <div><dt>Última atualização</dt><dd><time dateTime={project.updatedAt}>{formatDate(project.updatedAt)}</time></dd></div>
         <div><dt>Estrelas no GitHub</dt><dd>{project.stars.toLocaleString('pt-BR')}</dd></div>
       </dl>

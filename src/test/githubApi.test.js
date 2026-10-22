@@ -84,14 +84,15 @@ describe('transformação e formatação', () => {
     ]).map((project) => project.id)).toEqual([1]);
   });
 
-  it('exibe somente os quatro nomes selecionados, incluindo ArthurSgarbi', () => {
-    const names = ['meu-caixa', 'site-projeto-shopee', 'anninha-site-novo', 'ArthurSgarbi'];
+  it('exibe somente os três projetos selecionados e exclui ArthurSgarbi', () => {
+    const names = ['meu-caixa', 'site-projeto-shopee', 'anninha-site-novo'];
     const projects = formatRepositories([
       ...names.map((name, index) => repository({ id: index + 1, name })),
       repository({ id: 5, name: 'CP6-Web-Dev' }),
       repository({ id: 6, name: 'meu-caixa-demo' }),
+      repository({ id: 7, name: 'ArthurSgarbi' }),
     ]);
-    expect(projects).toHaveLength(4);
+    expect(projects).toHaveLength(3);
     expect(projects.map((project) => project.title)).toEqual(expect.arrayContaining(names));
   });
 

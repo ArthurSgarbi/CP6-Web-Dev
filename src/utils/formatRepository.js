@@ -1,10 +1,11 @@
+import projectTechnologies from './projectTechnologies.js';
+
 export const PROJECT_IMAGE_FALLBACK = '/images/hero-abstract.jpg';
 
 const VISIBLE_REPOSITORIES = new Set([
   'meu-caixa',
   'site-projeto-shopee',
   'anninha-site-novo',
-  'arthursgarbi',
 ]);
 
 // GitHub permits arbitrary homepage text. Only web URLs become clickable links.
@@ -28,6 +29,7 @@ export function formatRepository(repository) {
     title: repository.name,
     description: repository.description?.trim() || 'Descrição ainda não informada no GitHub',
     language: repository.language?.trim() || 'Tecnologia não informada',
+    technologies: projectTechnologies[repository.name.toLowerCase()] ?? [repository.language?.trim() || 'Tecnologia não informada'],
     repositoryUrl: repository.html_url,
     liveUrl: getLiveUrl(repository.homepage),
     updatedAt: repository.updated_at,

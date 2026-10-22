@@ -485,3 +485,11 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   [data-reveal-state] { opacity: 1 !important; transform: none !important; }
 }
+
+/* A stack completa pode ocupar várias linhas sem comprimir a data. */
+.study-caption { flex-wrap: wrap; align-items: flex-start; }
+.study-caption > :last-child { flex-shrink: 0; }
+.project-technologies { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; min-width: 0; }
+.study-caption .project-technologies { flex: 1 1 100%; }
+.project-technologies li { padding: 4px 7px; border: 1px solid currentColor; border-radius: 4px; line-height: 1.5; }
+.project-facts .project-technologies { font-size: 12px; }

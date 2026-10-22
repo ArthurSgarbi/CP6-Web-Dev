@@ -90,7 +90,9 @@ describe('projetos na página inicial', () => {
     const dialog = screen.getByRole('dialog');
     expect(within(dialog).getByRole('heading', { name: 'site-projeto-shopee' })).toBeInTheDocument();
     expect(within(dialog).getByText('Descrição beta')).toBeInTheDocument();
-    expect(within(dialog).getByText('Python')).toBeInTheDocument();
+    expect(within(dialog).getByText('TypeScript')).toBeInTheDocument();
+    expect(within(dialog).getByText('Next.js')).toBeInTheDocument();
+    expect(within(dialog).getByText('libSQL')).toBeInTheDocument();
     expect(within(dialog).getByText('7')).toBeInTheDocument();
     expect(within(dialog).getByText('react')).toBeInTheDocument();
     expect(within(dialog).queryByRole('link', { name: /Acessar projeto/ })).not.toBeInTheDocument();
@@ -143,6 +145,7 @@ describe('projetos na página inicial', () => {
     renderApp();
     expect(await screen.findByText('Descrição ainda não informada no GitHub')).toBeInTheDocument();
     expect(screen.getByText('Tecnologia não informada')).toBeInTheDocument();
+    expect(screen.queryByText('PostgreSQL')).not.toBeInTheDocument();
     const image = screen.getByRole('img', { name: 'Imagem de apresentação do repositório meu-caixa' });
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('width', '1200');
