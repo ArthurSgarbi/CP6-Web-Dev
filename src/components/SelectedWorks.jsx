@@ -43,8 +43,8 @@ export default function SelectedWorks({ projects, isLoading, error, isRetrying, 
       <div className="section-heading" data-reveal>
         <h2 id="work-title">PROJETOS</h2>
         <div className="section-intro">
-          <span className="collection-tag">Repositórios públicos / GitHub</span>
-          <p>Projetos reais, carregados automaticamente do GitHub e organizados pela última atualização.</p>
+          <span className="collection-tag">Meus projetos e ideias</span>
+          <p>Projetos reais que podem ajudar pessoas e empresas a se tornarem mais concorrentes no mercado, carregados automaticamente do github</p>
         </div>
       </div>
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
