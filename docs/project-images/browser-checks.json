@@ -1,0 +1,287 @@
+{
+  "assets": [
+    {
+      "images": [
+        {
+          "complete": true,
+          "height": 1100,
+          "src": "http://127.0.0.1:5173/images/meu-caixa.png",
+          "width": 1600
+        }
+      ],
+      "url": "http://127.0.0.1:5173/images/meu-caixa.png"
+    },
+    {
+      "images": [
+        {
+          "complete": true,
+          "height": 1100,
+          "src": "http://127.0.0.1:5173/images/site-projeto-shopee.png",
+          "width": 1600
+        }
+      ],
+      "url": "http://127.0.0.1:5173/images/site-projeto-shopee.png"
+    },
+    {
+      "images": [
+        {
+          "complete": true,
+          "height": 1100,
+          "src": "http://127.0.0.1:5173/images/anninha-site-novo.png",
+          "width": 1600
+        }
+      ],
+      "url": "http://127.0.0.1:5173/images/anninha-site-novo.png"
+    },
+    {
+      "images": [
+        {
+          "complete": true,
+          "height": 1100,
+          "src": "http://127.0.0.1:5173/images/ArthurSgarbi.png",
+          "width": 1600
+        }
+      ],
+      "url": "http://127.0.0.1:5173/images/ArthurSgarbi.png"
+    }
+  ],
+  "desktopCards": {
+    "images": [
+      {
+        "height": 571.125,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "1.12 / 1",
+        "src": "/images/meu-caixa.png",
+        "width": 639.6625366210938
+      },
+      {
+        "height": 623.8500366210938,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "0.84 / 1",
+        "src": "/images/site-projeto-shopee.png",
+        "width": 524.0375366210938
+      },
+      {
+        "height": 639.1875,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "0.78 / 1",
+        "src": "/images/anninha-site-novo.png",
+        "width": 498.5750122070313
+      },
+      {
+        "height": 444.0923767089844,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "1.18 / 1",
+        "src": "/images/ArthurSgarbi.png",
+        "width": 524.0433959960938
+      }
+    ],
+    "overflow": false,
+    "rect": {
+      "height": 2375,
+      "width": 1425,
+      "x": 0,
+      "y": 1493
+    },
+    "viewport": {
+      "height": 1000,
+      "width": 1440
+    }
+  },
+  "mobileCards": {
+    "images": [
+      {
+        "height": 316.9125061035156,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "1.04 / 1",
+        "src": "/images/meu-caixa.png",
+        "width": 329.6000061035156
+      },
+      {
+        "height": 300.6499938964844,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "0.92 / 1",
+        "src": "/images/site-projeto-shopee.png",
+        "width": 276.6000061035156
+      },
+      {
+        "height": 273.4375,
+        "loaded": true,
+        "opacity": "1",
+        "ratio": "1.06 / 1",
+        "src": "/images/anninha-site-novo.png",
+        "width": 289.8500061035156
+      },
+      {
+        "height": 279.3124084472656,
+        "loaded": true,
+        "opacity": "0.996689",
+        "ratio": "1.18 / 1",
+        "src": "/images/ArthurSgarbi.png",
+        "width": 329.6000061035156
+      }
+    ],
+    "overflow": false,
+    "rect": {
+      "height": 2559,
+      "width": 375,
+      "x": 0,
+      "y": 646
+    },
+    "viewport": {
+      "height": 844,
+      "width": 390
+    }
+  },
+  "checks": [
+    {
+      "view": "desktop-modal",
+      "name": "meu-caixa",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/meu-caixa.png"
+    },
+    {
+      "view": "desktop-page",
+      "name": "meu-caixa",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/meu-caixa.png",
+      "overflow": false
+    },
+    {
+      "view": "desktop-modal",
+      "name": "site-projeto-shopee",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/site-projeto-shopee.png"
+    },
+    {
+      "view": "desktop-page",
+      "name": "site-projeto-shopee",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/site-projeto-shopee.png",
+      "overflow": false
+    },
+    {
+      "view": "desktop-modal",
+      "name": "anninha-site-novo",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/anninha-site-novo.png"
+    },
+    {
+      "view": "desktop-page",
+      "name": "anninha-site-novo",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/anninha-site-novo.png",
+      "overflow": false
+    },
+    {
+      "view": "desktop-modal",
+      "name": "ArthurSgarbi",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/ArthurSgarbi.png"
+    },
+    {
+      "view": "desktop-page",
+      "name": "ArthurSgarbi",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/ArthurSgarbi.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-modal",
+      "name": "meu-caixa",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/meu-caixa.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-page",
+      "name": "meu-caixa",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/meu-caixa.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-modal",
+      "name": "site-projeto-shopee",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/site-projeto-shopee.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-page",
+      "name": "site-projeto-shopee",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/site-projeto-shopee.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-modal",
+      "name": "anninha-site-novo",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/anninha-site-novo.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-page",
+      "name": "anninha-site-novo",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/anninha-site-novo.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-modal",
+      "name": "ArthurSgarbi",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/ArthurSgarbi.png",
+      "overflow": false
+    },
+    {
+      "view": "mobile-page",
+      "name": "ArthurSgarbi",
+      "fit": "contain",
+      "loaded": true,
+      "src": "/images/ArthurSgarbi.png",
+      "overflow": false
+    }
+  ],
+  "fallback": {
+    "actual": "/images/hero-abstract.jpg",
+    "alt": "Composição abstrata usada como capa de CP6-Web-Dev",
+    "box": {
+      "bottom": 614.6375122070312,
+      "height": 346.0375061035156,
+      "left": 22,
+      "right": 353.20001220703125,
+      "top": 268.6000061035156,
+      "width": 331.20001220703125,
+      "x": 22,
+      "y": 268.6000061035156
+    },
+    "complete": true,
+    "fit": "contain",
+    "height": 1368,
+    "requested": "/images/CP6-Web-Dev.png",
+    "width": 1800
+  }
+}
