@@ -3,6 +3,7 @@ import projectTechnologies from './projectTechnologies.js';
 export const PROJECT_IMAGE_FALLBACK = '/images/hero-abstract.jpg';
 
 const VISIBLE_REPOSITORIES = new Set([
+  'aether-front-end',
   'meu-caixa',
   'site-projeto-shopee',
   'anninha-site-novo',
