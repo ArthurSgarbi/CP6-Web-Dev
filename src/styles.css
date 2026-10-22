@@ -96,6 +96,30 @@ button, input, a { touch-action: manipulation; }
 .hero-caption { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-block: 16px; border-bottom: 1px solid var(--line); font-size: 9px; }
 .hero-caption > span:nth-child(2) { margin-left: auto; color: var(--muted); }
 .hero-caption > span:last-child { margin-left: 38px; font-size: 17px; }
+/* A continuous, framed project preview inspired by the reference portfolio. */
+.hero-carousel { min-width: 0; width: 100%; }
+.carousel-window { overflow: hidden; border-radius: 5px; }
+.carousel-window:focus-visible { outline-offset: 5px; }
+.carousel-track { display: flex; width: 600%; animation: project-reel 24s linear infinite; will-change: transform; }
+.carousel-set { display: flex; width: 50%; flex-shrink: 0; }
+.carousel-card { width: 33.333333%; flex-shrink: 0; margin: 0; padding-right: 6px; }
+.carousel-screen { overflow: hidden; border: 3px solid var(--ink); border-radius: 5px; background: #151b2b; }
+.carousel-screen img { display: block; width: 100%; aspect-ratio: 2.1; object-fit: contain; transition: transform .45s cubic-bezier(.22, .61, .36, 1); will-change: transform; }
+.carousel-card:hover .carousel-screen img { transform: translate3d(8px, -3px, 0) scale(1.06); }
+.carousel-card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 2px 0; font-size: 11px; letter-spacing: -.02em; }
+.carousel-number { color: var(--muted); font-size: 9px; font-variant-numeric: tabular-nums; }
+.hero-carousel[data-paused='true'] .carousel-track { animation-play-state: paused; }
+.carousel-footer { display: flex; align-items: center; gap: 12px; min-height: 45px; font-size: 8px; font-weight: 600; letter-spacing: .04em; }
+.carousel-rule { flex: 1; height: 1px; background: var(--line); }
+.carousel-playback { display: grid; place-items: center; width: 30px; height: 36px; padding: 0; border: 0; background: transparent; color: var(--muted); font-size: 12px; }
+.carousel-playback:hover { color: var(--ink); }
+@keyframes project-reel { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .carousel-window { overflow-x: auto; }
+  .carousel-track { animation: none; width: 300%; transform: none; }
+  .carousel-set { width: 100%; }
+  .carousel-set[aria-hidden='true'] { display: none; }
+}
 
 /* Selected works: asymmetric pairs, alternating aspect ratios and open captions. */
 .work { padding-bottom: clamp(65px, 7vw, 110px); }
@@ -336,12 +360,14 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   .dialog-counter { font-size: 9px; white-space: nowrap; }
 }
 .hero-title.hero-title-business { font-size: clamp(28px, 8.3vw, 136px); letter-spacing: -.06em; line-height: 1.05; }
-.hero-title-business + .hero-support { position: static; width: 100%; display: flex; justify-content: space-between; gap: 24px; margin-top: 29px; }
-.hero-title-business + .hero-support .hero-index { display: block; }
-.hero-title-business + .hero-support .hero-description { width: 47%; }
-.hero-title-business + .hero-support .hero-description > p { max-width: 480px; }
+.hero-title-business + .hero-support { position: static; width: 100%; display: grid; grid-template-columns: 1fr; gap: clamp(28px, 4vw, 56px); margin-top: 45px; }
+.hero-title-business + .hero-support .hero-description { width: min(100%, 390px); justify-self: end; padding-bottom: 10px; }
+.hero-title-business + .hero-support .hero-description > p { max-width: 390px; font-size: clamp(12px, 1.15vw, 17px); line-height: 1.75; }
+.hero-title-business + .hero-support .hero-description .text-link { margin-top: 18px; }
 @media (max-width: 600px) {
-  .hero-title-business + .hero-support .hero-description { width: 66%; }
+  .hero-title-business + .hero-support { grid-template-columns: 1fr; gap: 28px; margin-top: 28px; }
+  .hero-title-business + .hero-support .hero-description { width: min(100%, 390px); }
+  .hero-carousel { max-width: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
