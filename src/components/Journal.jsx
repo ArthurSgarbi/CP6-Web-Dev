@@ -35,6 +35,8 @@ const editorial = [
 
 export default function Journal() {
   const [expanded, setExpanded] = useState(0);
+  const [hovered, setHovered] = useState(null);
+  const activeIndex = hovered ?? expanded;
 
   return (
     <section
@@ -63,16 +65,26 @@ export default function Journal() {
         <div className="editorial-list" data-reveal>
           {editorial.map((item, index) => (
             <div
-              className={`editorial-item ${expanded === index ? 'is-expanded' : ''}`}
+              className={`editorial-item ${activeIndex === index ? 'is-expanded' : ''}`}
               key={item.id}
+              onPointerEnter={(event) => {
+                if (event.pointerType === 'mouse' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+                  setHovered(index);
+                }
+              }}
+              onPointerLeave={() => setHovered(null)}
             >
               <h3>
                 <button
                   type="button"
-                  aria-expanded={expanded === index}
+                  aria-expanded={activeIndex === index}
                   aria-controls={`journal-panel-${item.id}`}
                   id={`journal-button-${item.id}`}
-                  onClick={() => setExpanded((current) => current === index ? null : index)}
+                  onFocus={() => setHovered(null)}
+                  onClick={() => {
+                    setHovered(null);
+                    setExpanded((current) => current === index ? null : index);
+                  }}
                 >
                   <span className="editorial-number" aria-hidden="true">0{index + 1}</span>
                   <span className="editorial-heading">
@@ -92,8 +104,10 @@ export default function Journal() {
                 id={`journal-panel-${item.id}`}
                 role="region"
                 aria-labelledby={`journal-button-${item.id}`}
-                hidden={expanded !== index}
+                aria-hidden={activeIndex !== index}
+                inert={activeIndex !== index}
               >
+                <div className="editorial-panel-inner">
                 <dl className="editorial-notes">
                   <div>
                     <dt>Problema</dt>
@@ -108,6 +122,7 @@ export default function Journal() {
                     <dd>{item.learning}</dd>
                   </div>
                 </dl>
+                </div>
               </div>
             </div>
           ))}
