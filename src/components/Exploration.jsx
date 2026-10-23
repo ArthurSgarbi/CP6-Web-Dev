@@ -1,6 +1,25 @@
 import SectionLabel from './SectionLabel.jsx';
 import TextLink from './TextLink.jsx';
 
+const steps = [
+  {
+    title: 'Entender',
+    description: 'Converso sobre o público, a necessidade do negócio e a ação que o site deve facilitar.',
+  },
+  {
+    title: 'Planejar',
+    description: 'Organizo o conteúdo e o caminho de navegação para que cada informação tenha um propósito.',
+  },
+  {
+    title: 'Desenvolver',
+    description: 'Transformo a estrutura em uma interface responsiva, legível e simples de usar.',
+  },
+  {
+    title: 'Validar',
+    description: 'Reviso o resultado em diferentes telas e ajusto o que atrapalha a compreensão ou o uso.',
+  },
+];
+
 export default function Exploration({ navigate }) {
   return (
     <section
@@ -10,41 +29,78 @@ export default function Exploration({ navigate }) {
       aria-labelledby="exploration-title"
     >
       <div className="page-width">
-        <SectionLabel number="02">Creative exploration</SectionLabel>
+        <SectionLabel number="02">Exploração / Do objetivo à interface</SectionLabel>
+
+        <div className="exploration-intro" data-reveal>
+          <h2 id="exploration-title">
+            Ideias que viram<br />
+            <span>experiências úteis.</span>
+          </h2>
+          <p>
+            Um site útil ajuda as pessoas a entender o que você oferece, confiar
+            na sua proposta e encontrar o próximo passo. Como estudante de
+            Engenharia de Software, uso um processo claro para transformar essa
+            intenção em uma experiência fácil de usar.
+          </p>
+        </div>
 
         <div className="exploration-grid">
-          <div className="exploration-art" data-reveal>
-            <div className="orbital-art" aria-hidden="true">
-              <span className="orbit orbit-one" />
-              <span className="orbit orbit-two" />
-              <span className="orbit orbit-three" />
-              <span className="orbit-core" />
-              <span className="orbital-cross">+</span>
+          <figure className="exploration-art" data-reveal>
+            <div
+              className="process-art"
+              role="img"
+              aria-label="Três telas ilustram a evolução de um rascunho para uma estrutura e, por fim, uma interface pronta."
+            >
+              <div className="process-card process-sketch" aria-hidden="true">
+                <span className="process-card-label">01 / Rascunho</span>
+                <span className="process-sketch-title" />
+                <span className="process-sketch-line" />
+                <span className="process-sketch-line short" />
+                <span className="process-sketch-box" />
+                <span className="process-sketch-button" />
+              </div>
+              <div className="process-card process-structure" aria-hidden="true">
+                <span className="process-card-label">02 / Estrutura</span>
+                <span className="process-window-bar" />
+                <span className="process-structure-title" />
+                <span className="process-structure-line" />
+                <span className="process-structure-line short" />
+                <span className="process-structure-grid"><span /><span /></span>
+                <span className="process-structure-button" />
+              </div>
+              <div className="process-card process-finished" aria-hidden="true">
+                <span className="process-card-label">03 / Interface</span>
+                <span className="process-window-bar" />
+                <span className="process-finished-image" />
+                <span className="process-finished-title" />
+                <span className="process-finished-line" />
+                <span className="process-finished-button" />
+              </div>
             </div>
-            <div className="exploration-art-caption">
-              <span>Study in balance</span>
-              <span>Fig. 05 / Geometric composition</span>
-            </div>
-          </div>
+            <figcaption className="exploration-art-caption">
+              <span>Do rascunho à experiência final</span>
+              <span>Processo de criação</span>
+            </figcaption>
+          </figure>
 
           <div className="exploration-copy" data-reveal>
-            <h2 id="exploration-title">
-              Less, but<br />
-              <span>with intention.</span>
-            </h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-            <p>
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <p className="exploration-process-label">Quatro decisões, um objetivo</p>
+            <ol className="exploration-steps">
+              {steps.map(({ title, description }, index) => (
+                <li key={title}>
+                  <span className="exploration-step-number" aria-hidden="true">0{index + 1}</span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
             <TextLink
-              href="#journal"
-              onClick={(event) => navigate(event, 'journal')}
+              href="#work"
+              onClick={(event) => navigate(event, 'work')}
             >
-              Explore the perspective
+              Ver projetos na prática
             </TextLink>
           </div>
         </div>
