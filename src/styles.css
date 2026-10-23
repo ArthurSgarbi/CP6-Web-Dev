@@ -307,6 +307,15 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .exploration-process-label { margin-bottom: 14px; color: var(--accent); font-size: 12px; line-height: 1.6; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
 .exploration-steps { list-style: none; margin: 0; padding: 0; }
 .exploration-steps li { display: grid; grid-template-columns: 30px 1fr; gap: 15px; padding: 20px 0; border-bottom: 1px solid #4b5548; }
+.exploration-step-title { display: inline-block; }
+.exploration-step-title,
+.exploration-step-summary,
+.exploration-step-full { transform-origin: left center; transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .exploration-step-details:hover .exploration-step-title { transform: scale(1.16); }
+  .exploration-step-details:hover .exploration-step-summary,
+  .exploration-step-details:hover .exploration-step-full { transform: scale(1.06); }
+}
 .exploration-steps li:first-child { border-top: 1px solid #4b5548; }
 .exploration-step-number { padding-top: 5px; color: var(--accent); font-size: 12px; font-weight: 700; }
 .exploration-steps h3 { margin-bottom: 5px; font-size: clamp(19px, 1.7vw, 24px); font-weight: 500; letter-spacing: -.04em; }
@@ -317,7 +326,15 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .exploration-step-details h3 { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .exploration-step-toggle { color: var(--accent); font-size: 18px; transition: transform .2s ease; }
 .exploration-step-details[open] .exploration-step-toggle { transform: rotate(45deg); }
-.exploration-step-details[open] .exploration-step-summary { display: none; }
+.exploration-step-details::details-content {
+  interpolate-size: allow-keywords;
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: block-size .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease, content-visibility .45s allow-discrete;
+}
+.exploration-step-details[open]::details-content { block-size: auto; opacity: 1; }
+.exploration-step-full { padding-top: 8px; }
 .exploration-copy .text-link { margin-top: 25px; color: var(--accent); font-size: 12px; }
 .exploration-copy .text-link:hover { color: var(--accent); }
 .exploration :focus-visible, .footer :focus-visible { outline-color: var(--accent); }

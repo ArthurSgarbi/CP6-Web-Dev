@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import SectionLabel from './SectionLabel.jsx';
 import TextLink from './TextLink.jsx';
 
@@ -16,11 +17,14 @@ const steps = [
   },
   {
     title: 'Validar',
-    description: 'Confiro se a interação corresponde à ação de quem usa. Nesta seção, por exemplo, passar o mouse não abre uma etapa: o conteúdo aparece ao clicar ou acionar o título pelo teclado. Uso comportamentos concretos como esse para orientar a revisão e os ajustes.',
+    description: 'Confiro se a interação corresponde à ação de quem usa. Nesta seção, por exemplo, passar o mouse revela os detalhes, enquanto o clique ou o teclado permitem manter uma etapa aberta. Uso comportamentos concretos como esse para orientar a revisão e os ajustes.',
   },
 ];
 
 export default function Exploration({ navigate }) {
+  const [hoveredStep, setHoveredStep] = useState(null);
+  const [pinnedSteps, setPinnedSteps] = useState([]);
+
   return (
     <section
       className="exploration section-space"
@@ -89,12 +93,24 @@ export default function Exploration({ navigate }) {
               {steps.map(({ title, description }, index) => (
                 <li key={title}>
                   <span className="exploration-step-number" aria-hidden="true">0{index + 1}</span>
-                  <details className="exploration-step-details">
-                    <summary>
-                      <h3>{title}<span className="exploration-step-toggle" aria-hidden="true">+</span></h3>
+                  <details
+                    className="exploration-step-details"
+                    open={hoveredStep === index || pinnedSteps.includes(index)}
+                    onPointerEnter={(event) => {
+                      if (event.pointerType === 'mouse') setHoveredStep(index);
+                    }}
+                    onPointerLeave={() => setHoveredStep(null)}
+                  >
+                    <summary onClick={(event) => {
+                      event.preventDefault();
+                      setPinnedSteps((current) => current.includes(index)
+                        ? current.filter((step) => step !== index)
+                        : [...current, index]);
+                    }}>
+                      <h3><span className="exploration-step-title">{title}</span><span className="exploration-step-toggle" aria-hidden="true">+</span></h3>
                       <p className="exploration-step-summary">{description.split('. ')[0]}.</p>
                     </summary>
-                    <p className="exploration-step-full">{description}</p>
+                    <p className="exploration-step-full">{description.split('. ').slice(1).join('. ')}</p>
                   </details>
                 </li>
               ))}
