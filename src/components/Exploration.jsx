@@ -89,11 +89,7 @@ export default function Exploration({ navigate }) {
               {steps.map(({ title, description }, index) => (
                 <li key={title}>
                   <span className="exploration-step-number" aria-hidden="true">0{index + 1}</span>
-                  <details
-                    className="exploration-step-details"
-                    onMouseEnter={(event) => { event.currentTarget.open = true; }}
-                    onMouseLeave={(event) => { event.currentTarget.open = false; }}
-                  >
+                  <details className="exploration-step-details">
                     <summary>
                       <h3>{title}<span className="exploration-step-toggle" aria-hidden="true">+</span></h3>
                       <p className="exploration-step-summary">{description.split('. ')[0]}.</p>
