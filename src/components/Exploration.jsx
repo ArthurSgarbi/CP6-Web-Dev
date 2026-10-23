@@ -26,10 +26,10 @@ export default function Exploration({ navigate }) {
       className="exploration section-space"
       id="exploration"
       tabIndex="-1"
-      aria-labelledby="exploration-title"
+      aria-label="Processo / Do objetivo à interface"
     >
       <div className="page-width">
-        <SectionLabel number="02">Exploração / Do objetivo à interface</SectionLabel>
+        <SectionLabel number="02">Processo / Do objetivo à interface</SectionLabel>
 
         <div className="exploration-intro" data-reveal>
           <h2 id="exploration-title">

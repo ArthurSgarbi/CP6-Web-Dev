@@ -3,7 +3,7 @@ import Icon from './Icon';
 
 const links = [
   { id: 'work', label: 'Trabalhos', index: '01' },
-  { id: 'exploration', label: 'Exploração', index: '02' },
+  { id: 'exploration', label: 'Processo', index: '02' },
   { id: 'journal', label: 'Diário', index: '03' },
 ];
 
