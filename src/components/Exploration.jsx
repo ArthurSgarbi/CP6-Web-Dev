@@ -4,19 +4,19 @@ import TextLink from './TextLink.jsx';
 const steps = [
   {
     title: 'Entender',
-    description: 'Converso sobre o público, a necessidade do negócio e a ação que o site deve facilitar. Procuro entender as dúvidas de quem visita, os diferenciais da proposta e o que precisa ficar claro desde o primeiro contato. Essa escuta orienta as escolhas do projeto e conecta a experiência aos objetivos de quem oferece e de quem procura.',
+    description: 'Começo pelo que o projeto precisa permitir fazer. No Meu Caixa, isso envolve organizar as finanças pessoais; no projeto Shopee, acompanhar estoque e gastos. Esses objetivos ajudam a definir quais informações e ações precisam aparecer na interface.',
   },
   {
     title: 'Planejar',
-    description: 'Organizo o conteúdo e o caminho de navegação para que cada informação tenha um propósito. Defino a ordem das seções, a hierarquia dos textos e os pontos de destaque que ajudam a apresentar a proposta. Antes de desenvolver, penso em como conduzir a pessoa da descoberta ao próximo passo, com clareza e sem etapas desnecessárias.',
+    description: 'Defino o que aparece primeiro e o que precisa de uma tela própria. Neste portfólio, os cards apresentam cada projeto de forma resumida, enquanto a página de detalhes reúne mais informações e as tecnologias utilizadas.',
   },
   {
     title: 'Desenvolver',
-    description: 'Transformo a estrutura em uma interface responsiva, legível e simples de usar. Trabalho o layout, os componentes e as interações para que a experiência faça sentido no celular e no computador. Durante a implementação, cuido da organização do código, da acessibilidade e do desempenho, criando uma base que facilite futuras melhorias.',
+    description: 'Divido a interface em componentes e conecto os dados que ela precisa exibir. Aqui, uso React e a API do GitHub para carregar os repositórios. A lista tem estados de carregamento, erro e ausência de projetos, além dos cards com os dados recebidos.',
   },
   {
     title: 'Validar',
-    description: 'Reviso o resultado em diferentes telas e ajusto o que atrapalha a compreensão ou o uso. Confiro a leitura dos textos, os caminhos de navegação e o funcionamento de links e botões para identificar pontos de fricção. A partir dessa revisão e dos feedbacks recebidos, refino os detalhes para entregar uma experiência mais consistente e alinhada ao objetivo inicial.',
+    description: 'Confiro se a interação corresponde à ação de quem usa. Nesta seção, por exemplo, passar o mouse não abre uma etapa: o conteúdo aparece ao clicar ou acionar o título pelo teclado. Uso comportamentos concretos como esse para orientar a revisão e os ajustes.',
   },
 ];
 
@@ -33,14 +33,14 @@ export default function Exploration({ navigate }) {
 
         <div className="exploration-intro" data-reveal>
           <h2 id="exploration-title">
-            Ideias que viram<br />
-            <span>experiências úteis.</span>
+            Como desenvolvo<br />
+            <span>meus projetos</span>
           </h2>
           <p>
-            Um site útil ajuda as pessoas a entender o que você oferece, confiar
-            na sua proposta e encontrar o próximo passo. Como estudante de
-            Engenharia de Software, uso um processo claro para transformar essa
-            intenção em uma experiência fácil de usar.
+            Sou Arthur Sgarbi, estudante de Engenharia de Software da FIAP.
+            Desenvolvo projetos para aplicar o que estudo, de controle financeiro
+            a um site pessoal. Abaixo, explico as escolhas por trás do código
+            com exemplos dos trabalhos deste portfólio.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function Exploration({ navigate }) {
           </figure>
 
           <div className="exploration-copy" data-reveal>
-            <p className="exploration-process-label">Quatro decisões, um objetivo</p>
+            <p className="exploration-process-label">Meu processo de trabalho</p>
             <ol className="exploration-steps">
               {steps.map(({ title, description }, index) => (
                 <li key={title}>
