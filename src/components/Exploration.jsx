@@ -4,19 +4,19 @@ import TextLink from './TextLink.jsx';
 const steps = [
   {
     title: 'Entender',
-    description: 'Converso sobre o público, a necessidade do negócio e a ação que o site deve facilitar.',
+    description: 'Converso sobre o público, a necessidade do negócio e a ação que o site deve facilitar. Procuro entender as dúvidas de quem visita, os diferenciais da proposta e o que precisa ficar claro desde o primeiro contato. Essa escuta orienta as escolhas do projeto e conecta a experiência aos objetivos de quem oferece e de quem procura.',
   },
   {
     title: 'Planejar',
-    description: 'Organizo o conteúdo e o caminho de navegação para que cada informação tenha um propósito.',
+    description: 'Organizo o conteúdo e o caminho de navegação para que cada informação tenha um propósito. Defino a ordem das seções, a hierarquia dos textos e os pontos de destaque que ajudam a apresentar a proposta. Antes de desenvolver, penso em como conduzir a pessoa da descoberta ao próximo passo, com clareza e sem etapas desnecessárias.',
   },
   {
     title: 'Desenvolver',
-    description: 'Transformo a estrutura em uma interface responsiva, legível e simples de usar.',
+    description: 'Transformo a estrutura em uma interface responsiva, legível e simples de usar. Trabalho o layout, os componentes e as interações para que a experiência faça sentido no celular e no computador. Durante a implementação, cuido da organização do código, da acessibilidade e do desempenho, criando uma base que facilite futuras melhorias.',
   },
   {
     title: 'Validar',
-    description: 'Reviso o resultado em diferentes telas e ajusto o que atrapalha a compreensão ou o uso.',
+    description: 'Reviso o resultado em diferentes telas e ajusto o que atrapalha a compreensão ou o uso. Confiro a leitura dos textos, os caminhos de navegação e o funcionamento de links e botões para identificar pontos de fricção. A partir dessa revisão e dos feedbacks recebidos, refino os detalhes para entregar uma experiência mais consistente e alinhada ao objetivo inicial.',
   },
 ];
 
@@ -89,10 +89,17 @@ export default function Exploration({ navigate }) {
               {steps.map(({ title, description }, index) => (
                 <li key={title}>
                   <span className="exploration-step-number" aria-hidden="true">0{index + 1}</span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{description}</p>
-                  </div>
+                  <details
+                    className="exploration-step-details"
+                    onMouseEnter={(event) => { event.currentTarget.open = true; }}
+                    onMouseLeave={(event) => { event.currentTarget.open = false; }}
+                  >
+                    <summary>
+                      <h3>{title}<span className="exploration-step-toggle" aria-hidden="true">+</span></h3>
+                      <p className="exploration-step-summary">{description.split('. ')[0]}.</p>
+                    </summary>
+                    <p className="exploration-step-full">{description}</p>
+                  </details>
                 </li>
               ))}
             </ol>
