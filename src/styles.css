@@ -324,14 +324,14 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .exploration-step-details summary { cursor: pointer; list-style: none; }
 .exploration-step-details summary::-webkit-details-marker { display: none; }
 .exploration-step-details h3 { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.exploration-step-toggle { color: var(--accent); font-size: 18px; transition: transform .2s ease; }
+.exploration-step-toggle { color: var(--accent); font-size: 18px; transition: transform .4s ease; }
 .exploration-step-details[open] .exploration-step-toggle { transform: rotate(45deg); }
 .exploration-step-details::details-content {
   interpolate-size: allow-keywords;
   block-size: 0;
   overflow: hidden;
   opacity: 0;
-  transition: block-size .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease, content-visibility .45s allow-discrete;
+  transition: block-size .8s cubic-bezier(.22, 1, .36, 1), opacity .55s ease, content-visibility .8s allow-discrete;
 }
 .exploration-step-details[open]::details-content { block-size: auto; opacity: 1; }
 .exploration-step-full { padding-top: 8px; }
