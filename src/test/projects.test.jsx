@@ -159,7 +159,7 @@ describe('projetos na página inicial', () => {
     fetch.mockImplementation(() => Promise.resolve(jsonResponse([repository()])));
     const { user } = renderApp();
     await screen.findByRole('heading', { name: 'meu-caixa' });
-    await user.click(screen.getByRole('link', { name: /Explore the perspective/ }));
+    await user.click(within(screen.getByRole('navigation', { name: 'Navegação principal' })).getByRole('link', { name: 'Diário' }));
     await user.click(screen.getByRole('button', { name: 'Abrir detalhes de meu-caixa' }));
     await user.click(screen.getByRole('link', { name: /Abrir página individual/ }));
     expect(await screen.findByRole('heading', { level: 1, name: 'meu-caixa' })).toBeInTheDocument();
