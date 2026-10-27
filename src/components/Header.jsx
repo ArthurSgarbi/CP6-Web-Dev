@@ -107,8 +107,8 @@ export default function Header({ activeSection, onNavigate }) {
           ))}
         </nav>
 
-        <a className="header-cta" href="#work" onClick={(event) => followAnchor(event, 'work')}>
-          Explore os estudos <Icon />
+        <a className="header-cta" href="#contato" onClick={(event) => followAnchor(event, 'contato')}>
+          Entre em contato <Icon />
         </a>
 
         <button

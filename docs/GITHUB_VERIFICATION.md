@@ -1,3 +1,19 @@
+# Atualização — estudos de caso em 23/10/2026
+
+Foram implementados estudos para a seleção realmente encontrada no código: **AETHER-front-end, meu-caixa, site-projeto-shopee e anninha-site-novo**. A seleção e a home foram preservadas. As seções abaixo registram a verificação histórica de 22/10/2026 e não substituem esta atualização.
+
+- 67 testes aprovados em 4 arquivos; build aprovado com 124 módulos; diff-check sem erros.
+- Quatro rotas reais e reload direto conferidos no navegador; galeria, Escape, foco e histórico verificados.
+- Responsividade e comparação com a home em 320, 375, 768, 1024 e 1440 px, sem overflow nas medições.
+- Quatro capturas reais adicionais em WebP e quatro capturas de celular explicitamente pendentes.
+- A navegação entre projetos reutiliza a lista/cache da home. Acesso direto consulta detalhe e lista para obter a ordem, sem duplicar o endpoint de detalhe.
+- A homepage de Shopee retornou 404 DEPLOYMENT_NOT_FOUND; o endereço vindo da API foi preservado. Meu Caixa abriu a tela pública de acesso.
+- Nenhum commit, push, deploy, Lighthouse ou teste das áreas externas autenticadas foi realizado.
+
+O inventário de arquivos, fontes, imagens, evidências e limitações está em [CASE_STUDY_VERIFICATION.md](CASE_STUDY_VERIFICATION.md) e [CASE_STUDY_CONTENT.md](CASE_STUDY_CONTENT.md). O README explica como cadastrar e manter os estudos.
+
+---
+
 # Verificação da integração GitHub
 
 Realizada em **22/10/2026**, no Windows, com Node.js 24.19.0, React 19, Vite 7.3.7, TanStack Query 5.104.5, React Router DOM 7.18.4 e Vitest 4.1.12. Este relatório descreve a integração atual; `VERIFICATION.md` registra a versão anterior.

@@ -5,6 +5,7 @@ import useGitHubProjects from './hooks/useGitHubProjects.js';
 
 const ProjectDetailsPage = lazy(() => import('./pages/ProjectDetailsPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx'));
 const EMPTY_PROJECTS = [];
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
             onNext={() => changeProject(1)} onPrevious={() => changeProject(-1)} />
         } />
         <Route path="/projetos/:repositoryName" element={<ProjectDetailsPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

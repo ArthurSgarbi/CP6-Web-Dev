@@ -184,22 +184,25 @@ describe('projetos na página inicial', () => {
 });
 
 describe('rotas individuais', () => {
-  it('abre sem cache e sem carregar a listagem em paralelo', async () => {
-    fetch.mockImplementation(() => Promise.resolve(jsonResponse(repository())));
+  it('abre sem cache consultando apenas o detalhe', async () => {
+    fetch.mockImplementation((url) => Promise.resolve(jsonResponse(url.includes('/users/') ? [repository()] : repository())));
     renderApp('/projetos/meu-caixa');
     expect(await screen.findByRole('heading', { name: 'meu-caixa', level: 1 })).toBeInTheDocument();
-    expect(fetch).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     expect(fetch.mock.calls[0][0]).toMatch(/\/repos\/portfolio-owner\/meu-caixa$/);
+    expect(fetch.mock.calls.some(([url]) => url.includes('/users/'))).toBe(false);
   });
 
   it('continua funcionando depois de remontar sem cache (equivalente a recarregar)', async () => {
-    fetch.mockImplementation(() => Promise.resolve(jsonResponse(repository())));
+    fetch.mockImplementation((url) => Promise.resolve(jsonResponse(url.includes('/users/') ? [repository()] : repository())));
     const view = renderApp('/projetos/meu-caixa');
     await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
     view.unmount();
     renderApp('/projetos/meu-caixa');
     await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
-    expect(fetch).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(fetch.mock.calls.filter(([url]) => url.includes('/repos/portfolio-owner/meu-caixa'))).toHaveLength(2);
+    expect(fetch.mock.calls.filter(([url]) => url.includes('/users/portfolio-owner/repos?'))).toHaveLength(0);
   });
 
   it('exibe 404 de repositório inexistente sem confundir com falha da API', async () => {
@@ -211,11 +214,17 @@ describe('rotas individuais', () => {
   });
 
   it('mostra falha da API com nova tentativa na rota direta', async () => {
-    fetch.mockResolvedValueOnce(jsonResponse({}, 403)).mockResolvedValueOnce(jsonResponse(repository()));
+    let detailAttempts = 0;
+    fetch.mockImplementation((url) => {
+      if (url.includes('/users/')) return Promise.resolve(jsonResponse([repository()]));
+      detailAttempts += 1;
+      return Promise.resolve(detailAttempts === 1 ? jsonResponse({}, 403) : jsonResponse(repository()));
+    });
     const { user } = renderApp('/projetos/meu-caixa');
     await user.click(await screen.findByRole('button', { name: 'Tentar novamente' }));
     await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
-    expect(fetch).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
+    expect(detailAttempts).toBe(2);
   });
 
   it('exibe 404 de URL desconhecida sem consultar a API', async () => {
