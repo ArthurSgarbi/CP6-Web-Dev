@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const SECTION_IDS = ['work', 'exploration', 'journal'];
+const SECTION_IDS = ['work', 'exploration', 'journal', 'contato'];
 
 export default function useAnchorNavigation() {
   const [activeSection, setActiveSection] = useState('');

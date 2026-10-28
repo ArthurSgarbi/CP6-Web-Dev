@@ -4,6 +4,7 @@ import Hero from '../components/Hero.jsx';
 import SelectedWorks from '../components/SelectedWorks.jsx';
 import Exploration from '../components/Exploration.jsx';
 import Journal from '../components/Journal.jsx';
+import Contact from '../components/Contact.jsx';
 import Footer from '../components/Footer.jsx';
 import StudyDialog from '../components/StudyDialog.jsx';
 import useReveal from '../hooks/useReveal.js';
@@ -24,6 +25,7 @@ export default function HomePage({ projects, projectsQuery, selectedProject, onS
           isRetrying={projectsQuery.isFetching} onRetry={() => projectsQuery.refetch()} onSelect={onSelect} />
         <Exploration navigate={navigate} />
         <Journal />
+        <Contact />
       </main>
       <Footer navigate={navigate} />
       <StudyDialog study={selectedProject}

@@ -1,0 +1,22 @@
+[
+  {
+    "route": "http://127.0.0.1:5180/projetos/AETHER-front-end",
+    "title": "AETHER-front-end | Arthur Sgarbi",
+    "reloaded": true
+  },
+  {
+    "route": "http://127.0.0.1:5180/projetos/meu-caixa",
+    "title": "meu-caixa | Arthur Sgarbi",
+    "reloaded": true
+  },
+  {
+    "route": "http://127.0.0.1:5180/projetos/site-projeto-shopee",
+    "title": "site-projeto-shopee | Arthur Sgarbi",
+    "reloaded": true
+  },
+  {
+    "route": "http://127.0.0.1:5180/projetos/anninha-site-novo",
+    "title": "anninha-site-novo | Arthur Sgarbi",
+    "reloaded": true
+  }
+]

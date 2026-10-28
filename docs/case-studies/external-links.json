@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://meu-caixa-azure.vercel.app/",
+    "result": "Página pública de acesso carregada; autenticação não exercitada"
+  },
+  {
+    "url": "https://site-projeto-shopee.vercel.app/",
+    "result": "404 DEPLOYMENT_NOT_FOUND"
+  },
+  {
+    "url": "https://github.com/ArthurSgarbi/AETHER-front-end",
+    "title": "ArthurSgarbi/AETHER-front-end: Projeto AETHER feito para o trabalho global solution de front end da FIAP"
+  },
+  {
+    "url": "https://github.com/ArthurSgarbi/meu-caixa",
+    "title": "ArthurSgarbi/meu-caixa: Aplicação segura de controle financeiro pessoal com transações, cartões, investimentos, simulações e assistente de IA."
+  },
+  {
+    "url": "https://github.com/ArthurSgarbi/site-projeto-shopee",
+    "title": "ArthurSgarbi/site-projeto-shopee: Site para acompanhar estoque na shopee, gastos e tudo mais"
+  },
+  {
+    "url": "https://github.com/ArthurSgarbi/anninha-site-novo",
+    "title": "github.com/ArthurSgarbi/anninha-site-novo"
+  }
+]

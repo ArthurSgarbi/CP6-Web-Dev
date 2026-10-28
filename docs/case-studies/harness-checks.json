@@ -1,0 +1,48 @@
+[
+  {
+    "count": "Requisições: 1",
+    "endpoints": [
+      "https://api.github.com/repos/ArthurSgarbi/meu-caixa"
+    ],
+    "state": "direct-loading"
+  },
+  {
+    "count": "Requisições: 2",
+    "endpoints": [
+      "https://api.github.com/repos/ArthurSgarbi/meu-caixa",
+      "https://api.github.com/users/ArthurSgarbi/repos?type=owner&sort=updated&direction=desc&per_page=100"
+    ],
+    "state": "direct-success"
+  },
+  {
+    "count": "Requisições: 1",
+    "endpoints": [
+      "https://api.github.com/users/ArthurSgarbi/repos?type=owner&sort=updated&direction=desc&per_page=100"
+    ],
+    "state": "home-to-case"
+  },
+  {
+    "focus": "Próxima imagem ",
+    "position": "Imagem 1 de 2",
+    "state": "focus-trap-backwards"
+  },
+  {
+    "focus": "Fechar imagem ampliada",
+    "state": "focus-trap-forwards"
+  },
+  {
+    "alt": "Captura de teste Meu Caixa",
+    "position": "Imagem 2 de 2",
+    "state": "next-image"
+  },
+  {
+    "position": "Imagem 1 de 2",
+    "state": "previous-image"
+  },
+  {
+    "focus": "Ampliar imagem: Captura de teste AETHER",
+    "missing": "Imagem do processo ainda não adicionada/images/projects/verificacao-local/arquivo-inexistente.webp",
+    "open": false,
+    "state": "closed"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "font": "Manrope, Arial, sans-serif",
+    "paper": "rgb(243, 242, 237)",
+    "scroll": 305,
+    "view": "home",
+    "width": 305,
+    "work": "rgb(17, 19, 16)"
+  },
+  {
+    "font": "Manrope, Arial, sans-serif",
+    "paper": "rgb(243, 242, 237)",
+    "scroll": 360,
+    "view": "home",
+    "width": 360,
+    "work": "rgb(17, 19, 16)"
+  },
+  {
+    "font": "Manrope, Arial, sans-serif",
+    "paper": "rgb(243, 242, 237)",
+    "scroll": 753,
+    "view": "home",
+    "width": 753,
+    "work": "rgb(17, 19, 16)"
+  },
+  {
+    "font": "Manrope, Arial, sans-serif",
+    "paper": "rgb(243, 242, 237)",
+    "scroll": 1009,
+    "view": "home",
+    "width": 1009,
+    "work": "rgb(17, 19, 16)"
+  },
+  {
+    "font": "Manrope, Arial, sans-serif",
+    "paper": "rgb(243, 242, 237)",
+    "scroll": 1425,
+    "view": "home",
+    "width": 1425,
+    "work": "rgb(17, 19, 16)"
+  }
+]
