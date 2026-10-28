@@ -2,10 +2,12 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage.jsx';
 import useGitHubProjects from './hooks/useGitHubProjects.js';
+import { AuthProvider, RequireAdmin } from './hooks/useAdminAuth.jsx';
 
 const ProjectDetailsPage = lazy(() => import('./pages/ProjectDetailsPage.jsx'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx'));
+const LoginPage = lazy(() => import('./pages/LoginPage.jsx'));
 const EMPTY_PROJECTS = [];
 
 export default function App() {
@@ -35,7 +37,8 @@ export default function App() {
             onNext={() => changeProject(1)} onPrevious={() => changeProject(-1)} />
         } />
         <Route path="/projetos/:repositoryName" element={<ProjectDetailsPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/login" element={<AuthProvider><LoginPage /></AuthProvider>} />
+        <Route path="/dashboard" element={<AuthProvider><RequireAdmin><DashboardPage /></RequireAdmin></AuthProvider>} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>

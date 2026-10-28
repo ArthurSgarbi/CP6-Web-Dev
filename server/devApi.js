@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { loadEnv } from 'vite';
 import contact from '../api/contact.js';
 import admin from '../api/admin.js';
+import featured from '../api/featured.js';
 Object.assign(process.env, loadEnv('development', process.cwd(), ''));
 createServer(async (req, res) => {
   res.status = (status) => { res.statusCode = status; return res; };
@@ -16,6 +17,7 @@ createServer(async (req, res) => {
     const path = req.url.split('?')[0];
     if (path === '/api/contact') await contact(req, res);
     else if (path === '/api/admin') await admin(req, res);
+    else if (path === '/api/featured') await featured(req, res);
     else res.status(404).json({ error: 'Endpoint não encontrado.' });
   } catch { if (!res.writableEnded) res.status(400).json({ error: 'Requisição inválida.' }); }
-}).listen(3001, '127.0.0.1', () => console.log('API local: http://127.0.0.1:3001'));
+}).listen(Number(process.env.API_PORT || 3001), '127.0.0.1', () => console.log(`API local: http://127.0.0.1:${process.env.API_PORT || 3001}`));

@@ -52,7 +52,7 @@ describe('projetos na página inicial', () => {
     expect(screen.getByText('1 projeto carregado do GitHub.')).toHaveAttribute('role', 'status');
   });
 
-  it.each([{ data: [] }, { data: [repository({ fork: true }), repository({ id: 2, archived: true })] }])('trata lista vazia depois da filtragem: %j', async ({ data }) => {
+  it.each([{ data: [] }, { data: [repository({ private: true }), repository({ id: 2, archived: true })] }])('trata lista vazia depois da filtragem: %j', async ({ data }) => {
     fetch.mockResolvedValue(jsonResponse(data));
     renderApp();
     expect(await screen.findByText('Nenhum projeto público foi encontrado.')).toBeInTheDocument();
@@ -233,3 +233,9 @@ describe('rotas individuais', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 });
+
+// Existing UI regressions isolate the public editorial configuration.
+vi.mock('../services/adminApi.js', async importOriginal => ({
+  ...await importOriginal(),
+  getFeaturedProjects: async () => ['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position })),
+}));

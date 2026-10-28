@@ -2,12 +2,6 @@ import projectTechnologies from './projectTechnologies.js';
 
 export const PROJECT_IMAGE_FALLBACK = '/images/hero-abstract.jpg';
 
-const VISIBLE_REPOSITORIES = new Set([
-  'aether-front-end',
-  'meu-caixa',
-  'site-projeto-shopee',
-  'anninha-site-novo',
-]);
 
 // GitHub permits arbitrary homepage text. Only web URLs become clickable links.
 function getLiveUrl(homepage) {
@@ -43,10 +37,9 @@ export function formatRepository(repository) {
   };
 }
 
-export function formatRepositories(repositories) {
+export function formatRepositories(repositories, { includeForks = false } = {}) {
   return repositories
-    .filter((repository) => VISIBLE_REPOSITORIES.has(repository.name.toLowerCase())
-      && !repository.fork && !repository.archived)
+    .filter((repository) => !repository.private && (includeForks || !repository.fork) && !repository.archived)
     .sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at) || a.name.localeCompare(b.name))
     .map(formatRepository);
 }

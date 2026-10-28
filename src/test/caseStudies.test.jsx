@@ -28,6 +28,8 @@ afterEach(() => { clients.forEach((client) => client.clear()); clients = []; });
 function createClient(repositories) {
   const client = new QueryClient();
   clients.push(client);
+  client.setQueryData(['featured'], selectedRepositories.map((item, position) => ({ repository_name: item.name, position })));
+
   if (repositories) client.setQueryData(listKey, repositories);
   return client;
 }
@@ -61,7 +63,7 @@ describe('navegação entre estudos de caso', () => {
     fetch.mockImplementation(() => Promise.resolve(jsonResponse([
       ...selectedRepositories.toReversed(),
       repository({ id: 15, name: 'ArthurSgarbi', updated_at: '2026-10-25T12:00:00Z' }),
-      repository({ id: 16, name: 'meu-caixa', fork: true, updated_at: '2026-10-26T12:00:00Z' }),
+      repository({ id: 16, name: 'fork-publico', fork: true, updated_at: '2026-10-26T12:00:00Z' }),
       repository({ id: 17, name: 'site-projeto-shopee', archived: true, updated_at: '2026-10-27T12:00:00Z' }),
     ])));
     const client = createClient();
@@ -231,3 +233,9 @@ describe('páginas de estudo de caso', () => {
   });
 
 });
+
+// Existing UI regressions isolate the public editorial configuration.
+vi.mock('../services/adminApi.js', async importOriginal => ({
+  ...await importOriginal(),
+  getFeaturedProjects: async () => ['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position })),
+}));

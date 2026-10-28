@@ -1,4 +1,5 @@
 import Icon from './Icon.jsx';
+import { Link } from 'react-router-dom';
 
 export default function Footer({ navigate }) {
   return (
@@ -28,6 +29,16 @@ export default function Footer({ navigate }) {
           <span>Stay curious<span className="title-dot">.</span></span>
           <Icon name="arrow-up-right" />
         </a>
+
+        <div className="footer-admin" aria-labelledby="footer-admin-title">
+          <div>
+            <p id="footer-admin-title">Área do proprietário</p>
+            <span>Gerencie suas mensagens e os projetos em destaque.</span>
+          </div>
+          <Link className="footer-admin-link" to="/dashboard">
+            Acessar dashboard <Icon name="arrow-up-right" />
+          </Link>
+        </div>
 
         <div className="footer-bottom">
           <span>Digital Excellence © 2026</span>

@@ -46,7 +46,7 @@ describe('Autorização administrativa', () => {
     expect(res.code).toBe(status); expect(fetch.mock.calls.some(([url]) => url.includes('/rest/v1/'))).toBe(false);
   });
   it('consulta somente depois de verificar usuário autorizado', async () => {
-    const fetch = vi.fn().mockResolvedValueOnce(json({ id: 'admin-user' })).mockResolvedValueOnce(json([])); vi.stubGlobal('fetch', fetch);
+    const fetch = vi.fn().mockResolvedValueOnce(json({ id: 'admin-user' })).mockResolvedValueOnce(json([])).mockResolvedValueOnce(json({ new: 0, responded: 0 })); vi.stubGlobal('fetch', fetch);
     const res = response(); await admin({ method: 'GET', url: '/api/admin', headers: { authorization: 'Bearer valid' } }, res);
     expect(res.code).toBe(200); expect(fetch.mock.calls[0][0]).toContain('/auth/v1/user'); expect(fetch.mock.calls[1][0]).toContain('/rest/v1/contact_messages');
   });

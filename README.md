@@ -361,3 +361,10 @@ Referências da integração: [RLS no Supabase](https://supabase.com/docs/guides
 - [TanStack Query: políticas de cache e revalidação](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults).
 - [React Router: rotas declarativas](https://reactrouter.com/7.18.4/start/declarative/routing).
 - [Vercel: configuração de rotas](https://vercel.com/docs/project-configuration/vercel-json#routes).
+
+## Dashboard do proprietário
+
+Acesse `/login`; `/dashboard` exige uma sessão validada pelo servidor. Consulte
+[docs/ADMIN_DASHBOARD.md](docs/ADMIN_DASHBOARD.md) para ativação, endpoints,
+segurança, migration e evidências de teste. Não há cadastro ou recuperação de
+senha pelo portfólio. A senha deve ser definida manualmente no Supabase Auth.
