@@ -1,8 +1,6 @@
 // Conteúdo editorial baseado nos arquivos públicos consultados em 23/10/2026.
 // As etapas são uma leitura técnica da implementação, não um histórico de trabalho.
 // Nome, descrição, linguagem, datas, estrelas e ações continuam vindo da API GitHub.
-const toConfirm = '[Informação a confirmar com o proprietário]';
-
 const source = (repository, path, label) => ({
   label,
   url: `https://github.com/ArthurSgarbi/${repository}/blob/main/${path}`,
@@ -18,8 +16,8 @@ export const projectCaseStudies = {
     problem: 'O conteúdo do portal discute a perda de comunicação em eventos climáticos severos. Na interface, o desafio é tornar essa proposta compreensível, separando problema, tecnologias, objetivos, benefícios e uma simulação de auditoria.',
     objective: 'Apresentar a solução e orientar a navegação entre seus fundamentos. Monitoramento de sensores, retenção local e transmissão por rádio são conceitos descritos pelo portal; este frontend não implementa esses serviços.',
     audience: 'Defesa Civil, bombeiros, gestores públicos e pessoas em áreas de risco são os públicos declarados em objetivos.html. O portal também permite apresentar a proposta em contexto acadêmico.',
-    role: toConfirm,
-    duration: toConfirm,
+    role: 'Projeto para a Global Solution do primeiro semestre.',
+    duration: '3 dias',
     process: [
       {
         id: 'discovery',
@@ -105,8 +103,8 @@ export const projectCaseStudies = {
     problem: 'Receitas, despesas, aportes, reservas e compras no cartão representam movimentos diferentes. Misturá-los pode distorcer a leitura do dinheiro disponível. O projeto trata essas diferenças e a privacidade entre contas como regras da aplicação.',
     objective: 'Permitir o registro e a consulta das finanças pessoais, mantendo distinção entre saldo, previsão e patrimônio. As contas são manuais: o README informa que não existe movimentação de contas bancárias reais.',
     audience: 'Pessoas que desejam acompanhar as próprias finanças em uma área individual. Essa caracterização é inferida das funcionalidades e do escopo declarado no README; não representa uma pesquisa de público comprovada.',
-    role: toConfirm,
-    duration: toConfirm,
+    role: 'Projeto desenvolvido para ajudar na organização das finanças.',
+    duration: '4 semanas',
     process: [
       {
         id: 'discovery',
@@ -195,8 +193,8 @@ export const projectCaseStudies = {
     problem: 'Produtos, pedidos e entregas precisam permanecer relacionados durante a operação. Ao mesmo tempo, uma apresentação pública do sistema não pode expor os cadastros administrativos nem sugerir uma venda real.',
     objective: 'Centralizar o cadastro e a consulta da operação manual, protegendo a área administrativa e oferecendo uma demo com dados fictícios. O README informa que ainda não existe sincronização com Shopee ou transportadoras.',
     audience: 'Administradores de uma loja que registram e acompanham sua operação. Essa caracterização deriva do fluxo documentado; volume de vendas, número de operadores e uso comercial não foram comprovados.',
-    role: toConfirm,
-    duration: toConfirm,
+    role: 'Projeto desenvolvido para planos de vendedores da Shopee.',
+    duration: '1 semana',
     process: [
       {
         id: 'discovery',
@@ -285,8 +283,8 @@ export const projectCaseStudies = {
     problem: 'Uma coleção de fotografias e textos pode perder continuidade quando cresce. A implementação combina narrativa e organização por ano, permitindo percorrer as memórias e abrir cada fotografia em destaque.',
     objective: 'Apresentar uma homenagem pessoal com leitura contínua e exploração das imagens. O contador e as legendas fazem parte do conteúdo afetivo; não representam datas ou duração do trabalho de desenvolvimento.',
     audience: 'A destinatária da homenagem e pessoas que acessam a página compartilhada. Esse público é inferido do conteúdo, sem evidência de pesquisa ou testes com participantes.',
-    role: toConfirm,
-    duration: toConfirm,
+    role: 'Site desenvolvido como projeto pessoal para minha namorada.',
+    duration: '1 dia',
     process: [
       {
         id: 'discovery',
