@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAdminAuth.jsx';
 import useGitHubProjects from '../hooks/useGitHubProjects.js';
 import ProjectImage from '../components/ProjectImage.jsx';
+import { projectCaseStudies } from '../data/projectCaseStudies.js';
 import './admin.css';
 const labels = { new: 'Nova', read: 'Visualizada', responded: 'Respondida', archived: 'Arquivada' };
 const delivery = { sent: 'Aceito pelo Resend', pending: 'Pendente', failed: 'Falha no envio' };
@@ -31,6 +32,7 @@ export default function DashboardPage() {
   const messages = useQuery({ queryKey: ['admin', 'messages', filter, offset], queryFn: () => auth.request(`resource=messages&offset=${offset}&status=${filter}`), retry: false });
   const featured = useQuery({ queryKey: ['admin', 'featured'], queryFn: () => auth.request('resource=featured'), retry: false });
   const repositories = useGitHubProjects({ all: true });
+  const availableProjects = repositories.data?.filter(project => Object.hasOwn(projectCaseStudies, project.slug.toLowerCase()));
   const saved = (featured.data?.projects || []).map(project => project.repository_name);
   const selection = draft ?? saved;
   const selectedItems = useRef(new Map());
@@ -151,12 +153,12 @@ export default function DashboardPage() {
         </li>)}
       </ol>}
       {!repositories.error && !featured.error && featured.data && <div className="admin-projects">
-        {repositories.data?.map(project => <article key={project.id} className="admin-project">
+        {availableProjects?.map(project => <article key={project.id} className="admin-project">
           <ProjectImage project={project} />
           <div><h3>{project.title}</h3><p>{project.description}</p><span className="muted">{project.language}</span></div>
           <label><input type="checkbox" checked={isSelected(project.slug)} disabled={pending || (!isSelected(project.slug) && selection.length >= 4)} onChange={() => toggle(project.slug)} />Selecionar {project.title}</label>
         </article>)}
-        {repositories.data?.length === 0 && <p>Nenhum repositório público disponível.</p>}
+        {availableProjects?.length === 0 && <p>Nenhum projeto do site disponível no GitHub.</p>}
       </div>}
       <div className="admin-save"><p>{dirty ? 'Alterações não salvas' : 'Seleção sincronizada com o servidor'}</p><button className="admin-button primary" disabled={!dirty || pending || !featured.data} onClick={save}>{pending ? 'Aguarde…' : 'Salvar destaques'} ↗</button></div>
     </section>

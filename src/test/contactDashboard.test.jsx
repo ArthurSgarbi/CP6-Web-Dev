@@ -12,7 +12,7 @@ beforeEach(() => {
   rows = [{ id, name: 'Visitante', email: 'teste@example.com', subject: 'Projeto novo', message: 'Mensagem completa para consulta administrativa.', status: 'new', email_status: 'failed', created_at: '2026-10-27T12:00:00Z' }];
   selected = ['meu-caixa'];
   vi.stubGlobal('fetch', vi.fn(async (path, options = {}) => {
-    if (path.startsWith('https://api.github.com')) return jsonResponse(Array.from({ length: 5 }, (_, i) => repository({ id: i + 1, name: i === 0 ? 'meu-caixa' : `projeto-${i}` })));
+    if (path.startsWith('https://api.github.com')) return jsonResponse(Array.from({ length: 5 }, (_, i) => repository({ id: i + 1, name: ['meu-caixa', 'aether-front-end', 'site-projeto-shopee', 'anninha-site-novo', 'projeto-4'][i] })));
     const projects = () => selected.map((repository_name, position) => ({ repository_name, position }));
     if (path === '/api/featured') return jsonResponse({ projects: projects() });
     const url = new URL(path, 'http://localhost');
@@ -109,15 +109,15 @@ it('preserva status se o servidor recusar atualização', async () => {
   await screen.findByText(/Não foi possível acessar a administração/);
   expect(rows[0].status).toBe('new'); expect(screen.getByText('Nova', { exact: true })).toBeVisible();
 });
-it('limita quatro projetos, reordena, persiste e atualiza a home', async () => {
+it('exibe apenas os quatro projetos do site, reordena, persiste e atualiza a home', async () => {
   loggedIn = true; const user = start();
-  await user.click(await screen.findByLabelText('Selecionar projeto-1'));
-  await user.click(screen.getByLabelText('Selecionar projeto-2')); await user.click(screen.getByLabelText('Selecionar projeto-3'));
-  expect(screen.getByLabelText('Selecionar projeto-4')).toBeDisabled();
-  await user.click(screen.getByRole('button', { name: 'Mover projeto-3 para cima' }));
+  await user.click(await screen.findByLabelText('Selecionar aether-front-end'));
+  await user.click(screen.getByLabelText('Selecionar site-projeto-shopee')); await user.click(screen.getByLabelText('Selecionar anninha-site-novo'));
+  expect(screen.queryByLabelText('Selecionar projeto-4')).not.toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Mover anninha-site-novo para cima' }));
   await user.click(screen.getByRole('button', { name: /Salvar destaques/ }));
   await screen.findByText(/Destaques salvos com sucesso/);
-  expect(selected).toEqual(['meu-caixa', 'projeto-1', 'projeto-3', 'projeto-2']);
+  expect(selected).toEqual(['meu-caixa', 'aether-front-end', 'anninha-site-novo', 'site-projeto-shopee']);
   await user.click(screen.getByRole('link', { name: /Voltar ao portfólio/ }));
   await screen.findByRole('heading', { name: 'meu-caixa', level: 3 });
   const work = document.querySelector('#work');
@@ -131,7 +131,7 @@ it('ignora destaque removido e mantém um estado vazio seguro', async () => {
 });
 it('mantém rascunho se salvamento falha e bloqueia navegação sem confirmação', async () => {
   loggedIn = true; failSave = true; vi.spyOn(window, 'confirm').mockReturnValue(false); const user = start();
-  await user.click(await screen.findByLabelText('Selecionar projeto-1'));
+  await user.click(await screen.findByLabelText('Selecionar aether-front-end'));
   await user.click(screen.getByRole('button', { name: /Salvar destaques/ }));
   await screen.findByText(/Não foi possível acessar a administração/);
   expect(screen.getByText('Alterações não salvas')).toBeVisible();
