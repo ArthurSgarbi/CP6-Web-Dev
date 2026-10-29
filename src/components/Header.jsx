@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon';
+import ThemeToggle from './ThemeToggle';
 
 const links = [
   { id: 'work', label: 'Trabalhos', index: '01' },
@@ -110,6 +111,8 @@ export default function Header({ activeSection, onNavigate }) {
         <a className="header-cta" href="#contato" onClick={(event) => followAnchor(event, 'contato')}>
           Entre em contato <Icon />
         </a>
+
+        <ThemeToggle />
 
         <button
           className="menu-toggle"
