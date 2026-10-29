@@ -1,6 +1,7 @@
 /* Foundations: a restrained palette, one typeface, and a shared spacing scale. */
 @font-face { font-family: Manrope; src: url('/fonts/manrope-latin.woff2') format('woff2'); font-style: normal; font-weight: 400 800; font-display: swap; }
 :root {
+  color-scheme: light;
   --paper: #f3f2ed;
   --ink: #24251f;
   --muted: #67695f;
@@ -11,6 +12,33 @@
   --section-space: clamp(80px, 10vw, 160px);
   --font: Manrope, Arial, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #171a16;
+  --ink: #f0f1e9;
+  --muted: #b2b7a8;
+  --line: #3e4539;
+}
+:root[data-theme='dark'] ::selection { color: #171a16; }
+:root[data-theme='dark'] :focus-visible { outline-color: var(--accent); }
+:root[data-theme='dark'] .title-dot,
+:root[data-theme='dark'] .text-link:hover,
+:root[data-theme='dark'] .dialog-nav-button:hover { color: var(--accent); }
+:root[data-theme='dark'] .journal { --journal-green: #c3dc82; }
+:root[data-theme='dark'] .journal .editorial-item.is-expanded { background: #252d20; }
+:root[data-theme='dark'] .journal .editorial-learning { border-color: var(--line); }
+:root[data-theme='dark'] .journal .is-expanded .editorial-toggle { background: var(--accent); border-color: var(--accent); color: #24251f; }
+:root[data-theme='dark'] .exploration,
+:root[data-theme='dark'] .footer { color: #f0f1e9; }
+:root[data-theme='dark'] .footer-admin-link,
+:root[data-theme='dark'] .dialog-close:hover { color: #24251f; }
+:root[data-theme='dark'] .footer-admin-link:hover { background: #f0f1e9; border-color: #f0f1e9; }
+.theme-toggle { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: 50%; background: transparent; }
+.theme-toggle:hover { background: var(--ink); color: var(--paper); }
+@media (width <= 800px) {
+  .header-inner { gap: 12px; }
+  .theme-toggle { margin-left: auto; }
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-padding-top: 30px; scrollbar-color: #a5a79a var(--paper); scrollbar-gutter: stable; }
