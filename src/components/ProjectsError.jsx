@@ -1,5 +1,6 @@
 export default function ProjectsError({ error, onRetry, isRetrying = false }) {
   const messages = {
+    FEATURED_UNAVAILABLE: 'Não foi possível carregar a seleção de destaques do portfólio. Tente novamente em instantes.',
     RATE_LIMIT: 'O limite temporário de consultas ao GitHub foi atingido. Aguarde alguns minutos e tente novamente.',
     NETWORK: 'Não foi possível conectar ao GitHub. Verifique sua conexão e tente novamente.',
     TIMEOUT: 'O GitHub demorou para responder. Tente novamente em instantes.',

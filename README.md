@@ -18,7 +18,7 @@ Copie o exemplo somente se ainda não tiver um `.env`. O arquivo contém:
 VITE_GITHUB_USERNAME=ArthurSgarbi
 ```
 
-O endereço padrão é `http://127.0.0.1:5173/`. Reinicie o Vite depois de mudar a variável. Ela é pública, incluída durante o build; configure-a também no ambiente de build da Vercel. Sem ela, o desenvolvimento apresenta uma mensagem explicando como configurar a integração.
+O endereço padrão é `http://127.0.0.1:5173/`. `npm run dev` serve o frontend e as rotas locais `/api` no mesmo processo, incluindo login, destaques e contato. Não é necessário iniciar outro terminal na porta 3001. Configure também as variáveis privadas de Supabase indicadas em `.env.example` para esses recursos. Reinicie o Vite depois de mudar o `.env`. `VITE_GITHUB_USERNAME` é pública, incluída durante o build; configure-a também no ambiente de build da Vercel. Sem ela, o desenvolvimento apresenta uma mensagem explicando como configurar a integração.
 
 `.env`, `.env.*`, `node_modules/` e `dist/` continuam ignorados pelo Git; `.env.example` é a exceção versionável. Não há credenciais no exemplo.
 
@@ -313,8 +313,10 @@ ambiente do servidor no deploy. Nunca prefixe estas credenciais com `VITE_`.
    `CONTACT_ADMIN_USER_IDS`. Desabilite cadastros públicos se não forem necessários.
    O backend verifica a sessão no Auth e a lista de UUIDs antes de consultar dados.
 3. Opcionalmente, verifique o domínio no Resend e configure remetente, destinatário e chave para notificações por e-mail. Sem essas variáveis, as mensagens continuam chegando ao dashboard. `CONTACT_HASH_SECRET` é opcional: quando ausente, o servidor usa a chave privada do banco como chave do HMAC, sem expor ou salvar o IP.
-4. Em dois terminais, execute `npm run dev:api` (porta 3001) e `npm run dev`
-   (Vite na 5173, com proxy para `/api`). Reinicie a API após mudar `.env`.
+4. Execute `npm run dev`: o Vite na porta 5173 também atende `/api`.
+   Opcionalmente, use `npm run dev:api` para uma API separada (porta 3001) e
+   configure `API_PROXY_TARGET=http://127.0.0.1:3001` no `.env` para o Vite encaminhar as chamadas.
+   Reinicie os processos após mudar `.env`.
    `npm run preview` sozinho serve apenas o frontend; não executa funções.
 5. Acesse `/dashboard`, entre com e-mail/senha do usuário autorizado. O token fica
    apenas na memória; reload ou Sair exige novo login. A lista tem páginas de 50,

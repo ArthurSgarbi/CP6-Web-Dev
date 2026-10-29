@@ -38,6 +38,14 @@ Nenhuma dependência nova foi adicionada.
 
 ## Arquitetura e decisões
 
+Em desenvolvimento, `npm run dev` atende o frontend e `/api` no mesmo servidor Vite.
+As credenciais privadas são carregadas somente no processo Node; o navegador recebe
+apenas variáveis `VITE_`. `npm run dev:api` continua disponível para uma API separada,
+mediante `API_PROXY_TARGET` explícito no ambiente do Vite. Reinicie após editar `.env`.
+Falhas em `/api/featured` são identificadas como falhas na seleção de destaques,
+sem atribuir o erro ao GitHub. No login, falha de conexão ou HTTP 5xx é diferenciada
+da recusa de acesso (401/403), que continua genérica.
+
 O navegador envia as credenciais somente ao endpoint de sessão por HTTPS em produção.
 O servidor autentica no Supabase, confere o UUID na allowlist e grava o access token em
 cookie HttpOnly, SameSite=Lax, Secure em produção, limitado a `/api/admin`.
@@ -93,9 +101,10 @@ existente; oferece a mesma operação do exemplo `/api/admin/messages/:id`, sem 
 
 ## Desenvolvimento e testes
 
-Execute `npm run dev:api` e `npm run dev` em terminais separados. Em caso de portas ocupadas,
-`API_PORT` altera a porta da API e `API_PROXY_TARGET` altera o destino do proxy Vite.
-Os valores padrão permanecem 3001 e http://127.0.0.1:3001.
+Execute `npm run dev` para iniciar frontend e API integrada. Para usar dois processos,
+execute também `npm run dev:api` e configure explicitamente `API_PROXY_TARGET` no Vite.
+`API_PORT` altera a porta da API separada (padrão 3001); sem `API_PROXY_TARGET`,
+o Vite atende `/api` diretamente e não depende dessa porta.
 
 Os testes Vitest usam serviços simulados e cobrem os 16 grupos funcionais do pedido:
 acesso, login e credenciais inválidas, 403, sessão expirada, logout, listagem,
