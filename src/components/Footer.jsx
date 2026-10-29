@@ -7,15 +7,14 @@ export default function Footer({ navigate }) {
       <div className="page-width">
         <div className="footer-top">
           <span className="status-label">
-            <span className="status-dot" />
-            Always exploring.
+            Sempre explorando.
           </span>
           <a
             className="back-top"
             href="#top"
             onClick={(event) => navigate(event, 'top')}
           >
-            Back to top
+            Voltar ao topo
             <Icon name="arrow-up-right" />
           </a>
         </div>
@@ -24,9 +23,9 @@ export default function Footer({ navigate }) {
           className="footer-title"
           href="#work"
           onClick={(event) => navigate(event, 'work')}
-          aria-label="Revisit the visual studies"
+          aria-label="Revisitar os estudos visuais"
         >
-          <span>Stay curious<span className="title-dot">.</span></span>
+          <span>Mantenha a curiosidade<span className="title-dot">.</span></span>
           <Icon name="arrow-up-right" />
         </a>
 
@@ -41,10 +40,10 @@ export default function Footer({ navigate }) {
         </div>
 
         <div className="footer-bottom">
-          <span>Digital Excellence © 2026</span>
-          <span>Anonymous by design.</span>
+          <span>Explorações de design © 2026</span>
+          <span>Arthur Sgarbi Sousa</span>
           <a href="#work" onClick={(event) => navigate(event, 'work')}>
-            Visual studies only <Icon name="arrow-up-right" />
+            CP6 de Web Dev <Icon name="arrow-up-right" />
           </a>
         </div>
       </div>
