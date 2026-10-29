@@ -22,20 +22,33 @@ describe('API de contato', () => {
     expect(fetch.mock.calls[1][1].headers['Idempotency-Key']).toBe(`contact/${valid.requestId}`);
     expect(JSON.parse(fetch.mock.calls[2][1].body).email_status).toBe('sent');
   });
-  it('não informa sucesso completo se e-mail falhar', async () => {
+  it('confirma recebimento no dashboard mesmo se e-mail falhar', async () => {
     const fetch = vi.fn().mockResolvedValueOnce(json({ result: 'claimed', id: 'id' })).mockResolvedValueOnce(json({}, false)).mockResolvedValueOnce({ ok: true, status: 204 }); vi.stubGlobal('fetch', fetch);
-    expect((await processContact(valid, 'test'))[0]).toBe(502);
+    expect((await processContact(valid, 'test'))[0]).toBe(200);
     expect(JSON.parse(fetch.mock.calls[2][1].body).email_status).toBe('failed');
   });
-  it('não envia e-mail se banco falha e não confirma atualização perdida', async () => {
+  it('falha sem persistência, mas confirma recebimento se só o registro do e-mail falhar', async () => {
     const fetch = vi.fn().mockRejectedValueOnce(new Error('db')); vi.stubGlobal('fetch', fetch);
     expect((await processContact(valid, 'test'))[0]).toBe(503); expect(fetch).toHaveBeenCalledTimes(1);
     fetch.mockResolvedValueOnce(json({ result: 'claimed', id: 'id' })).mockResolvedValueOnce(json({ id: 'mail' })).mockRejectedValueOnce(new Error('db'));
-    expect((await processContact(valid, 'test'))[0]).toBe(503);
+    expect((await processContact(valid, 'test'))[0]).toBe(200);
   });
   it.each([['sent', 200], ['limited', 429], ['busy', 429], ['conflict', 409]])('trata reserva %s sem duplicar envio', async (result, status) => {
-    const fetch = vi.fn().mockResolvedValue(json({ result })); vi.stubGlobal('fetch', fetch);
-    expect((await processContact(valid, 'test'))[0]).toBe(status); expect(fetch).toHaveBeenCalledTimes(1);
+    const fetch = vi.fn().mockResolvedValueOnce(json({ result })).mockResolvedValueOnce(json([])); vi.stubGlobal('fetch', fetch);
+    expect((await processContact(valid, 'test'))[0]).toBe(status);
+  });
+  it('salva no dashboard sem configuração de e-mail ou segredo de hash separado', async () => {
+    for (const key of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL', 'CONTACT_HASH_SECRET']) vi.stubEnv(key, '');
+    const fetch = vi.fn().mockResolvedValue(json({ result: 'claimed', id: 'id' })); vi.stubGlobal('fetch', fetch);
+    expect(await processContact(valid, 'test')).toEqual([200, { ok: true }]);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it('reconhece retry de mensagem persistida sem duplicar nem depender do e-mail', async () => {
+    const { createHash } = await import('node:crypto');
+    const fingerprint = createHash('sha256').update(JSON.stringify({ name: valid.name, email: valid.email.toLowerCase(), subject: valid.subject, message: valid.message })).digest('hex');
+    const fetch = vi.fn().mockResolvedValueOnce(json({ result: 'busy' })).mockResolvedValueOnce(json([{ fingerprint }])); vi.stubGlobal('fetch', fetch);
+    expect(await processContact(valid, 'test')).toEqual([200, { ok: true }]);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
 });
 function response() { return { setHeader: vi.fn(), status: vi.fn(function (status) { this.code = status; return this; }), json: vi.fn() }; }
@@ -46,7 +59,7 @@ describe('Autorização administrativa', () => {
     expect(res.code).toBe(status); expect(fetch.mock.calls.some(([url]) => url.includes('/rest/v1/'))).toBe(false);
   });
   it('consulta somente depois de verificar usuário autorizado', async () => {
-    const fetch = vi.fn().mockResolvedValueOnce(json({ id: 'admin-user' })).mockResolvedValueOnce(json([])); vi.stubGlobal('fetch', fetch);
+    const fetch = vi.fn().mockResolvedValueOnce(json({ id: 'admin-user' })).mockResolvedValueOnce(json([])).mockResolvedValueOnce(json({ new: 0, responded: 0 })); vi.stubGlobal('fetch', fetch);
     const res = response(); await admin({ method: 'GET', url: '/api/admin', headers: { authorization: 'Bearer valid' } }, res);
     expect(res.code).toBe(200); expect(fetch.mock.calls[0][0]).toContain('/auth/v1/user'); expect(fetch.mock.calls[1][0]).toContain('/rest/v1/contact_messages');
   });

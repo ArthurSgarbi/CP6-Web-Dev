@@ -18,17 +18,24 @@ export async function processContact(body, clientAddress) {
   const errors = validateContact(body);
   if (Object.keys(errors).length) return [422, { errors }];
   if (body.website || !/^[0-9a-f-]{36}$/i.test(body.requestId || '')) return [400, { error: failure }];
-  if (!configured(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL', 'CONTACT_HASH_SECRET'])) return [503, { error: failure }];
+  if (!configured(['SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY'])) return [503, { error: failure }];
   const data = normalizeContact(body);
   data.email = data.email.toLowerCase();
   const fingerprint = createHash('sha256').update(JSON.stringify(data)).digest('hex');
-  const clientKey = createHmac('sha256', process.env.CONTACT_HASH_SECRET).update(clientAddress).digest('hex');
+  const clientKey = createHmac('sha256', process.env.CONTACT_HASH_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY).update(clientAddress).digest('hex');
   try {
     const reservation = await database('rpc/reserve_contact', { method: 'POST', body: JSON.stringify({
       p_request: body.requestId, p_client: clientKey, p_fingerprint: fingerprint, p_data: data,
     }) });
     if (reservation.result === 'sent') return [200, { ok: true }];
+    if (['busy', 'conflict'].includes(reservation.result)) {
+      const existing = await database(`contact_messages?request_id=eq.${body.requestId}&select=fingerprint&limit=1`);
+      // A persisted message has already reached the administrator, even if email failed.
+      if (existing[0]?.fingerprint === fingerprint) return [200, { ok: true }];
+    }
     if (reservation.result !== 'claimed') return [reservation.result === 'conflict' ? 409 : 429, { error: failure }];
+    // Email is an optional notification; the dashboard reads this persisted row.
+    if (!configured(['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL'])) return [200, { ok: true }];
     let emailId;
     try {
       const email = await fetch('https://api.resend.com/emails', {
@@ -44,11 +51,11 @@ export async function processContact(body, clientAddress) {
       if (!emailId) throw new Error('Missing email receipt');
     } catch {
       await database(`contact_messages?id=eq.${reservation.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' },
-        body: JSON.stringify({ email_status: 'failed', email_error: 'provider_unavailable' }) });
-      return [502, { error: failure }];
+        body: JSON.stringify({ email_status: 'failed', email_error: 'provider_unavailable' }) }).catch(() => {});
+      return [200, { ok: true }];
     }
     await database(`contact_messages?id=eq.${reservation.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' },
-      body: JSON.stringify({ email_status: 'sent', email_provider_id: emailId, email_error: null }) });
+      body: JSON.stringify({ email_status: 'sent', email_provider_id: emailId, email_error: null }) }).catch(() => {});
     return [200, { ok: true }];
   } catch { return [503, { error: failure }]; }
 }

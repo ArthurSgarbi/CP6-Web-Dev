@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserRepositories } from '../services/githubApi.js';
 import { formatRepositories } from '../utils/formatRepository.js';
+import { getFeaturedProjects, selectFeatured } from '../services/adminApi.js';
 
 export const githubUsername = (import.meta.env.VITE_GITHUB_USERNAME ?? '').trim();
 export const githubKeys = {
@@ -21,14 +22,23 @@ export const githubQueryOptions = {
   retryDelay: 1000,
 };
 
-export default function useGitHubProjects({ enabled = true } = {}) {
-  return useQuery({
+export default function useGitHubProjects({ enabled = true, all = false } = {}) {
+  const repositories = useQuery({
     ...githubQueryOptions,
     queryKey: githubKeys.repositories(githubUsername),
     // Keep the in-flight request across StrictMode remounts for deduplication.
     // The service owns its timeout instead of consuming Query's abort signal.
     queryFn: () => getUserRepositories(githubUsername),
-    select: formatRepositories,
+    select: (items) => formatRepositories(items, { includeForks: true }),
     enabled,
   });
+  const featured = useQuery({ queryKey: ['featured'], queryFn: getFeaturedProjects, enabled: enabled && !all,
+    staleTime: 0, retry: false, refetchOnWindowFocus: true });
+  if (all) return repositories;
+  return { ...repositories, data: selectFeatured(repositories.data || [], featured.data || []),
+    isLoading: repositories.isLoading || featured.isLoading,
+    isPending: repositories.isPending || featured.isPending,
+    isFetching: repositories.isFetching || featured.isFetching,
+    error: repositories.error || featured.error,
+    refetch: () => Promise.all([repositories.refetch(), featured.refetch()]) };
 }

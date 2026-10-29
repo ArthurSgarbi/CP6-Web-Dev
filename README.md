@@ -288,7 +288,7 @@ Dependências adicionadas em produção: `@tanstack/react-query` e `react-router
 ## Contato e consulta administrativa
 
 A seção `#contato` aparece após o Diário e antes do rodapé. O navegador chama
-`POST /api/contact`; a função Node salva no Supabase e envia pelo Resend. Nenhuma
+`POST /api/contact`; a função Node salva no Supabase para consulta no dashboard. O Resend é uma notificação opcional. Nenhuma
 dependência nova foi adicionada. As outras seções mantêm seus componentes e CSS.
 
 **Configuração:** copie os nomes de `.env.example` para `.env` local e para o
@@ -299,10 +299,10 @@ ambiente do servidor no deploy. Nunca prefixe estas credenciais com `VITE_`.
 | `SUPABASE_URL` | URL do projeto Supabase |
 | `SUPABASE_ANON_KEY` | Chave pública do projeto, usada pelo servidor para Auth |
 | `SUPABASE_SERVICE_ROLE_KEY` | Chave privada service_role para banco, somente servidor |
-| `RESEND_API_KEY` | Chave privada do serviço de e-mail |
-| `CONTACT_FROM_EMAIL` | Remetente em domínio verificado no Resend |
-| `CONTACT_TO_EMAIL` | E-mail do proprietário que receberá as mensagens |
-| `CONTACT_HASH_SECRET` | Segredo aleatório forte para gerar hash dos endereços IP |
+| `RESEND_API_KEY` | Opcional: chave privada do serviço de e-mail |
+| `CONTACT_FROM_EMAIL` | Opcional: remetente em domínio verificado no Resend |
+| `CONTACT_TO_EMAIL` | Opcional: e-mail do proprietário para notificações |
+| `CONTACT_HASH_SECRET` | Opcional: segredo dedicado ao hash dos IPs; usa a chave privada do banco quando ausente |
 | `CONTACT_ADMIN_USER_IDS` | UUIDs autorizados do Supabase Auth, separados por vírgula |
 
 1. Execute `supabase/migrations/202610270001_contact.sql` no SQL Editor do Supabase.
@@ -312,7 +312,7 @@ ambiente do servidor no deploy. Nunca prefixe estas credenciais com `VITE_`.
 2. Crie o usuário administrativo no Supabase Auth e coloque seu UUID na lista
    `CONTACT_ADMIN_USER_IDS`. Desabilite cadastros públicos se não forem necessários.
    O backend verifica a sessão no Auth e a lista de UUIDs antes de consultar dados.
-3. Verifique o domínio remetente no Resend e configure remetente, destinatário e chave.
+3. Opcionalmente, verifique o domínio no Resend e configure remetente, destinatário e chave para notificações por e-mail. Sem essas variáveis, as mensagens continuam chegando ao dashboard. `CONTACT_HASH_SECRET` é opcional: quando ausente, o servidor usa a chave privada do banco como chave do HMAC, sem expor ou salvar o IP.
 4. Em dois terminais, execute `npm run dev:api` (porta 3001) e `npm run dev`
    (Vite na 5173, com proxy para `/api`). Reinicie a API após mudar `.env`.
    `npm run preview` sozinho serve apenas o frontend; não executa funções.
@@ -327,13 +327,12 @@ ambiente do servidor no deploy. Nunca prefixe estas credenciais com `VITE_`.
 de 60 segundos por IP (hash) protegem o envio. A reserva usa locks transacionais no
 Postgres e UUID por tentativa. Retry sem editar reaproveita a linha e a chave de
 idempotência do Resend. Mensagens já confirmadas retornam sucesso sem reenviar.
-Tentativas antigas demais são rejeitadas antes de vencer a janela de idempotência.
+Retries de mensagens já persistidas são confirmados comparando o fingerprint, mesmo sem e-mail enviado.
 Se editar o formulário após erro, ele passa a representar uma nova mensagem.
-Falha no Resend mantém a mensagem com `email_status=failed`; falhas de confirmação
-no banco não retornam sucesso. `sent` significa aceito pelo Resend, não entrega na
-caixa de entrada; confirmação de entrega exigiria webhook. Mensagens pendentes por
-interrupção podem ser retomadas pelo retry após 60s. Sem retry, o administrador
-deve acompanhar os registros pendentes/falhos; não há worker de recuperação automática.
+O sucesso confirma o recebimento no banco e no dashboard. Falha ao salvar não retorna sucesso.
+Falha no Resend não impede esse recebimento; o servidor tenta registrar `email_status=failed`.
+`pending` pode indicar notificação por e-mail não configurada; `sent` significa aceito pelo Resend,
+não entrega na caixa de entrada. Não há worker de recuperação automática de notificações.
 Planeje retenção e limpeza periódica de mensagens e hashes de controle de frequência.
 
 **Verificação local:** `npm test`, `npm run build` e `git diff --check`.
@@ -361,3 +360,10 @@ Referências da integração: [RLS no Supabase](https://supabase.com/docs/guides
 - [TanStack Query: políticas de cache e revalidação](https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults).
 - [React Router: rotas declarativas](https://reactrouter.com/7.18.4/start/declarative/routing).
 - [Vercel: configuração de rotas](https://vercel.com/docs/project-configuration/vercel-json#routes).
+
+## Dashboard do proprietário
+
+Acesse `/login`; `/dashboard` exige uma sessão validada pelo servidor. Consulte
+[docs/ADMIN_DASHBOARD.md](docs/ADMIN_DASHBOARD.md) para ativação, endpoints,
+segurança, migration e evidências de teste. Não há cadastro ou recuperação de
+senha pelo portfólio. A senha deve ser definida manualmente no Supabase Auth.

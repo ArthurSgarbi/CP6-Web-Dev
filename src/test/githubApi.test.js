@@ -84,7 +84,7 @@ describe('transformação e formatação', () => {
     ]).map((project) => project.id)).toEqual([1]);
   });
 
-  it('exibe somente os três projetos selecionados e exclui ArthurSgarbi', () => {
+  it('disponibiliza todos os repositórios elegíveis para seleção editorial', () => {
     const names = ['meu-caixa', 'site-projeto-shopee', 'anninha-site-novo'];
     const projects = formatRepositories([
       ...names.map((name, index) => repository({ id: index + 1, name })),
@@ -92,12 +92,12 @@ describe('transformação e formatação', () => {
       repository({ id: 6, name: 'meu-caixa-demo' }),
       repository({ id: 7, name: 'ArthurSgarbi' }),
     ]);
-    expect(projects).toHaveLength(3);
+    expect(projects).toHaveLength(6);
     expect(projects.map((project) => project.title)).toEqual(expect.arrayContaining(names));
   });
 
-  it('retorna lista vazia quando nenhum repositório está selecionado', () => {
-    expect(formatRepositories([repository({ name: 'outro-projeto' })])).toEqual([]);
+  it('não restringe a lista a nomes fixos', () => {
+    expect(formatRepositories([repository({ name: 'outro-projeto' })])[0].slug).toBe('outro-projeto');
   });
 
   it('ordena pela atualização e usa fallback apenas para dados ausentes', () => {

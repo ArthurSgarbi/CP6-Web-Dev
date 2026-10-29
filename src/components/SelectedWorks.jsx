@@ -44,7 +44,7 @@ export default function SelectedWorks({ projects, isLoading, error, isRetrying, 
         <h2 id="work-title">PROJETOS</h2>
         <div className="section-intro">
           <span className="collection-tag">Repositórios públicos / GitHub</span>
-          <p>Projetos reais, carregados automaticamente do GitHub e organizados pela última atualização.</p>
+          <p>Projetos reais, carregados automaticamente do GitHub e selecionados para este portfólio.</p>
         </div>
       </div>
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
