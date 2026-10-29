@@ -5,19 +5,21 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from '../App.jsx';
 import { repository, jsonResponse } from './fixtures.js';
-let loggedIn, expired, failUpdate, failSave, rows, selected, client, router;
+let loggedIn, expired, failUpdate, failSave, failFeatured, failLogin, rows, selected, client, router;
 const id = '11111111-1111-4111-8111-111111111111';
 beforeEach(() => {
   loggedIn = false; expired = false; failUpdate = false; failSave = false;
+  failFeatured = false; failLogin = false;
   rows = [{ id, name: 'Visitante', email: 'teste@example.com', subject: 'Projeto novo', message: 'Mensagem completa para consulta administrativa.', status: 'new', email_status: 'failed', created_at: '2026-10-27T12:00:00Z' }];
   selected = ['meu-caixa'];
   vi.stubGlobal('fetch', vi.fn(async (path, options = {}) => {
     if (path.startsWith('https://api.github.com')) return jsonResponse(Array.from({ length: 5 }, (_, i) => repository({ id: i + 1, name: ['meu-caixa', 'aether-front-end', 'site-projeto-shopee', 'anninha-site-novo', 'projeto-4'][i] })));
     const projects = () => selected.map((repository_name, position) => ({ repository_name, position }));
-    if (path === '/api/featured') return jsonResponse({ projects: projects() });
+    if (path === '/api/featured') return failFeatured ? jsonResponse({}, 503) : jsonResponse({ projects: projects() });
     const url = new URL(path, 'http://localhost');
     const resource = url.searchParams.get('resource');
     if (resource === 'session' && options.method === 'POST') {
+      if (failLogin) return jsonResponse({}, 503);
       const body = JSON.parse(options.body);
       if (body.password === 'invalid') return jsonResponse({}, 401);
       if (body.email === 'visitor@example.com') return jsonResponse({}, 403);
@@ -106,7 +108,7 @@ it('persiste respondida em nova consulta, filtra e permite desmarcar e arquivar'
 it('preserva status se o servidor recusar atualização', async () => {
   loggedIn = true; failUpdate = true; const user = start();
   await user.click(await screen.findByRole('button', { name: 'Marcar como respondida' }));
-  await screen.findByText(/Não foi possível acessar a administração/);
+  await screen.findByText(/O serviço de administração está indisponível/);
   expect(rows[0].status).toBe('new'); expect(screen.getByText('Nova', { exact: true })).toBeVisible();
 });
 it('exibe apenas os quatro projetos do site, reordena, persiste e atualiza a home', async () => {
@@ -133,7 +135,7 @@ it('mantém rascunho se salvamento falha e bloqueia navegação sem confirmaçã
   loggedIn = true; failSave = true; vi.spyOn(window, 'confirm').mockReturnValue(false); const user = start();
   await user.click(await screen.findByLabelText('Selecionar aether-front-end'));
   await user.click(screen.getByRole('button', { name: /Salvar destaques/ }));
-  await screen.findByText(/Não foi possível acessar a administração/);
+  await screen.findByText(/O serviço de administração está indisponível/);
   expect(screen.getByText('Alterações não salvas')).toBeVisible();
   await user.click(screen.getByRole('link', { name: /Voltar ao portfólio/ }));
   await waitFor(() => expect(window.confirm).toHaveBeenCalled());
@@ -155,4 +157,22 @@ it('reconhece seleção salva com capitalização diferente', async () => {
   await user.click(screen.getByLabelText('Selecionar meu-caixa'));
   expect(screen.getByText('0 de 4 projetos selecionados')).toBeVisible();
   expect(screen.getByRole('button', { name: /Salvar destaques/ })).toBeEnabled();
+});
+
+it('identifica falha nos destaques sem atribuir a indisponibilidade ao GitHub', async () => {
+  failFeatured = true;
+  const user = start('/');
+  await screen.findByText(/Não foi possível carregar a seleção de destaques/);
+  expect(screen.queryByText(/A integração com o GitHub está indisponível/)).not.toBeInTheDocument();
+  failFeatured = false;
+  await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+  await screen.findByRole('heading', { name: 'meu-caixa', level: 3 });
+});
+
+it('distingue indisponibilidade do serviço de recusa de acesso no login', async () => {
+  failLogin = true;
+  const user = start('/login');
+  await signIn(user);
+  await screen.findByText(/O serviço de administração está indisponível/);
+  expect(router.state.location.pathname).toBe('/login');
 });
