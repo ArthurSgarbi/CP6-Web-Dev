@@ -13,7 +13,7 @@ import useAnchorNavigation from '../hooks/useAnchorNavigation.js';
 export default function HomePage({ projects, projectsQuery, selectedProject, onSelect, onClose, onNext, onPrevious }) {
   const revealRef = useReveal(projects);
   const { activeSection, navigate } = useAnchorNavigation();
-  useEffect(() => { document.title = 'Digital Excellence — Portfólio'; }, []);
+  useEffect(() => { document.title = 'Explorações de design'; }, []);
 
   return (
     <div id="top" tabIndex="-1" ref={revealRef}>
