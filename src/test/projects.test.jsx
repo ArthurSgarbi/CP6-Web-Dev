@@ -1,5 +1,5 @@
 import { StrictMode } from 'react';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
@@ -11,8 +11,12 @@ import { projectPresentation } from '../utils/formatRepository.js';
 import { jsonResponse, repository } from './fixtures.js';
 
 let clients = [];
-beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); getFeaturedProjects.mockResolvedValue(['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position }))); });
-afterEach(() => { clients.forEach((client) => client.clear()); clients = []; });
+beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); getFeaturedProjects.mockReset().mockResolvedValue(['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position }))); });
+afterEach(() => {
+  // Unsubscribe React observers before clearing their cache, including on failure.
+  cleanup();
+  clients.forEach((client) => client.clear()); clients = [];
+});
 
 function renderApp(path = '/', client = new QueryClient()) {
   clients.push(client);
@@ -182,6 +186,8 @@ describe('projetos na página inicial', () => {
     await user.click(within(screen.getByRole('navigation', { name: 'Navegação principal' })).getByRole('link', { name: 'Diário' }));
     await user.click(screen.getByRole('button', { name: 'Abrir prévia de Meu Caixa' }));
     await user.click(screen.getByRole('link', { name: /Ver estudo completo/ }));
+    // Wait for the real lazy import and React commit before polling the heading.
+    await act(async () => { await vi.dynamicImportSettled(); });
     expect(await screen.findByRole('heading', { level: 1, name: 'Meu Caixa' })).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: /Voltar aos projetos/ }));
     await screen.findByRole('heading', { level: 3, name: 'Meu Caixa' });

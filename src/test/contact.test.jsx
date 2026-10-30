@@ -5,7 +5,12 @@ import Contact from '../components/Contact.jsx';
 import { validateContact } from '../../shared/contactValidation.js';
 const valid = { name: 'Visitante Teste', email: 'teste@example.com', subject: 'Projeto de teste', message: 'Esta é uma mensagem de teste com tamanho válido.' };
 async function fill(user) {
-  for (const [label, key] of [['Nome', 'name'], ['E-mail', 'email'], ['Assunto', 'subject'], ['Mensagem', 'message']]) await user.type(screen.getByLabelText(label, { exact: true }), valid[key]);
+  // These tests exercise submission, not individual keystrokes. Paste still
+  // exercises the real input/change handlers without a timer for every letter.
+  for (const [label, key] of [['Nome', 'name'], ['E-mail', 'email'], ['Assunto', 'subject'], ['Mensagem', 'message']]) {
+    await user.click(screen.getByLabelText(label, { exact: true }));
+    await user.paste(valid[key]);
+  }
 }
 describe('Contato', () => {
   it('valida limites e formato no schema compartilhado', () => {
@@ -28,6 +33,7 @@ describe('Contato', () => {
     const user = userEvent.setup(); render(<Contact />); await fill(user);
     await user.dblClick(screen.getByRole('button', { name: 'Enviar mensagem' }));
     expect(screen.getByRole('button', { name: 'Enviando…' })).toBeDisabled(); expect(fetch).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject(valid);
     resolve({ ok: true, json: async () => ({ ok: true }) });
     await screen.findByText('Mensagem recebida com sucesso. Obrigado pelo contato!');
     expect(screen.getByLabelText('Nome', { exact: true })).toHaveValue('');
