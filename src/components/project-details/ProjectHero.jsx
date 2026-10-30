@@ -4,6 +4,7 @@ import ProjectImage from '../ProjectImage.jsx';
 import formatDate from '../../utils/formatDate.js';
 
 export default function ProjectHero({ project, study, headingRef }) {
+  const evidence = study?.gallery?.find(image => !image.pending);
   return (
     <header className="case-hero page-width">
       <Link className="text-link project-back" to="/#work">← Voltar aos projetos</Link>
@@ -27,10 +28,10 @@ export default function ProjectHero({ project, study, headingRef }) {
               <dt>Última atualização</dt>
               <dd><time dateTime={project.updatedAt}>{formatDate(project.updatedAt)}</time></dd>
             </div>
-            <div>
+            {project.stars > 0 && <div>
               <dt>Estrelas no GitHub</dt>
               <dd>{project.stars.toLocaleString('pt-BR')}</dd>
-            </div>
+            </div>}
           </dl>
           {project.topics.length > 0 && (
             <ul className="project-topics" aria-label="Tópicos do repositório">
@@ -58,7 +59,7 @@ export default function ProjectHero({ project, study, headingRef }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Acessar projeto <Icon name="arrow-up-right" />
+                {project.liveLabel ?? 'Acessar projeto'} <Icon name="arrow-up-right" />
               </a>
             )}
           </div>
@@ -67,9 +68,9 @@ export default function ProjectHero({ project, study, headingRef }) {
       <figure className="case-cover">
         <div className="case-cover-frame">
           <ProjectImage
-            project={project}
-            width={1600}
-            height={1100}
+            project={evidence ? { ...project, image: evidence.src, imageAlt: evidence.alt } : project}
+            width={evidence?.width ?? 1600}
+            height={evidence?.height ?? 1100}
             className="case-cover-image"
             loading="eager"
           />
@@ -77,7 +78,7 @@ export default function ProjectHero({ project, study, headingRef }) {
         <figcaption>
           <span>01 / Apresentação do projeto</span>
           <span>
-            {study?.coverCaption ?? 'Capa de apresentação. Na ausência do arquivo, é utilizada uma composição abstrata.'}
+            {evidence?.caption ?? study?.coverCaption ?? 'Capa de apresentação. Na ausência do arquivo, é utilizada uma composição abstrata.'}
           </span>
         </figcaption>
       </figure>

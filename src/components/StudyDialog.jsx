@@ -73,7 +73,7 @@ export default function StudyDialog({ study, onClose, onPrevious, onNext, totalC
       {study && (
         <div className="study-dialog-inner">
           <div className="dialog-topline">
-            <span className="dialog-kicker">Projeto de desenvolvimento / GitHub</span>
+            <span className="dialog-kicker">Prévia do projeto</span>
             <button className="dialog-close" type="button" ref={closeRef} onClick={onClose} aria-label="Fechar detalhes do projeto">
               <Icon name="close" />
             </button>
@@ -89,7 +89,7 @@ export default function StudyDialog({ study, onClose, onPrevious, onNext, totalC
               <span className="dialog-counter">{String(position).padStart(2, '0')}{totalCount ? ` / ${String(totalCount).padStart(2, '0')}` : ''}</span>
             </div>
             <ProjectInfo project={study} descriptionId="dialog-study-description" />
-            <Link className="text-link project-permalink" to={study.detailsUrl}>Abrir página individual <Icon /></Link>
+            <Link className="text-link project-permalink" to={study.detailsUrl}>Ver estudo completo <Icon /></Link>
             {totalCount > 1 && (onPrevious || onNext) && (
               <div className="dialog-navigation">
                 {onPrevious && <button className="dialog-nav-button" type="button" onClick={onPrevious}><Icon name="arrow-left" /> Projeto anterior</button>}

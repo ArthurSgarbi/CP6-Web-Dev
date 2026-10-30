@@ -1,7 +1,16 @@
 import { configured, database } from '../server/contactBackend.js';
-const failure = { error: 'Não foi possível acessar a administração. Verifique seu acesso e tente novamente.' };
-const fields = 'id,name,email,subject,message,status,created_at,email_status';
+const failure = { error: 'Não foi possível acessar o painel. Verifique seu acesso e tente novamente.' };
+const fields = 'id,name,email,subject,message,status,created_at,email_status,email_error';
 const statuses = ['new', 'read', 'responded', 'archived'];
+function presentMessage(row) {
+  const { email_error, ...message } = row;
+  // Return only a fixed public state, never provider diagnostics or configuration values.
+  const notificationStatus = row.email_status === 'sent' ? 'sent'
+    : email_error === 'not_configured' ? 'not_configured'
+      : row.email_status === 'failed' ? 'failed'
+        : configured(['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL']) ? 'unconfirmed' : 'not_configured';
+  return { ...message, notification_status: notificationStatus };
+}
 const allowed = id => Boolean(id) && process.env.CONTACT_ADMIN_USER_IDS.split(',').map(s => s.trim()).includes(id);
 function cookie(res, value, age) {
   res.setHeader('Set-Cookie', `portfolio_admin=${encodeURIComponent(value)}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=Lax; Path=/api/admin; Max-Age=${age}`);
@@ -59,14 +68,15 @@ export default async function handler(req, res) {
       const id = url.searchParams.get('id');
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id || '') || !statuses.includes(body?.status)) return res.status(400).json(failure);
       const rows = await database(`contact_messages?id=eq.${id}&select=${fields}`, { method: 'PATCH', headers: { Prefer: 'return=representation' }, body: JSON.stringify({ status: body.status }) });
-      return rows.length ? res.status(200).json({ message: rows[0] }) : res.status(404).json(failure);
+      return rows.length ? res.status(200).json({ message: presentMessage(rows[0]) }) : res.status(404).json(failure);
     }
     if (req.method !== 'GET') return res.status(405).json(failure);
     const filter = url.searchParams.get('status');
-    if (filter && !statuses.includes(filter)) return res.status(400).json(failure);
+    if (filter && filter !== 'awaiting' && !statuses.includes(filter)) return res.status(400).json(failure);
     const offset = Math.max(0, Math.min(100000, Number.parseInt(url.searchParams.get('offset'), 10) || 0));
-    const messages = await database(`contact_messages?select=${fields}&order=created_at.desc,id.desc&limit=50&offset=${offset}${filter ? `&status=eq.${filter}` : ''}`);
+    const statusQuery = filter === 'awaiting' ? '&status=in.(new,read)' : filter ? `&status=eq.${filter}` : '';
+    const messages = await database(`contact_messages?select=${fields}&order=created_at.desc,id.desc&limit=50&offset=${offset}${statusQuery}`);
     const counts = await database('rpc/admin_message_counts', { method: 'POST', body: '{}' });
-    return res.status(200).json({ messages, counts });
+    return res.status(200).json({ messages: messages.map(presentMessage), counts });
   } catch { return res.status(503).json(failure); }
 }

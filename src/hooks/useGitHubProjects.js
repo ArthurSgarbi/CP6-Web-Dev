@@ -36,6 +36,7 @@ export default function useGitHubProjects({ enabled = true, all = false } = {}) 
     staleTime: 0, retry: false, refetchOnWindowFocus: true });
   if (all) return repositories;
   return { ...repositories, data: selectFeatured(repositories.data || [], featured.data || []),
+    emptyReason: repositories.data?.length ? 'selection' : 'repositories',
     isLoading: repositories.isLoading || featured.isLoading,
     isPending: repositories.isPending || featured.isPending,
     isFetching: repositories.isFetching || featured.isFetching,

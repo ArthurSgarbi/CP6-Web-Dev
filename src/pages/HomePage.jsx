@@ -13,7 +13,7 @@ import useAnchorNavigation from '../hooks/useAnchorNavigation.js';
 export default function HomePage({ projects, projectsQuery, selectedProject, onSelect, onClose, onNext, onPrevious }) {
   const revealRef = useReveal(projects);
   const { activeSection, navigate } = useAnchorNavigation();
-  useEffect(() => { document.title = 'Explorações de design'; }, []);
+  useEffect(() => { document.title = 'Arthur Sgarbi | Desenvolvimento de software'; }, []);
 
   return (
     <div id="top" tabIndex="-1" ref={revealRef}>
@@ -22,7 +22,7 @@ export default function HomePage({ projects, projectsQuery, selectedProject, onS
       <main id="main" tabIndex="-1">
         <Hero navigate={navigate} />
         <SelectedWorks projects={projects} isLoading={projectsQuery.isPending} error={projectsQuery.error}
-          isRetrying={projectsQuery.isFetching} onRetry={() => projectsQuery.refetch()} onSelect={onSelect} />
+          isRetrying={projectsQuery.isFetching} onRetry={() => projectsQuery.refetch()} onSelect={onSelect} emptyReason={projectsQuery.emptyReason} />
         <Exploration navigate={navigate} />
         <Journal />
         <Contact />

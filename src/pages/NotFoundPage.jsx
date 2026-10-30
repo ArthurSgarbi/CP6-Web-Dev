@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 export default function NotFoundPage({ repositoryName }) {
   const titleRef = useRef(null);
   useEffect(() => {
-    document.title = 'Página não encontrada — Explorações de design';
+    document.title = 'Página não encontrada — Arthur Sgarbi';
     titleRef.current?.focus();
   }, []);
   return (

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import Contact from '../../components/Contact.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
 import '../../styles.css';
 const realFetch = window.fetch.bind(window);
 let scenario = 'success';
@@ -19,7 +20,7 @@ function Harness() {
   const [calls, setCalls] = useState(0);
   notify = setCalls;
   return <><aside className="page-width" style={{ paddingBlock: 20 }}>
-    <p>Ambiente de teste — serviços simulados, nenhum e-mail real.</p>
+    <p>Ambiente de teste — serviços simulados, nenhum e-mail real.</p><ThemeToggle />
     <label>Cenário <select value={mode} onChange={(event) => { scenario = event.target.value; setMode(scenario); }}>
       <option value="success">Sucesso</option><option value="server">Falha do servidor</option><option value="offline">Sem conexão</option>
     </select></label><p>Requisições: {calls}</p>

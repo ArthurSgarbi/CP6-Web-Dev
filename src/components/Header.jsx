@@ -7,6 +7,7 @@ const links = [
   { id: 'exploration', label: 'Processo', index: '02' },
   { id: 'journal', label: 'Diário', index: '03' },
 ];
+const mobileLinks = [...links, { id: 'contato', label: 'Contato', index: '04' }];
 
 export default function Header({ activeSection, onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -85,12 +86,12 @@ export default function Header({ activeSection, onNavigate }) {
       onFocusCapture={() => setHeaderHidden(false)}
     >
       <div className="header-inner">
-        <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Explorações de design — voltar ao topo">
+        <a className="brand" href="#top" onClick={(event) => followAnchor(event, 'top')} aria-label="Arthur Sgarbi — voltar ao topo">
           <svg className="brand-symbol" viewBox="0 0 36 36" fill="none" aria-hidden="true" focusable="false">
             <path d="M2 2h14v14H2zM20 2h14v14H20zM2 20h14v14H2z" fill="currentColor" />
             <circle cx="27" cy="27" r="7" fill="currentColor" />
           </svg>
-          <span className="brand-name">EXPLORAÇÕES<br />DE DESIGN</span>
+          <span className="brand-name">ARTHUR<br />SGARBI</span>
         </a>
 
         <nav className="desktop-nav" aria-label="Navegação principal">
@@ -129,7 +130,7 @@ export default function Header({ activeSection, onNavigate }) {
       </div>
 
       <nav className="mobile-navigation" id="mobile-navigation" aria-label="Navegação móvel" hidden={!menuOpen}>
-        {links.map(({ id, label, index }) => (
+        {mobileLinks.map(({ id, label, index }) => (
           <a
             className="mobile-nav-link"
             key={id}

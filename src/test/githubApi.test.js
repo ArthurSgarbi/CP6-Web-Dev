@@ -93,7 +93,7 @@ describe('transformação e formatação', () => {
       repository({ id: 7, name: 'ArthurSgarbi' }),
     ]);
     expect(projects).toHaveLength(6);
-    expect(projects.map((project) => project.title)).toEqual(expect.arrayContaining(names));
+    expect(projects.map((project) => project.slug)).toEqual(expect.arrayContaining(names));
   });
 
   it('não restringe a lista a nomes fixos', () => {
@@ -102,13 +102,13 @@ describe('transformação e formatação', () => {
 
   it('ordena pela atualização e usa fallback apenas para dados ausentes', () => {
     const projects = formatRepositories([
-      repository({ description: null, language: null, homepage: '' }),
+      repository({ name: 'outro-projeto', description: null, language: null, homepage: '' }),
       repository({ id: 2, name: 'anninha-site-novo', updated_at: '2026-10-21T12:00:00Z' }),
     ]);
     expect(projects[0].id).toBe(2);
     expect(projects[1]).toMatchObject({
-      description: 'Descrição ainda não informada no GitHub', language: 'Tecnologia não informada',
-      liveUrl: null, image: '/images/meu-caixa.png', detailsUrl: '/projetos/meu-caixa', stars: 7,
+      description: 'Descrição ainda não informada no GitHub.', language: 'Tecnologia não informada',
+      liveUrl: null, image: '/images/outro-projeto.png', detailsUrl: '/projetos/outro-projeto', stars: 7,
     });
   });
 

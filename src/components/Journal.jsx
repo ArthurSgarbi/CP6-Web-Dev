@@ -10,8 +10,8 @@ const editorial = [
     project: 'Meu Caixa · Finanças pessoais',
     title: 'Separar previsão de saldo disponível',
     problem: 'Uma despesa prevista ainda não aconteceu. Misturá-la ao saldo confirmado pode distorcer a leitura das finanças.',
-    decision: 'Mantive as recorrências como previsões até a confirmação e separei os aportes das despesas de consumo.',
-    learning: 'Aprendi que um total só é útil quando a interface deixa claro o que entra no cálculo.',
+    decision: 'As recorrências permanecem como previsões até a confirmação, e os aportes ficam separados das despesas de consumo.',
+    learning: 'Um total só é útil quando a interface deixa claro o que entra no cálculo.',
   },
   // Base: github.com/ArthurSgarbi/site-projeto-shopee, README — Publicar na Vercel.
   {
@@ -19,8 +19,8 @@ const editorial = [
     project: 'SYNC Mobile · Gestão de estoque',
     title: 'Demonstrar sem expor dados da loja',
     problem: 'Quem está conhecendo o sistema precisa entender o painel de estoque sem acessar informações administrativas da loja.',
-    decision: 'Separei uma demonstração pública com dados fictícios da área administrativa, que exige autenticação.',
-    learning: 'Aprendi a pensar na demonstração como parte do produto: explicar o uso também exige definir limites de acesso.',
+    decision: 'A demonstração pública usa dados fictícios e fica separada da área administrativa, que exige autenticação.',
+    learning: 'A demonstração faz parte do produto: explicar o uso também exige definir limites de acesso.',
   },
   // Base local: README, src/services/githubApi.js e src/hooks/useGitHubProjects.js.
   {
@@ -28,15 +28,14 @@ const editorial = [
     project: 'Este portfólio · Integração com GitHub',
     title: 'Projetar também para a espera e a falha',
     problem: 'Os projetos vêm do GitHub. Enquanto a resposta não chega — ou se a consulta falha — uma área vazia não explica o que aconteceu.',
-    decision: 'Incluí estados de carregamento, lista vazia e erro com nova tentativa. O cache reaproveita consultas recentes.',
-    learning: 'Aprendi que a experiência precisa fazer sentido antes dos dados chegarem e quando o serviço fica indisponível.',
+    decision: 'A interface oferece estados de carregamento, lista vazia e erro com nova tentativa. O cache reaproveita consultas recentes.',
+    learning: 'A experiência precisa fazer sentido antes de os dados chegarem e quando o serviço fica indisponível.',
   },
 ];
 
 export default function Journal() {
   const [expanded, setExpanded] = useState(0);
-  const [hovered, setHovered] = useState(null);
-  const activeIndex = hovered ?? expanded;
+  const activeIndex = expanded;
 
   return (
     <section
@@ -55,9 +54,9 @@ export default function Journal() {
             cada projeto<span className="title-dot">.</span>
           </h2>
           <p>
-            Nos meus estudos em Engenharia de Software, cada projeto traz uma
-            pergunta. Aqui registro as escolhas que fiz e o que aprendi ao
-            colocá-las em prática.
+            Finanças, estoque e integração de dados trazem perguntas diferentes.
+            Aqui compartilho decisões presentes nos projetos e o que elas
+            ensinam sobre criar interfaces claras.
           </p>
           <Icon name="spark" className="journal-spark" />
         </div>
@@ -67,12 +66,6 @@ export default function Journal() {
             <div
               className={`editorial-item ${activeIndex === index ? 'is-expanded' : ''}`}
               key={item.id}
-              onPointerEnter={(event) => {
-                if (event.pointerType === 'mouse' && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-                  setHovered(index);
-                }
-              }}
-              onPointerLeave={() => setHovered(null)}
             >
               <h3>
                 <button
@@ -80,9 +73,7 @@ export default function Journal() {
                   aria-expanded={activeIndex === index}
                   aria-controls={`journal-panel-${item.id}`}
                   id={`journal-button-${item.id}`}
-                  onFocus={() => setHovered(null)}
                   onClick={() => {
-                    setHovered(null);
                     setExpanded((current) => current === index ? null : index);
                   }}
                 >
