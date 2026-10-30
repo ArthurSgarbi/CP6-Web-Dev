@@ -41,7 +41,9 @@ describe('API de contato', () => {
     for (const key of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL', 'CONTACT_HASH_SECRET']) vi.stubEnv(key, '');
     const fetch = vi.fn().mockResolvedValue(json({ result: 'claimed', id: 'id' })); vi.stubGlobal('fetch', fetch);
     expect(await processContact(valid, 'test')).toEqual([200, { ok: true }]);
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls.some(([url]) => url.includes('api.resend.com'))).toBe(false);
+    expect(JSON.parse(fetch.mock.calls[1][1].body)).toEqual({ email_error: 'not_configured' });
   });
   it('reconhece retry de mensagem persistida sem duplicar nem depender do e-mail', async () => {
     const { createHash } = await import('node:crypto');
@@ -49,6 +51,13 @@ describe('API de contato', () => {
     const fetch = vi.fn().mockResolvedValueOnce(json({ result: 'busy' })).mockResolvedValueOnce(json([{ fingerprint }])); vi.stubGlobal('fetch', fetch);
     expect(await processContact(valid, 'test')).toEqual([200, { ok: true }]);
     expect(fetch).toHaveBeenCalledTimes(2);
+  });
+  it('confirma a mensagem persistida mesmo se o registro de notificação desativada falhar', async () => {
+    vi.stubEnv('RESEND_API_KEY', '');
+    const fetch = vi.fn().mockResolvedValueOnce(json({ result: 'claimed', id: 'id' })).mockRejectedValueOnce(new Error('db unavailable'));
+    vi.stubGlobal('fetch', fetch);
+    expect(await processContact(valid, 'test')).toEqual([200, { ok: true }]);
+    expect(fetch.mock.calls.some(([url]) => url.includes('api.resend.com'))).toBe(false);
   });
 });
 function response() { return { setHeader: vi.fn(), status: vi.fn(function (status) { this.code = status; return this; }), json: vi.fn() }; }

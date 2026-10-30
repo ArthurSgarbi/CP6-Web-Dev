@@ -1,18 +1,27 @@
 import { useEffect, useState } from 'react';
 import Icon from './Icon.jsx';
 import TextLink from './TextLink.jsx';
+import './hero.css';
 
+const PAUSE_KEY = 'portfolio-reel-paused';
 const projects = [
-  { title: 'Sistema de gastos', image: '/images/sistema-de-gastos.png', alt: 'Tela inicial do Meu Caixa, sistema de controle de finanças pessoais.' },
-  { title: 'Sistema de estoque', image: '/images/sistema-de-estoque.png', alt: 'Painel de demonstração da SYNC Mobile com indicadores de vendas e estoque.' },
-  { title: 'Site pessoal para surpresa', image: '/images/site-pessoal-para-surpresa.png', alt: 'Site pessoal de um casal com uma mensagem especial e uma fotografia dos dois.' },
+  { title: 'Meu Caixa', image: 'meu-caixa', caption: 'Tela de acesso · Finanças pessoais', alt: 'Tela de acesso do Meu Caixa, aplicação de finanças pessoais.' },
+  { title: 'SYNC Mobile', image: 'sync-mobile', caption: 'Demonstração com dados fictícios · Operação manual', alt: 'Painel de demonstração da SYNC Mobile com indicadores de vendas e estoque e dados fictícios.' },
+  { title: 'Memórias a dois', image: 'memorias-a-dois', caption: 'Página pessoal · Narrativa e memórias', alt: 'Página pessoal com uma mensagem e uma fotografia do casal.' },
 ];
 
+function readPause() {
+  try { return sessionStorage.getItem(PAUSE_KEY) === 'true'; }
+  catch { return false; }
+}
+
 export default function Hero({ navigate }) {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(readPause);
   const [focused, setFocused] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [pageHidden, setPageHidden] = useState(false);
-  const autoPlaying = !focused && !reducedMotion && !pageHidden;
+  const autoPlaying = !paused && !focused && !reducedMotion && !pageHidden;
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -28,68 +37,75 @@ export default function Hero({ navigate }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!autoPlaying) return undefined;
+    const timer = window.setInterval(() => setActive(current => (current + 1) % projects.length), 7000);
+    return () => window.clearInterval(timer);
+  }, [autoPlaying]);
+
+  const setPlaybackPause = value => {
+    setPaused(value);
+    try { sessionStorage.setItem(PAUSE_KEY, String(value)); } catch { /* Storage is optional. */ }
+  };
+
+  const move = direction => {
+    setPlaybackPause(true);
+    setActive(current => (current + direction + projects.length) % projects.length);
+  };
 
   return (
     <section className="hero page-width" aria-labelledby="hero-title">
-      <div className="hero-overline">
-        <span className="status-label">
-          Feito por Arthur Sgarbi
-        </span>
-      </div>
-
-      <h1 className="hero-title hero-title-business" id="hero-title">
-        <span>SITES QUE FARÃO</span>
-        <span>SEU NEGÓCIO</span>
-        <span className="hero-second-line">
-          CRESCER
-          <Icon name="spark" className="hero-spark" />
-        </span>
+      <div className="hero-overline"><span className="status-label">Arthur Sgarbi / Engenharia de Software</span></div>
+      <h1 className="hero-title hero-title-software" id="hero-title">
+        <span>IDEIAS EM CÓDIGO.</span>
+        <span className="hero-second-line">SOLUÇÕES NA PRÁTICA.<Icon name="spark" className="hero-spark" /></span>
       </h1>
-
-      <div className="hero-support">
+      <div className="hero-support hero-support-software">
         <div className="hero-description">
-          <p>
-            Como um estudante de Engenharia de Software, construí com meus estudos sites onde sua pequena a grande empresa pode encontrar uma grande mudança para a concorrência
-          </p>
-          <TextLink
-            href="#work"
-            onClick={(event) => navigate(event, 'work')}
-          >
-            Explore os trabalhos selecionados
-          </TextLink>
-        </div>
-
-      <div
-        className="hero-carousel"
-        data-paused={!autoPlaying}
-        role="region"
-        aria-roledescription="carrossel"
-        aria-label="Projetos em destaque"
-        onFocus={() => setFocused(true)}
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-        }}
-      >
-        <div className="carousel-window" tabIndex={0} aria-label="Amostras dos projetos">
-          <div className="carousel-track">
-            {[0, 1].map((copy) => (
-              <div className="carousel-set" key={copy} aria-hidden={copy === 1 ? true : undefined}>
-                {projects.map((item, index) => (
-                  <figure className="carousel-card" key={item.image}>
-                    <div className="carousel-screen">
-                      <img src={item.image} alt={copy === 0 ? item.alt : ''} width="1917" height="907" fetchPriority={index === 0 ? 'high' : 'auto'} />
-                    </div>
-                    <figcaption>
-                      <span>{item.title}</span>
-                      <span className="carousel-number">0{index + 1}</span>
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            ))}
+          <p>Sou Arthur Sgarbi, estudante de Engenharia de Software na FIAP. Desenvolvo sites e aplicações para organizar informações e simplificar tarefas, de finanças pessoais à gestão de uma loja.</p>
+          <div className="hero-links">
+            <TextLink href="#work" onClick={event => navigate(event, 'work')}>Explore os trabalhos selecionados</TextLink>
+            <TextLink href="#contato" onClick={event => navigate(event, 'contato')}>Vamos conversar</TextLink>
           </div>
         </div>
-      </div>
+        <div className="project-reel" role="region" aria-roledescription="carrossel" aria-label="Amostras de interfaces"
+          data-paused={!autoPlaying}
+          onFocus={() => setFocused(true)}
+          onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+          onKeyDown={event => {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              event.preventDefault();
+              move(event.key === 'ArrowLeft' ? -1 : 1);
+            }
+          }}>
+          <div className="project-reel-heading">
+            <span>Amostras de interfaces</span>
+            <span className="project-reel-count">{active + 1} / {projects.length}</span>
+          </div>
+          <div id="project-reel-slides" className="project-reel-slides" aria-live={autoPlaying ? 'off' : 'polite'} aria-atomic="true">
+            {projects.map((project, index) => (
+              <figure className="project-reel-slide" key={project.image} hidden={index !== active} role="group" aria-roledescription="slide" aria-label={`${index + 1} de ${projects.length}: ${project.title}`}>
+                <div className="project-reel-screen">
+                  <img src={`/images/hero/${project.image}-1280.webp`}
+                    srcSet={`/images/hero/${project.image}-640.webp 640w, /images/hero/${project.image}-1280.webp 1280w, /images/hero/${project.image}-1600.webp 1600w`}
+                    sizes="(max-width: 600px) calc(100vw - 44px), (max-width: 1640px) 91vw, 1480px"
+                    alt={project.alt} width="1600" height="760" loading={index === 0 ? 'eager' : 'lazy'} fetchPriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+                </div>
+                <figcaption><strong>{project.title}</strong><span>{project.caption}</span></figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="project-reel-controls">
+            {reducedMotion ? <span className="project-reel-motion">Navegação manual · movimento reduzido</span> :
+              <button type="button" className="project-reel-playback" onClick={() => setPlaybackPause(!paused)} aria-controls="project-reel-slides">
+                {paused ? 'Reproduzir carrossel' : 'Pausar carrossel'}
+              </button>}
+            <div className="project-reel-navigation">
+              <button type="button" onClick={() => move(-1)} aria-label="Interface anterior" aria-controls="project-reel-slides"><Icon name="arrow-left" /></button>
+              <button type="button" onClick={() => move(1)} aria-label="Próxima interface" aria-controls="project-reel-slides"><Icon name="arrow-right" /></button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -9,7 +9,7 @@ export function ProjectChallenge({ challenges }) {
             <h3>{item.title}</h3>
             <div>
               <p>{item.description}</p>
-              {item.solution && <p><strong>Resposta no código: </strong>{item.solution}</p>}
+              {item.solution && <p><strong>Como funciona: </strong>{item.solution}</p>}
             </div>
           </article>
         ))}

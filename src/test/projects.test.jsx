@@ -6,10 +6,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from '../App.jsx';
 import { githubKeys, githubUsername } from '../hooks/useGitHubProjects.js';
+import { getFeaturedProjects } from '../services/adminApi.js';
+import { projectPresentation } from '../utils/formatRepository.js';
 import { jsonResponse, repository } from './fixtures.js';
 
 let clients = [];
-beforeEach(() => vi.stubGlobal('fetch', vi.fn()));
+beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); getFeaturedProjects.mockResolvedValue(['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position }))); });
 afterEach(() => { clients.forEach((client) => client.clear()); clients = []; });
 
 function renderApp(path = '/', client = new QueryClient()) {
@@ -26,6 +28,23 @@ function renderApp(path = '/', client = new QueryClient()) {
 }
 
 describe('projetos na página inicial', () => {
+  it('distingue seleção vazia de ausência de repositórios', async () => {
+    fetch.mockResolvedValue(jsonResponse([repository()]));
+    getFeaturedProjects.mockResolvedValue([]);
+    renderApp();
+    expect(await screen.findByText('Nenhum projeto em destaque no momento.')).toBeInTheDocument();
+    expect(screen.queryByText('Nenhum repositório público disponível.')).not.toBeInTheDocument();
+  });
+
+  it('distingue falha na seleção de uma seleção vazia e permite recuperar', async () => {
+    fetch.mockImplementation(() => Promise.resolve(jsonResponse([repository()])));
+    getFeaturedProjects.mockRejectedValueOnce(Object.assign(new Error(), { code: 'FEATURED_UNAVAILABLE' }));
+    const { user } = renderApp();
+    expect(await screen.findByText(/Não foi possível carregar a seleção/)).toBeInTheDocument();
+    expect(screen.queryByText('Nenhum projeto em destaque no momento.')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(await screen.findByRole('heading', { name: 'Meu Caixa' })).toBeInTheDocument();
+  });
   it('exibe quatro skeletons e anuncia carregamento antes da resposta', async () => {
     let resolveRequest;
     fetch.mockImplementation(() => new Promise((resolve) => { resolveRequest = resolve; }));
@@ -34,7 +53,7 @@ describe('projetos na página inicial', () => {
     expect(container.querySelector('.work-grid')).toHaveAttribute('aria-busy', 'true');
     expect(container.querySelectorAll('.project-skeleton')).toHaveLength(4);
     await act(async () => resolveRequest(jsonResponse([repository()])));
-    expect(await screen.findByRole('heading', { name: 'meu-caixa' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Meu Caixa' })).toBeInTheDocument();
   });
 
   it('mostra dados reais, filtra forks/arquivados e calcula o índice visual', async () => {
@@ -43,8 +62,8 @@ describe('projetos na página inicial', () => {
       repository({ id: 3, name: 'arquivo-oculto', archived: true }),
     ]));
     renderApp();
-    expect(await screen.findByRole('heading', { name: 'meu-caixa' })).toBeInTheDocument();
-    expect(screen.getByText('Descrição real fornecida pela API de teste.')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Meu Caixa' })).toBeInTheDocument();
+    expect(screen.getByText(projectPresentation['meu-caixa'].description)).toBeInTheDocument();
     expect(screen.getByText('JavaScript')).toBeInTheDocument();
     expect(screen.getByText('01 /')).toBeInTheDocument();
     expect(screen.queryByText('fork-oculto')).not.toBeInTheDocument();
@@ -55,7 +74,7 @@ describe('projetos na página inicial', () => {
   it.each([{ data: [] }, { data: [repository({ private: true }), repository({ id: 2, archived: true })] }])('trata lista vazia depois da filtragem: %j', async ({ data }) => {
     fetch.mockResolvedValue(jsonResponse(data));
     renderApp();
-    expect(await screen.findByText('Nenhum projeto público foi encontrado.')).toBeInTheDocument();
+    expect(await screen.findByText('Nenhum repositório público disponível.')).toBeInTheDocument();
     expect(screen.queryByText('Não foi possível carregar os projetos no momento.')).not.toBeInTheDocument();
   });
 
@@ -67,7 +86,7 @@ describe('projetos na página inicial', () => {
     expect(message.closest('[role="status"]')).toHaveAttribute('aria-live', 'polite');
     expect(fetch).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
-    expect(await screen.findByRole('heading', { name: 'meu-caixa' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Meu Caixa' })).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
@@ -85,17 +104,17 @@ describe('projetos na página inicial', () => {
       repository(), repository({ id: 2, name: 'site-projeto-shopee', description: 'Descrição beta', homepage: '', language: 'Python' }),
     ]));
     const { user } = renderApp();
-    const trigger = await screen.findByRole('button', { name: 'Abrir detalhes de site-projeto-shopee' });
+    const trigger = await screen.findByRole('button', { name: 'Abrir prévia de SYNC Mobile — Gestão de loja' });
     await user.click(trigger);
     const dialog = screen.getByRole('dialog');
-    expect(within(dialog).getByRole('heading', { name: 'site-projeto-shopee' })).toBeInTheDocument();
-    expect(within(dialog).getByText('Descrição beta')).toBeInTheDocument();
+    expect(within(dialog).getByRole('heading', { name: 'SYNC Mobile — Gestão de loja' })).toBeInTheDocument();
+    expect(within(dialog).getByText(projectPresentation['site-projeto-shopee'].description)).toBeInTheDocument();
     expect(within(dialog).getByText('TypeScript')).toBeInTheDocument();
     expect(within(dialog).getByText('Next.js')).toBeInTheDocument();
     expect(within(dialog).getByText('libSQL')).toBeInTheDocument();
     expect(within(dialog).getByText('7')).toBeInTheDocument();
     expect(within(dialog).getByText('react')).toBeInTheDocument();
-    expect(within(dialog).queryByRole('link', { name: /Acessar projeto/ })).not.toBeInTheDocument();
+    expect(within(dialog).getByRole('link', { name: /Abrir demonstração/ })).toHaveAttribute('href', 'https://sync-mobile.vercel.app/demo');
     const codeLink = within(dialog).getByRole('link', { name: /Ver código no GitHub/ });
     expect(codeLink).toHaveAttribute('target', '_blank');
     expect(codeLink).toHaveAttribute('rel', 'noopener noreferrer');
@@ -106,10 +125,10 @@ describe('projetos na página inicial', () => {
     await user.tab();
     expect(close).toHaveFocus();
     await user.click(within(dialog).getByRole('button', { name: 'Projeto anterior' }));
-    expect(within(dialog).getByRole('heading', { name: 'meu-caixa' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('heading', { name: 'Meu Caixa' })).toBeInTheDocument();
     expect(within(dialog).getByRole('link', { name: /Acessar projeto/ })).toHaveAttribute('href', 'https://alpha.example.com/');
     fireEvent.keyDown(dialog, { key: 'ArrowRight' });
-    expect(within(dialog).getByRole('heading', { name: 'site-projeto-shopee' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('heading', { name: 'SYNC Mobile — Gestão de loja' })).toBeInTheDocument();
     fireEvent(dialog, new Event('cancel', { cancelable: true }));
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(trigger).toHaveFocus();
@@ -119,10 +138,10 @@ describe('projetos na página inicial', () => {
   it('preserva os links externos na armadilha de foco', async () => {
     fetch.mockResolvedValue(jsonResponse([repository()]));
     const { user } = renderApp();
-    await user.click(await screen.findByRole('button', { name: 'Abrir detalhes de meu-caixa' }));
+    await user.click(await screen.findByRole('button', { name: 'Abrir prévia de Meu Caixa' }));
     const dialog = screen.getByRole('dialog');
     await user.tab({ shift: true });
-    expect(within(dialog).getByRole('link', { name: /Abrir página individual/ })).toHaveFocus();
+    expect(within(dialog).getByRole('link', { name: /Ver estudo completo/ })).toHaveFocus();
     await user.tab();
     expect(within(dialog).getByRole('button', { name: 'Fechar detalhes do projeto' })).toHaveFocus();
   });
@@ -130,23 +149,24 @@ describe('projetos na página inicial', () => {
   it('fecha o modal se o projeto selecionado desaparecer do cache', async () => {
     fetch.mockResolvedValue(jsonResponse([repository()]));
     const { client, user } = renderApp();
-    await user.click(await screen.findByRole('button', { name: 'Abrir detalhes de meu-caixa' }));
+    await user.click(await screen.findByRole('button', { name: 'Abrir prévia de Meu Caixa' }));
     act(() => client.setQueryData(githubKeys.repositories(githubUsername), []));
     await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
-    expect(screen.getByText('Nenhum projeto público foi encontrado.')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum repositório público disponível.')).toBeInTheDocument();
     expect(document.getElementById('work')).toHaveFocus();
     act(() => client.setQueryData(githubKeys.repositories(githubUsername), [repository()]));
-    await screen.findByRole('heading', { name: 'meu-caixa' });
+    await screen.findByRole('heading', { name: 'Meu Caixa' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('usa descrição/linguagem alternativas e fallback de imagem sem loop', async () => {
-    fetch.mockResolvedValue(jsonResponse([repository({ description: null, language: null })]));
+    fetch.mockResolvedValue(jsonResponse([repository({ name: 'projeto-sem-editorial', description: null, language: null })]));
+    getFeaturedProjects.mockResolvedValue([{ repository_name: 'projeto-sem-editorial', position: 0 }]);
     renderApp();
-    expect(await screen.findByText('Descrição ainda não informada no GitHub')).toBeInTheDocument();
+    expect(await screen.findByText('Descrição ainda não informada no GitHub.')).toBeInTheDocument();
     expect(screen.getByText('Tecnologia não informada')).toBeInTheDocument();
     expect(screen.queryByText('PostgreSQL')).not.toBeInTheDocument();
-    const image = screen.getByRole('img', { name: 'Imagem de apresentação do repositório meu-caixa' });
+    const image = screen.getByRole('img', { name: 'Imagem de apresentação de projeto-sem-editorial' });
     expect(image).toHaveAttribute('loading', 'lazy');
     expect(image).toHaveAttribute('width', '1200');
     fireEvent.error(image);
@@ -158,13 +178,13 @@ describe('projetos na página inicial', () => {
   it('reutiliza a consulta entre StrictMode, seções, modal e página individual', async () => {
     fetch.mockImplementation(() => Promise.resolve(jsonResponse([repository()])));
     const { user } = renderApp();
-    await screen.findByRole('heading', { name: 'meu-caixa' });
+    await screen.findByRole('heading', { name: 'Meu Caixa' });
     await user.click(within(screen.getByRole('navigation', { name: 'Navegação principal' })).getByRole('link', { name: 'Diário' }));
-    await user.click(screen.getByRole('button', { name: 'Abrir detalhes de meu-caixa' }));
-    await user.click(screen.getByRole('link', { name: /Abrir página individual/ }));
-    expect(await screen.findByRole('heading', { level: 1, name: 'meu-caixa' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Abrir prévia de Meu Caixa' }));
+    await user.click(screen.getByRole('link', { name: /Ver estudo completo/ }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Meu Caixa' })).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: /Voltar aos projetos/ }));
-    await screen.findByRole('heading', { level: 3, name: 'meu-caixa' });
+    await screen.findByRole('heading', { level: 3, name: 'Meu Caixa' });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
 
@@ -175,7 +195,7 @@ describe('projetos na página inicial', () => {
     }));
     fetch.mockResolvedValue(jsonResponse([repository()]));
     const { user } = renderApp();
-    await screen.findByRole('heading', { name: 'meu-caixa' });
+    await screen.findByRole('heading', { name: 'Meu Caixa' });
     expect(document.querySelector('#work article')).toHaveAttribute('data-reveal-state', 'visible');
     await user.click(screen.getByRole('link', { name: 'Explore os trabalhos selecionados' }));
     expect(HTMLElement.prototype.scrollIntoView).toHaveBeenLastCalledWith({ behavior: 'instant', block: 'start' });
@@ -187,7 +207,7 @@ describe('rotas individuais', () => {
   it('abre sem cache consultando apenas o detalhe', async () => {
     fetch.mockImplementation((url) => Promise.resolve(jsonResponse(url.includes('/users/') ? [repository()] : repository())));
     renderApp('/projetos/meu-caixa');
-    expect(await screen.findByRole('heading', { name: 'meu-caixa', level: 1 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Meu Caixa', level: 1 })).toBeInTheDocument();
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     expect(fetch.mock.calls[0][0]).toMatch(/\/repos\/portfolio-owner\/meu-caixa$/);
     expect(fetch.mock.calls.some(([url]) => url.includes('/users/'))).toBe(false);
@@ -196,10 +216,10 @@ describe('rotas individuais', () => {
   it('continua funcionando depois de remontar sem cache (equivalente a recarregar)', async () => {
     fetch.mockImplementation((url) => Promise.resolve(jsonResponse(url.includes('/users/') ? [repository()] : repository())));
     const view = renderApp('/projetos/meu-caixa');
-    await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
+    await screen.findByRole('heading', { name: 'Meu Caixa', level: 1 });
     view.unmount();
     renderApp('/projetos/meu-caixa');
-    await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
+    await screen.findByRole('heading', { name: 'Meu Caixa', level: 1 });
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
     expect(fetch.mock.calls.filter(([url]) => url.includes('/repos/portfolio-owner/meu-caixa'))).toHaveLength(2);
     expect(fetch.mock.calls.filter(([url]) => url.includes('/users/portfolio-owner/repos?'))).toHaveLength(0);
@@ -222,7 +242,7 @@ describe('rotas individuais', () => {
     });
     const { user } = renderApp('/projetos/meu-caixa');
     await user.click(await screen.findByRole('button', { name: 'Tentar novamente' }));
-    await screen.findByRole('heading', { name: 'meu-caixa', level: 1 });
+    await screen.findByRole('heading', { name: 'Meu Caixa', level: 1 });
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
     expect(detailAttempts).toBe(2);
   });
@@ -237,5 +257,5 @@ describe('rotas individuais', () => {
 // Existing UI regressions isolate the public editorial configuration.
 vi.mock('../services/adminApi.js', async importOriginal => ({
   ...await importOriginal(),
-  getFeaturedProjects: async () => ['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position })),
+  getFeaturedProjects: vi.fn(),
 }));

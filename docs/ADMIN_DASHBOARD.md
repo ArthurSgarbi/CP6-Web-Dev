@@ -1,4 +1,27 @@
-# Dashboard do proprietário
+# Painel do proprietário
+
+## Revisão de 29/10/2026
+
+O painel distingue a mensagem recebida da notificação opcional por e-mail. Quando
+o serviço está desconfigurado, o backend registra `email_error=not_configured` no
+campo existente e a API entrega apenas `notification_status`, sem o diagnóstico
+original. Registros antigos sem confirmação aparecem como “Sem confirmação de
+envio” quando o serviço está configurado. Não existe fila de reenvio automático.
+Falhar ao atualizar esse indicador não transforma uma mensagem já persistida em
+falha de envio para o visitante. Esta mudança não exige migração do banco.
+
+Os filtros incluem “Visualizadas” e “Aguardando resposta” (estados `new` e `read`).
+“Desarquivar” move diretamente para `read`, sem afirmar que houve uma resposta.
+“Responder por e-mail” abre o aplicativo de e-mail; marcar respondida apenas
+organiza a caixa. A seleção persistida controla a seção Projetos da página inicial;
+as amostras de interfaces do topo são uma seleção editorial independente.
+
+Contato, login, filtros e indicadores usam os tokens semânticos compartilhados
+para contraste nos dois temas. O login oferece mostrar/ocultar senha e foco no
+título; o formulário de contato limpa o sucesso anterior ao iniciar outra mensagem.
+Os harnesses locais de contato e administração incluem controle de tema e usam
+somente dados simulados. O login simulado aceita dados fictícios; a senha `invalid`
+simula recusa de acesso.
 
 ## O que foi implementado
 
@@ -32,8 +55,10 @@ Não foram editados os componentes das outras seções da home.
 | `CONTACT_ADMIN_USER_IDS` | UUID do proprietário autorizado |
 | `NODE_ENV=production` | Garante o atributo Secure no cookie em produção; definido pelo runtime de produção |
 
-As variáveis existentes de Resend e contato continuam necessárias para o envio do formulário:
-`RESEND_API_KEY`, `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL`, `CONTACT_HASH_SECRET`.
+As variáveis `RESEND_API_KEY`, `CONTACT_FROM_EMAIL` e `CONTACT_TO_EMAIL` são opcionais
+para notificação por e-mail. A persistência no Supabase basta para confirmar o
+recebimento. `CONTACT_HASH_SECRET` é opcional; na ausência dele, o servidor usa a
+chave de serviço como segredo do HMAC, sem enviá-la ao cliente.
 Nenhuma dependência nova foi adicionada.
 
 ## Arquitetura e decisões
@@ -90,7 +115,7 @@ permite o aviso nativo. Por segurança, expiração da sessão continua tendo pr
 | POST `/api/admin?resource=session` | Login com `{email,password}` e cookie HttpOnly |
 | GET `/api/admin?resource=session` | Verifica sessão e autorização |
 | DELETE `/api/admin?resource=session` | Revoga sessão e remove cookie |
-| GET `/api/admin?resource=messages&offset=0&status=new` | Até 50 mensagens e contagens globais; status vazio lista todas |
+| GET `/api/admin?resource=messages&offset=0&status=new` | Até 50 mensagens e contagens globais; status vazio lista todas; `awaiting` reúne novas e visualizadas |
 | PATCH `/api/admin?resource=messages&id=UUID` | Atualiza `{status}` e retorna mensagem; 404 se ausente |
 | GET `/api/admin?resource=featured` | Consulta seleção para administração |
 | PUT `/api/admin?resource=featured` | Salva `{repositories:["nome", "outro"]}` em ordem; aceita seleção vazia |

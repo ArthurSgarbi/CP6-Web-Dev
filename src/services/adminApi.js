@@ -1,15 +1,15 @@
-export const adminFailure = 'Não foi possível acessar a administração. Verifique seu acesso e tente novamente.';
+export const adminFailure = 'Não foi possível acessar o painel. Verifique seu acesso e tente novamente.';
 export async function adminRequest(resource, options = {}) {
   let response;
   try {
     response = await fetch(`/api/admin?${resource}`, { credentials: 'same-origin', ...options, headers: { 'Content-Type': 'application/json', ...options.headers }, signal: AbortSignal.timeout(15000) });
   } catch {
-    throw new Error('Não foi possível conectar à administração. Verifique sua conexão e tente novamente.');
+    throw new Error('Não foi possível conectar ao painel. Verifique sua conexão e tente novamente.');
   }
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(response.status >= 500
-      ? 'O serviço de administração está indisponível no momento. Tente novamente em instantes.'
+      ? 'O serviço do painel está indisponível no momento. Tente novamente em instantes.'
       : adminFailure);
     error.status = response.status;
     throw error;

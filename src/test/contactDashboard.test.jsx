@@ -33,7 +33,7 @@ beforeEach(() => {
     }
     if (options.method === 'PATCH') { if (failUpdate) return jsonResponse({}, 503); rows[0] = { ...rows[0], ...JSON.parse(options.body) }; return jsonResponse({ message: rows[0] }); }
     const status = url.searchParams.get('status');
-    return jsonResponse({ messages: rows.filter(row => !status || row.status === status), counts: { new: rows.filter(row => row.status === 'new').length, responded: rows.filter(row => row.status === 'responded').length } });
+    return jsonResponse({ messages: rows.filter(row => !status || (status === 'awaiting' ? ['new', 'read'].includes(row.status) : row.status === status)), counts: { new: rows.filter(row => row.status === 'new').length, responded: rows.filter(row => row.status === 'responded').length } });
   }));
 });
 afterEach(() => { client?.clear(); router?.dispose(); });
@@ -58,7 +58,7 @@ it('redireciona visitante e permite login, logout e teclado', async () => {
   await signIn(user);
   await screen.findByRole('heading', { name: 'Projeto novo' });
   expect(router.state.location.pathname).toBe('/dashboard');
-  expect(screen.getByRole('navigation', { name: 'Navegação do dashboard' }).querySelector('[aria-current]')).toBeInTheDocument();
+  expect(screen.getByRole('navigation', { name: 'Navegação do painel' }).querySelector('[aria-current]')).toBeInTheDocument();
   await user.click(screen.getByText('Ver mensagem completa'));
   expect(screen.getByText(rows[0].message)).toBeVisible();
   await user.tab();
@@ -72,7 +72,7 @@ it.each([['invalid', false], ['test-password', true]])('nega senha inválida ou 
   await screen.findByLabelText('E-mail');
   if (unauthorized) { await user.clear(screen.getByLabelText('E-mail')); await user.type(screen.getByLabelText('E-mail'), 'visitor@example.com'); }
   await signIn(user, password);
-  expect(await screen.findByText(/Não foi possível acessar a administração/)).toHaveAttribute('aria-live', 'polite');
+  expect(await screen.findByText(/Não foi possível acessar o painel/)).toHaveAttribute('aria-live', 'polite');
   expect(screen.queryByText('Projeto novo')).not.toBeInTheDocument();
   expect(screen.getByLabelText('Senha')).toHaveValue('');
 });
@@ -108,34 +108,64 @@ it('persiste respondida em nova consulta, filtra e permite desmarcar e arquivar'
 it('preserva status se o servidor recusar atualização', async () => {
   loggedIn = true; failUpdate = true; const user = start();
   await user.click(await screen.findByRole('button', { name: 'Marcar como respondida' }));
-  await screen.findByText(/O serviço de administração está indisponível/);
+  await screen.findByText(/O serviço do painel está indisponível/);
   expect(rows[0].status).toBe('new'); expect(screen.getByText('Nova', { exact: true })).toBeVisible();
+});
+it('permite ler, filtrar aguardando resposta e desarquivar diretamente', async () => {
+  loggedIn = true;
+  rows[0].notification_status = 'not_configured';
+  const user = start();
+  await screen.findByText('Notificação por e-mail: Não utilizada — serviço não configurado');
+  expect(screen.getByRole('link', { name: 'Responder por e-mail' })).toHaveAttribute('href', 'mailto:teste%40example.com?subject=Re%3A%20Projeto%20novo');
+  await user.click(screen.getByRole('button', { name: 'Marcar como visualizada' }));
+  await screen.findByText('Mensagem marcada como visualizada.');
+  await user.click(screen.getByRole('button', { name: 'Aguardando resposta' }));
+  await screen.findByRole('heading', { name: 'Projeto novo' });
+  await user.click(screen.getByRole('button', { name: 'Arquivar' }));
+  await screen.findByText('Nenhuma mensagem neste filtro.');
+  await user.click(screen.getByRole('button', { name: 'Arquivadas' }));
+  await user.click(await screen.findByRole('button', { name: 'Desarquivar' }));
+  await screen.findByText('Nenhuma mensagem neste filtro.');
+  await user.click(screen.getByRole('button', { name: 'Visualizadas' }));
+  await screen.findByRole('heading', { name: 'Projeto novo' });
+  expect(rows[0].status).toBe('read');
+});
+it('foca o título do login e permite mostrar e ocultar a senha', async () => {
+  const user = start('/login');
+  const password = await screen.findByLabelText('Senha');
+  expect(screen.getByRole('heading', { level: 1 })).toHaveFocus();
+  await user.type(password, 'somente-teste');
+  await user.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+  expect(password).toHaveAttribute('type', 'text');
+  expect(password).toHaveValue('somente-teste');
+  await user.click(screen.getByRole('button', { name: 'Ocultar senha' }));
+  expect(password).toHaveAttribute('type', 'password');
 });
 it('exibe apenas os quatro projetos do site, reordena, persiste e atualiza a home', async () => {
   loggedIn = true; const user = start();
-  await user.click(await screen.findByLabelText('Selecionar aether-front-end'));
-  await user.click(screen.getByLabelText('Selecionar site-projeto-shopee')); await user.click(screen.getByLabelText('Selecionar anninha-site-novo'));
+  await user.click(await screen.findByLabelText('Selecionar AETHER — Portal institucional'));
+  await user.click(screen.getByLabelText('Selecionar SYNC Mobile — Gestão de loja')); await user.click(screen.getByLabelText('Selecionar Memórias a dois'));
   expect(screen.queryByLabelText('Selecionar projeto-4')).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: 'Mover anninha-site-novo para cima' }));
   await user.click(screen.getByRole('button', { name: /Salvar destaques/ }));
   await screen.findByText(/Destaques salvos com sucesso/);
   expect(selected).toEqual(['meu-caixa', 'aether-front-end', 'anninha-site-novo', 'site-projeto-shopee']);
   await user.click(screen.getByRole('link', { name: /Voltar ao portfólio/ }));
-  await screen.findByRole('heading', { name: 'meu-caixa', level: 3 });
+  await screen.findByRole('heading', { name: 'Meu Caixa', level: 3 });
   const work = document.querySelector('#work');
   expect(within(work).queryByRole('heading', { name: 'projeto-4' })).not.toBeInTheDocument();
-  expect([...work.querySelectorAll('h3')].map(node => node.textContent)).toEqual(selected);
+  expect([...work.querySelectorAll('h3')].map(node => node.textContent)).toEqual(['Meu Caixa', 'AETHER — Portal institucional', 'Memórias a dois', 'SYNC Mobile — Gestão de loja']);
 });
 it('ignora destaque removido e mantém um estado vazio seguro', async () => {
   selected = ['removido']; start('/');
-  await screen.findByText('Nenhum projeto público foi encontrado.');
-  expect(screen.queryByRole('heading', { name: 'meu-caixa' })).not.toBeInTheDocument();
+  await screen.findByText('Nenhum projeto em destaque no momento.');
+  expect(screen.queryByRole('heading', { name: 'Meu Caixa' })).not.toBeInTheDocument();
 });
 it('mantém rascunho se salvamento falha e bloqueia navegação sem confirmação', async () => {
   loggedIn = true; failSave = true; vi.spyOn(window, 'confirm').mockReturnValue(false); const user = start();
-  await user.click(await screen.findByLabelText('Selecionar aether-front-end'));
+  await user.click(await screen.findByLabelText('Selecionar AETHER — Portal institucional'));
   await user.click(screen.getByRole('button', { name: /Salvar destaques/ }));
-  await screen.findByText(/O serviço de administração está indisponível/);
+  await screen.findByText(/O serviço do painel está indisponível/);
   expect(screen.getByText('Alterações não salvas')).toBeVisible();
   await user.click(screen.getByRole('link', { name: /Voltar ao portfólio/ }));
   await waitFor(() => expect(window.confirm).toHaveBeenCalled());
@@ -153,8 +183,8 @@ it('exibe fork público selecionado e ignora repositório privado', async () => 
 });
 it('reconhece seleção salva com capitalização diferente', async () => {
   loggedIn = true; selected = ['MEU-CAIXA']; const user = start();
-  expect(await screen.findByLabelText('Selecionar meu-caixa')).toBeChecked();
-  await user.click(screen.getByLabelText('Selecionar meu-caixa'));
+  expect(await screen.findByLabelText('Selecionar Meu Caixa')).toBeChecked();
+  await user.click(screen.getByLabelText('Selecionar Meu Caixa'));
   expect(screen.getByText('0 de 4 projetos selecionados')).toBeVisible();
   expect(screen.getByRole('button', { name: /Salvar destaques/ })).toBeEnabled();
 });
@@ -166,13 +196,13 @@ it('identifica falha nos destaques sem atribuir a indisponibilidade ao GitHub', 
   expect(screen.queryByText(/A integração com o GitHub está indisponível/)).not.toBeInTheDocument();
   failFeatured = false;
   await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
-  await screen.findByRole('heading', { name: 'meu-caixa', level: 3 });
+  await screen.findByRole('heading', { name: 'Meu Caixa', level: 3 });
 });
 
 it('distingue indisponibilidade do serviço de recusa de acesso no login', async () => {
   failLogin = true;
   const user = start('/login');
   await signIn(user);
-  await screen.findByText(/O serviço de administração está indisponível/);
+  await screen.findByText(/O serviço do painel está indisponível/);
   expect(router.state.location.pathname).toBe('/login');
 });

@@ -11,7 +11,7 @@ export default function ProjectImage({ project, width = 1200, height = 1500, cla
       src={usingFallback ? PROJECT_IMAGE_FALLBACK : project.image}
       alt={usingFallback
         ? `Composição abstrata usada como capa de ${project.title}`
-        : `Imagem de apresentação do repositório ${project.title}`}
+        : project.imageAlt ?? `Imagem de apresentação de ${project.title}`}
       width={width}
       height={height}
       loading={loading}

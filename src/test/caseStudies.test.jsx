@@ -9,6 +9,7 @@ import useGitHubProject from '../hooks/useGitHubProject.js';
 import { githubKeys, githubUsername } from '../hooks/useGitHubProjects.js';
 import useProjectNavigation from '../hooks/useProjectNavigation.js';
 import { jsonResponse, repository } from './fixtures.js';
+import { formatRepository } from '../utils/formatRepository.js';
 
 const listKey = githubKeys.repositories(githubUsername);
 const caseStudyHeadings = [
@@ -102,7 +103,7 @@ describe('navegação entre estudos de caso', () => {
       detail: useGitHubProject('anninha-site-novo'),
     }), { wrapper: queryWrapper(client) });
     expect(result.current.navigation.next?.slug).toBe('anninha-site-novo');
-    expect(result.current.detail.data?.title).toBe('anninha-site-novo');
+    expect(result.current.detail.data?.title).toBe('Memórias a dois');
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -134,21 +135,38 @@ describe('navegação entre estudos de caso', () => {
 });
 
 describe('páginas de estudo de caso', () => {
-  it.each(selectedRepositories)('encerra $name após o desafio sem chamadas quando há cache', async (raw) => {
+  it('usa a demonstração verificada do SYNC e preserva o identificador técnico', async () => {
+    const raw = repository({ name: 'site-projeto-shopee', homepage: 'https://site-projeto-shopee.vercel.app/', stargazers_count: 0 });
+    renderPage(raw.name, createClient([raw]));
+    await screen.findByRole('heading', { level: 1, name: 'SYNC Mobile — Gestão de loja' });
+    expect(screen.getByRole('link', { name: /Abrir demonstração/ })).toHaveAttribute('href', 'https://sync-mobile.vercel.app/demo');
+    expect(screen.getByRole('link', { name: /Ver código no GitHub/ })).toHaveAttribute('href', raw.html_url);
+    expect(formatRepository(raw).slug).toBe('site-projeto-shopee');
+    expect(formatRepository(raw).repositoryName).toBe('site-projeto-shopee');
+    expect(screen.queryByText('Estrelas no GitHub')).not.toBeInTheDocument();
+    expect(screen.getByText(/Não há sincronização automática com a Shopee/)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Demonstração pública do SYNC Mobile/ })).toHaveAttribute('src', '/images/projects/site-projeto-shopee/01-demo.webp');
+  });
+
+  it.each(selectedRepositories)('mantém $name em duas seções e oferece saída útil sem novas consultas', async (raw) => {
     const { container } = renderPage(raw.name, createClient(selectedRepositories));
-    const title = await screen.findByRole('heading', { level: 1, name: raw.name });
+    const title = await screen.findByRole('heading', { level: 1, name: formatRepository(raw).title });
     expect(container.querySelectorAll('h1')).toHaveLength(1);
     expect(title).toHaveFocus();
     caseStudyHeadings.forEach((name) => expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument());
     expect([...container.querySelectorAll('h2')].map((heading) => heading.textContent)).toEqual(caseStudyHeadings);
-    expect(container.querySelector('main').lastElementChild.lastElementChild.getAttribute('aria-labelledby')).toBe('case-challenge');
-    expect(document.title).toBe(`${raw.name} | Arthur Sgarbi`);
+    expect(screen.getByRole('navigation', { name: 'Continuar a navegação' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Conversar sobre um projeto/ })).toHaveAttribute('href', '/#contato');
+    expect(screen.getByText('Contribuição individual')).toBeInTheDocument();
+    expect(screen.queryByText('Duração')).not.toBeInTheDocument();
+    expect(container.textContent).not.toMatch(/O README|este estudo reconstrói|cronologia de desenvolvimento/i);
+    expect(document.title).toBe(`${formatRepository(raw).title} | Arthur Sgarbi`);
     expect(screen.getByRole('link', { name: /Voltar aos projetos/ })).toHaveAttribute('href', '/#work');
-    expect(screen.queryByRole('link', { name: 'Todos os projetos' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Todos os projetos/ })).toHaveAttribute('href', '/#work');
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it('mantém descrição, metadados e URLs vindos da API no estudo editorial', async () => {
+  it('combina apresentação editorial com metadados e URLs técnicos da API', async () => {
     const raw = repository({
       description: 'Descrição inédita fornecida pelo GitHub nesta consulta.',
       language: 'Linguagem da API', stargazers_count: 173, topics: ['topico-api'],
@@ -156,8 +174,9 @@ describe('páginas de estudo de caso', () => {
     });
     serveRepositories(raw, [raw]);
     renderPage(raw.name);
-    await screen.findByRole('heading', { level: 1, name: raw.name });
-    expect(screen.getByText(raw.description)).toBeInTheDocument();
+    await screen.findByRole('heading', { level: 1, name: formatRepository(raw).title });
+    expect(screen.getByText(formatRepository(raw).description)).toBeInTheDocument();
+    expect(formatRepository(raw).repositoryDescription).toBe(raw.description);
     expect(screen.getByText(raw.language)).toBeInTheDocument();
     expect(screen.getByText('173')).toBeInTheDocument();
     expect(screen.getByText('topico-api')).toBeInTheDocument();
@@ -176,7 +195,7 @@ describe('páginas de estudo de caso', () => {
   it('não cria link de deploy quando a API não fornece uma URL web segura', async () => {
     const raw = repository({ homepage: 'javascript:alert(1)' });
     renderPage(raw.name, createClient([raw]));
-    await screen.findByRole('heading', { level: 1, name: raw.name });
+    await screen.findByRole('heading', { level: 1, name: formatRepository(raw).title });
     expect(screen.queryByRole('link', { name: /Acessar projeto/ })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ver código no GitHub/ })).toBeInTheDocument();
   });
@@ -185,7 +204,7 @@ describe('páginas de estudo de caso', () => {
     const raw = repository({ id: 90, name: 'repositorio-sem-estudo' });
     serveRepositories(raw);
     renderPage(raw.name);
-    await screen.findByRole('heading', { level: 1, name: raw.name });
+    await screen.findByRole('heading', { level: 1, name: formatRepository(raw).title });
     expect(screen.getByText(raw.description)).toBeInTheDocument();
     expect(screen.getByText(/estudo de caso.*(preparação|disponível|cadastrado)|conteúdo editorial.*(preparação|disponível|cadastrado)/i)).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Repositório não encontrado' })).not.toBeInTheDocument();
@@ -203,7 +222,7 @@ describe('páginas de estudo de caso', () => {
     expect(container.querySelector('.case-skeleton-cover')).toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
     await act(async () => finishDetail(jsonResponse(repository())));
-    await screen.findByRole('heading', { level: 1, name: 'meu-caixa' });
+    await screen.findByRole('heading', { level: 1, name: 'Meu Caixa' });
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
   });
 
@@ -219,7 +238,7 @@ describe('páginas de estudo de caso', () => {
     expect(screen.queryByRole('heading', { name: 'Repositório não encontrado' })).not.toBeInTheDocument();
     expect(fetch).toHaveBeenCalledTimes(1);
     await user.click(screen.getByRole('button', { name: 'Tentar novamente' }));
-    await screen.findByRole('heading', { level: 1, name: 'meu-caixa' });
+    await screen.findByRole('heading', { level: 1, name: 'Meu Caixa' });
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
   });
 

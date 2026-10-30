@@ -7,26 +7,20 @@ export default function ProjectOverview({ study }) {
         <aside>
           <dl className="case-facts case-facts-stacked">
             <div>
-              <dt>Papel desempenhado</dt>
+              <dt>Contribuição individual</dt>
               <dd>{study.role}</dd>
-            </div>
-            <div>
-              <dt>Duração</dt>
-              <dd>{study.duration}</dd>
             </div>
           </dl>
           <p className="case-evidence-note">
-            Este estudo apresenta uma leitura técnica do código e da documentação disponíveis.
-            Etapas e aprendizados descrevem a implementação observável; a cronologia de
-            desenvolvimento depende de confirmação.
+            {study.limitation}
           </p>
         </aside>
         <div className="case-narrative">
           {[
-            ['Contexto', study.context],
+            ['Contexto e público', study.context],
             ['Problema', study.problem],
-            ['Objetivo', study.objective],
-            ['Público', study.audience],
+            ['Decisão e implementação', study.implementation],
+            ['Evidência', study.evidence],
           ].map(([title, text]) => (
             <div key={title}>
               <h3>{title}</h3>

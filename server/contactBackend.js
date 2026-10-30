@@ -35,7 +35,12 @@ export async function processContact(body, clientAddress) {
     }
     if (reservation.result !== 'claimed') return [reservation.result === 'conflict' ? 409 : 429, { error: failure }];
     // Email is an optional notification; the dashboard reads this persisted row.
-    if (!configured(['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL'])) return [200, { ok: true }];
+    if (!configured(['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL'])) {
+      // Use the existing diagnostic field: no schema migration or delivery queue is needed.
+      await database(`contact_messages?id=eq.${reservation.id}`, { method: 'PATCH', headers: { Prefer: 'return=minimal' },
+        body: JSON.stringify({ email_error: 'not_configured' }) }).catch(() => {});
+      return [200, { ok: true }];
+    }
     let emailId;
     try {
       const email = await fetch('https://api.resend.com/emails', {

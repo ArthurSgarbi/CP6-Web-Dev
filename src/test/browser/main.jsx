@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import App from '../../App.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
 import { repository, jsonResponse } from '../fixtures.js';
 import CaseGalleryHarness from './CaseGalleryHarness.jsx';
 import '../../styles.css';
@@ -42,6 +43,11 @@ function releaseLoading() {
 }
 
 window.fetch = (url, options) => {
+  if (String(url).startsWith('/api/featured')) return Promise.resolve(
+    scenario === 'featured-error' ? jsonResponse({}, 503) : jsonResponse({ projects: scenario === 'unselected' ? [] : samples.map((sample, position) => ({ repository_name: sample.name, position })) }),
+  );
+  // This UI harness must never write to real contact or administrative services.
+  if (String(url).startsWith('/api/')) return Promise.resolve(jsonResponse({ error: 'Use o cenário dedicado de contato ou administração.' }, 401));
   if (!String(url).startsWith('https://api.github.com/')) return realFetch(url, options);
   const requestUrl = String(url);
   calls.push(requestUrl);
@@ -110,13 +116,15 @@ function Harness() {
     <>
       <aside style={{ position: 'sticky', top: 0, zIndex: 200, padding: 14, background: '#d6eb78', color: '#171b12', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }} aria-label="Controles de verificação local">
         <strong>Verificação local · API e metadados simulados</strong>
+        <ThemeToggle />
         <label>Cenário <select value={selectedScenario} onChange={selectScenario}>
           <option value="loading">Carregamento</option><option value="success">Sucesso</option>
           <option value="empty">Lista vazia</option><option value="filtered">Somente forks e arquivados</option>
+          <option value="unselected">Sem destaques selecionados</option><option value="featured-error">Falha na seleção de destaques</option>
           <option value="error">Indisponível</option><option value="limit">Limite de consultas</option><option value="missing">Repositório inexistente</option>
         </select></label>
         <label>Destino <select value={destination} onChange={selectDestination}>
-          <option value="/">Home /</option>
+          <option value="/">Página inicial /</option>
           {samples.map((sample) => <option key={sample.name} value={`/projetos/${sample.name}`}>{sample.name}</option>)}
           <option value="/projetos/CP6-Web-Dev">CP6-Web-Dev · sem conteúdo editorial</option>
           <option value="gallery">Galeria de teste</option>

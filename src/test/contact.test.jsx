@@ -27,10 +27,13 @@ describe('Contato', () => {
     const fetch = vi.fn(() => new Promise((done) => { resolve = done; })); vi.stubGlobal('fetch', fetch);
     const user = userEvent.setup(); render(<Contact />); await fill(user);
     await user.dblClick(screen.getByRole('button', { name: 'Enviar mensagem' }));
-    expect(screen.getByRole('button', { name: 'Enviando...' })).toBeDisabled(); expect(fetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Enviando…' })).toBeDisabled(); expect(fetch).toHaveBeenCalledTimes(1);
     resolve({ ok: true, json: async () => ({ ok: true }) });
-    await screen.findByText('Mensagem enviada com sucesso! Retornarei o contato em breve.');
+    await screen.findByText('Mensagem recebida com sucesso. Obrigado pelo contato!');
     expect(screen.getByLabelText('Nome', { exact: true })).toHaveValue('');
+    await user.type(screen.getByLabelText('Nome', { exact: true }), 'Outra pessoa');
+    expect(screen.queryByText('Mensagem recebida com sucesso. Obrigado pelo contato!')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
   });
   it('preserva dados após erro e repete a mesma chave na nova tentativa', async () => {
     const fetch = vi.fn().mockRejectedValueOnce(new TypeError('offline')).mockResolvedValueOnce({ ok: false, status: 502, json: async () => ({}) }).mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true }) });

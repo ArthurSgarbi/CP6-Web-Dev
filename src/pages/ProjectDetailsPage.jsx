@@ -98,6 +98,10 @@ export default function ProjectDetailsPage() {
           </p>
         </section>
       )}
+      <nav className="case-ending page-width" aria-label="Continuar a navegação">
+        <Link className="text-link" to="/#work">← Todos os projetos</Link>
+        <Link className="text-link" to="/#contato">Conversar sobre um projeto ↗</Link>
+      </nav>
     </main>
   );
 }

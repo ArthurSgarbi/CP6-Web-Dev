@@ -23,28 +23,15 @@ export default function Footer({ navigate }) {
           className="footer-title"
           href="#work"
           onClick={(event) => navigate(event, 'work')}
-          aria-label="Revisitar os estudos visuais"
         >
           <span>Mantenha a curiosidade<span className="title-dot">.</span></span>
           <Icon name="arrow-up-right" />
         </a>
 
-        <div className="footer-admin" aria-labelledby="footer-admin-title">
-          <div>
-            <p id="footer-admin-title">Área do proprietário</p>
-            <span>Gerencie suas mensagens e os projetos em destaque.</span>
-          </div>
-          <Link className="footer-admin-link" to="/dashboard">
-            Acessar dashboard <Icon name="arrow-up-right" />
-          </Link>
-        </div>
-
         <div className="footer-bottom">
-          <span>Explorações de design © 2026</span>
-          <span>Arthur Sgarbi Sousa</span>
-          <a href="#work" onClick={(event) => navigate(event, 'work')}>
-            CP6 de Web Dev <Icon name="arrow-up-right" />
-          </a>
+          <span>Arthur Sgarbi © 2026</span>
+          <span>Engenharia de Software · FIAP</span>
+          <Link to="/dashboard">Acessar painel <Icon name="arrow-up-right" /></Link>
         </div>
       </div>
     </footer>

@@ -17,6 +17,7 @@ export default function Contact() {
   const attempt = useRef(null);
   function change(key, value) {
     setValues((current) => ({ ...current, [key]: value }));
+    if (state === 'success') { setState('idle'); setFeedback(''); }
     attempt.current = null;
     if (errors[key]) setErrors((current) => ({ ...current, [key]: validateContact({ ...values, [key]: value })[key] }));
   }
@@ -33,7 +34,7 @@ export default function Contact() {
     try {
       await sendContact(values, attempt.current);
       setValues(empty); attempt.current = null; setState('success');
-      setFeedback('Mensagem enviada com sucesso! Retornarei o contato em breve.');
+      setFeedback('Mensagem recebida com sucesso. Obrigado pelo contato!');
     } catch (error) {
       setState('error'); setFeedback(error.message);
       if (error.fields) {
@@ -50,6 +51,14 @@ export default function Contact() {
           <h2 id="contact-title">Vamos criar<br />algo juntos<span className="title-dot">?</span></h2>
           <p>Uma ideia, um projeto ou uma conversa. Conte o que você tem em mente.</p>
           <span className="contact-note">Preencha todos os campos para começar.</span>
+          <div className="contact-alternatives" aria-label="Outros canais de contato">
+            <a href="mailto:arthursgarbi037@gmail.com">arthursgarbi037@gmail.com <Icon /></a>
+            <a href="https://www.linkedin.com/in/arthur-sgarbi/" target="_blank" rel="noopener noreferrer">Meu perfil no LinkedIn <Icon /></a>
+          </div>
+          <details className="contact-privacy">
+            <summary>Como seus dados são usados</summary>
+            <p>Seu nome, e-mail e mensagem ficam disponíveis no painel privado do portfólio para que eu possa ler e responder ao contato. Se a notificação por e-mail estiver habilitada, uma cópia também é enviada ao meu e-mail.</p>
+          </details>
         </div>
         <form className="contact-form" onSubmit={submit} noValidate aria-busy={state === 'sending'}>
           <fieldset disabled={state === 'sending'}>
@@ -78,7 +87,7 @@ export default function Contact() {
             <div className="contact-trap" aria-hidden="true"><label htmlFor="contact-website">Website</label>
               <input id="contact-website" name="website" tabIndex={-1} autoComplete="off" value={values.website} onChange={(event) => change('website', event.target.value)} /></div>
             <button className="contact-submit" type="submit" disabled={state === 'sending'}>
-              {state === 'sending' ? 'Enviando...' : 'Enviar mensagem'}<Icon name="arrow-up-right" />
+              {state === 'sending' ? 'Enviando…' : 'Enviar mensagem'}<Icon name="arrow-up-right" />
             </button>
           </fieldset>
           <div className={`contact-feedback contact-feedback-${state}`} role="status" aria-live="polite" aria-atomic="true">{feedback}</div>

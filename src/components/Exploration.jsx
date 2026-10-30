@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import SectionLabel from './SectionLabel.jsx';
 import TextLink from './TextLink.jsx';
 
 const steps = [
   {
     title: 'Entender',
-    description: 'Começo pelo que o projeto precisa permitir fazer. No Meu Caixa, isso envolve organizar as finanças pessoais; no projeto Shopee, acompanhar estoque e gastos. Esses objetivos ajudam a definir quais informações e ações precisam aparecer na interface.',
+    description: 'Começo pelo que o projeto precisa permitir fazer. No Meu Caixa, isso envolve organizar as finanças pessoais; no SYNC Mobile, acompanhar estoque e pedidos. Esses objetivos ajudam a definir quais informações e ações precisam aparecer na interface.',
   },
   {
     title: 'Planejar',
@@ -17,13 +16,11 @@ const steps = [
   },
   {
     title: 'Validar',
-    description: 'Confiro se a interação corresponde à ação de quem usa. Nesta seção, por exemplo, passar o mouse revela os detalhes, enquanto o clique ou o teclado permitem manter uma etapa aberta. Uso comportamentos concretos como esse para orientar a revisão e os ajustes.',
+    description: 'Confiro os fluxos completos, inclusive quando algo dá errado. Neste portfólio, verifico a navegação por teclado, o comportamento em telas pequenas e os estados de carregamento, erro e envio. Os testes automatizados ajudam a evitar regressões enquanto reviso a interface no navegador.',
   },
 ];
 
 export default function Exploration({ navigate }) {
-  const [hoveredStep, setHoveredStep] = useState(null);
-  const [pinnedSteps, setPinnedSteps] = useState([]);
 
   return (
     <section
@@ -93,20 +90,8 @@ export default function Exploration({ navigate }) {
               {steps.map(({ title, description }, index) => (
                 <li key={title}>
                   <span className="exploration-step-number" aria-hidden="true">0{index + 1}</span>
-                  <details
-                    className="exploration-step-details"
-                    open={hoveredStep === index || pinnedSteps.includes(index)}
-                    onPointerEnter={(event) => {
-                      if (event.pointerType === 'mouse') setHoveredStep(index);
-                    }}
-                    onPointerLeave={() => setHoveredStep(null)}
-                  >
-                    <summary onClick={(event) => {
-                      event.preventDefault();
-                      setPinnedSteps((current) => current.includes(index)
-                        ? current.filter((step) => step !== index)
-                        : [...current, index]);
-                    }}>
+                  <details className="exploration-step-details">
+                    <summary>
                       <h3><span className="exploration-step-title">{title}</span><span className="exploration-step-toggle" aria-hidden="true">+</span></h3>
                       <p className="exploration-step-summary">{description.split('. ')[0]}.</p>
                     </summary>

@@ -8,6 +8,7 @@ const req = (resource, method = 'GET', body) => ({ url: `/api/admin?resource=${r
 beforeEach(() => {
   for (const name of ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY']) vi.stubEnv(name, 'test-only');
   vi.stubEnv('CONTACT_ADMIN_USER_IDS', id);
+  for (const name of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL']) vi.stubEnv(name, '');
   vi.stubGlobal('fetch', vi.fn());
 });
 it('login usa cookie HttpOnly seguro em produção sem retornar token', async () => {
@@ -33,7 +34,8 @@ it('valida UUID, status, 404 e retorna apenas os campos públicos selecionados',
   response = res(); await admin(req(`messages&id=${id}`, 'PATCH', { status: 'invalid' }), response); expect(response.code).toBe(400);
   fetch.mockReset().mockResolvedValueOnce(json({ id })).mockResolvedValueOnce(json([])); response = res(); await admin(req(`messages&id=${id}`, 'PATCH', { status: 'responded' }), response); expect(response.code).toBe(404);
   fetch.mockReset().mockResolvedValueOnce(json({ id })).mockResolvedValueOnce(json([{ id, status: 'responded' }])); response = res(); await admin(req(`messages&id=${id}`, 'PATCH', { status: 'responded' }), response);
-  expect(response.body.message.status).toBe('responded'); expect(fetch.mock.calls[1][0]).not.toMatch(/email_error|email_provider_id/);
+  expect(response.body.message.status).toBe('responded'); expect(response.body.message).not.toHaveProperty('email_error');
+  expect(fetch.mock.calls[1][0]).not.toContain('email_provider_id');
   expect(fetch.mock.calls[1][1].headers.apikey).toBe('test-only');
 });
 it('recusa requisição de outra origem antes de consultar serviços', async () => {
@@ -51,6 +53,29 @@ it('preserva paginação, filtro e contagem global', async () => {
   fetch.mockResolvedValueOnce(json({ id })).mockResolvedValueOnce(json([])).mockResolvedValueOnce(json({ new: 60, responded: 20 }));
   const response = res(); await admin(req('messages&offset=50&status=responded'), response);
   expect(response.code).toBe(200); expect(fetch.mock.calls[1][0]).toContain('limit=50&offset=50&status=eq.responded'); expect(response.body.counts.new).toBe(60);
+});
+it('filtra novas e visualizadas como aguardando resposta sem incluir arquivadas', async () => {
+  fetch.mockResolvedValueOnce(json({ id })).mockResolvedValueOnce(json([])).mockResolvedValueOnce(json({ new: 1, responded: 2 }));
+  const response = res(); await admin(req('messages&status=awaiting'), response);
+  expect(response.code).toBe(200);
+  expect(fetch.mock.calls[1][0]).toContain('&status=in.(new,read)');
+  expect(response.body.counts.responded).toBe(2);
+});
+it.each([
+  ['pending', 'not_configured', true, 'not_configured'],
+  ['pending', null, false, 'not_configured'],
+  ['pending', null, true, 'unconfirmed'],
+  ['sent', null, false, 'sent'],
+  ['failed', 'provider-detail-not-for-client', true, 'failed'],
+])('expõe estado seguro de notificação: %s / %s', async (email_status, email_error, emailConfigured, expected) => {
+  if (emailConfigured) for (const key of ['RESEND_API_KEY', 'CONTACT_FROM_EMAIL', 'CONTACT_TO_EMAIL']) vi.stubEnv(key, 'test-only');
+  fetch.mockResolvedValueOnce(json({ id }))
+    .mockResolvedValueOnce(json([{ id, email_status, email_error }]))
+    .mockResolvedValueOnce(json({}));
+  const response = res(); await admin(req('messages'), response);
+  expect(response.body.messages[0].notification_status).toBe(expected);
+  expect(response.body.messages[0]).not.toHaveProperty('email_error');
+  expect(JSON.stringify(response.body)).not.toContain('provider-detail');
 });
 it('endpoint público é somente leitura e consulta apenas nome e posição', async () => {
   fetch.mockResolvedValue(json([{ repository_name: 'one', position: 0 }])); const response = res(); await featured({ method: 'GET' }, response);

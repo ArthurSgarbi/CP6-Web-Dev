@@ -1,0 +1,13 @@
+
+> digital-excellence@1.0.0 test
+> vitest run --fileParallelism=false
+
+
+ RUN  v4.1.12 C:/Users/Arthur/Desktop/CP6 web-dev/CP6-Web-Dev
+
+
+ Test Files  12 passed (12)
+      Tests  132 passed (132)
+   Start at  11:02:56
+   Duration  72.00s (transform 1.19s, setup 10.68s, import 6.25s, tests 21.00s, environment 29.18s)
+

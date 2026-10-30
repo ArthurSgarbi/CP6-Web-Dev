@@ -1,6 +1,16 @@
 # Conteúdo editorial dos estudos de caso
 
-Fontes públicas consultadas em 23/10/2026 pelo conector GitHub, na branch padrão `main`. O conteúdo em `src/data/projectCaseStudies.js` complementa os metadados da API. Não substitui nome, descrição, linguagem, datas, estrelas, tópicos ou links de ação.
+Fontes públicas consultadas em 23/10/2026 pelo conector GitHub, na branch padrão `main`. A revisão de 29–30/10/2026 preserva esses registros e reorganiza a apresentação pública. O conteúdo em `src/data/projectCaseStudies.js` complementa os metadados da API. `src/utils/formatRepository.js` define nomes, descrições e um destino editorial verificado; identificador, URL do repositório, linguagem, datas, estrelas e tópicos continuam vindo do GitHub. A descrição original permanece em `repositoryDescription`.
+
+## Formato público atual
+
+- As páginas continuam curtas, com apenas **Sobre o projeto** e **O desafio**. Contexto, problema, decisão, implementação, evidência e limites ficam dentro dessas seções.
+- Nomes de apresentação: Meu Caixa, SYNC Mobile — Gestão de loja, AETHER — Portal institucional e Memórias a dois. Os slugs e repositórios não foram renomeados.
+- Contribuição individual fica explicitamente em preparação, separada da finalidade do projeto. As durações específicas sem confirmação foram retiradas. Não se atribuem responsabilidades ou relatos pessoais de aprendizado sem evidência.
+- SYNC Mobile aponta para `https://sync-mobile.vercel.app/demo`, com a ação **Abrir demonstração**. O endereço abriu no navegador em 30/10/2026; os exemplos são fictícios e a operação do produto é manual, sem sincronização com a Shopee.
+- A imagem principal usa a primeira captura real disponível da galeria, com legenda honesta. Meu Caixa ainda mostra a tela pública de acesso; não é apresentada como painel financeiro autenticado.
+- As páginas terminam com retorno aos projetos e contato. Zero estrelas deixa de ocupar espaço; metadados úteis permanecem.
+- Componentes de galeria ampliada e seções antigas continuam como material reutilizável, com cobertura de testes/harness. Não voltaram à composição pública. Os critérios históricos abaixo se aplicam a esse material de pesquisa, e não significam que todas as seções sejam exibidas.
 
 ## Critérios de escrita
 
@@ -8,7 +18,7 @@ Fontes públicas consultadas em 23/10/2026 pelo conector GitHub, na branch padr�
 - Decisões descrevem escolhas observáveis no código. Desafios são problemas técnicos identificáveis; soluções apontam os mecanismos encontrados, sem atribuir uma intenção histórica não documentada.
 - Resultados descrevem entregáveis presentes. Aprendizados são conclusões técnicas desta leitura, sem atribuir relatos pessoais ao proprietário.
 - Próximos passos são propostas, identificadas como tal. Não representam compromissos do autor nem funcionalidades existentes.
-- Papel individual e duração usam `[Informação a confirmar com o proprietário]`. Datas de fotografias, do contador ou da API não são duração do projeto.
+- Papel individual e duração dependem de confirmação do proprietário. A página atual sinaliza contribuição em preparação e omite duração; datas de fotografias, do contador ou da API não são duração do projeto.
 - Suítes dos projetos de origem foram inspecionadas, não executadas nesta revisão editorial. Testes do portfólio não comprovam funcionamento dos produtos externos.
 - Não foram pesquisadas métricas comerciais, números de usuários, receita ou ganhos de performance. Nenhum desses resultados é atribuído aos produtos.
 
@@ -47,7 +57,7 @@ Os quatro originais abaixo foram abertos e inspecionados durante esta revisão. 
 | `docs/project-images/shopee-demo-original.png` | `/images/projects/site-projeto-shopee/01-demo.webp` | 1600 × 1100 | Demo com dados fictícios, avisos, indicadores e tabela. Os valores não são resultados comerciais. |
 | `public/images/site-pessoal-para-surpresa.png` | `/images/projects/anninha-site-novo/01-pagina-pessoal.webp` | 1897 × 902 | Abertura da página pessoal com texto e fotografia existentes. |
 
-As capas `meu-caixa.png`, `site-projeto-shopee.png` e `anninha-site-novo.png` são composições que incluem capturas reais, conforme `docs/PROJECT_IMAGES.md` e `scripts/prepare-project-images.mjs`; não são novos screenshots integrais das aplicações. `AETHER-front-end.png` já é uma captura da página. O campo `coverCaption` de cada estudo identifica essa origem junto à capa, independentemente das legendas da galeria. A antiga composição do perfil `ArthurSgarbi.png` não faz parte destes quatro estudos.
+As capas `meu-caixa.png`, `site-projeto-shopee.png` e `anninha-site-novo.png` são composições que incluem capturas reais, conforme `docs/PROJECT_IMAGES.md` e `scripts/prepare-project-images.mjs`; não são novos screenshots integrais das aplicações. `AETHER-front-end.png` já é uma captura da página. Os cartões e prévias mantêm essas capas; a página completa usa a primeira captura não pendente e sua própria legenda. `coverCaption` fica como alternativa quando não existe captura disponível. A antiga composição do perfil `ArthurSgarbi.png` não faz parte destes quatro estudos.
 
 Cada galeria reserva ainda `/images/projects/<nome-exato>/02-responsivo.webp`. Esses quatro arquivos estão pendentes: os itens possuem `pending: true`, legenda `[Imagem a adicionar]` e alt descritivo. Esse booleano pertence ao item da galeria e é diferente do array `pending` do estudo, que reúne informações a confirmar. O componente deve renderizar o placeholder diretamente para `pending: true`, sem criar uma imagem nem solicitar o caminho à rede; portanto, a pendência editorial não precisa provocar um HTTP 404. As dimensões 780 × 1688 são o espaço planejado para a captura, não uma medição de imagem existente. Ao inserir a captura real, remover `pending` ou defini-lo como `false`, conferir as dimensões e substituir legenda e texto alternativo.
 
@@ -55,7 +65,7 @@ Para Meu Caixa, a imagem extra deve usar somente dados fictícios em área auten
 
 ## Informações que o proprietário precisa confirmar
 
-Pendências também aparecem em cada página pelo campo `pending`:
+O campo `pending` preserva o inventário interno abaixo. A página curta não renderiza esse inventário completo: mostra a contribuição em preparação e as limitações relevantes. Novas evidências devem ser verificadas antes de substituir os textos:
 
 - Papel individual, divisão de responsabilidades, colaboradores e duração dos quatro projetos. O AETHER identifica participantes no README, mas não detalha a contribuição individual.
 - Origem da ideia, pesquisa, sequência real das decisões e metodologia adotada, caso se deseje narrar o processo histórico.
