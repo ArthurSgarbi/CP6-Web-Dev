@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "name": "Home em 320/390/768/1440 px nos dois temas",
+      "passed": true,
+      "detail": "8 combinations; full-page screenshots, 1 H1, no document overflow or visible broken images."
+    }
+  ],
+  "measurements": [
+    {
+      "width": 320,
+      "client": 320,
+      "scroll": 305,
+      "h1": 1,
+      "broken": [],
+      "theme": "light"
+    },
+    {
+      "width": 320,
+      "client": 320,
+      "scroll": 305,
+      "h1": 1,
+      "broken": [],
+      "theme": "dark"
+    },
+    {
+      "width": 390,
+      "client": 390,
+      "scroll": 375,
+      "h1": 1,
+      "broken": [],
+      "theme": "light"
+    },
+    {
+      "width": 390,
+      "client": 390,
+      "scroll": 375,
+      "h1": 1,
+      "broken": [],
+      "theme": "dark"
+    },
+    {
+      "width": 768,
+      "client": 768,
+      "scroll": 753,
+      "h1": 1,
+      "broken": [],
+      "theme": "light"
+    },
+    {
+      "width": 768,
+      "client": 768,
+      "scroll": 753,
+      "h1": 1,
+      "broken": [],
+      "theme": "dark"
+    },
+    {
+      "width": 1440,
+      "client": 1440,
+      "scroll": 1425,
+      "h1": 1,
+      "broken": [],
+      "theme": "light"
+    },
+    {
+      "width": 1440,
+      "client": 1440,
+      "scroll": 1425,
+      "h1": 1,
+      "broken": [],
+      "theme": "dark"
+    }
+  ],
+  "events": [
+    {
+      "type": "public-api",
+      "status": 200,
+      "url": "http://127.0.0.1:5173/api/featured"
+    },
+    {
+      "type": "public-api",
+      "status": 200,
+      "url": "https://api.github.com/users/ArthurSgarbi/repos?type=owner&sort=updated&direction=desc&per_page=100"
+    }
+  ]
+}

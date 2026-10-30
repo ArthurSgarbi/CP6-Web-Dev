@@ -1,0 +1,122 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-640.webp",
+      "complete": true,
+      "naturalWidth": 276,
+      "naturalHeight": 130,
+      "width": 259,
+      "height": 121.96875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-640.webp",
+      "complete": true,
+      "naturalWidth": 276,
+      "naturalHeight": 130,
+      "width": 259,
+      "height": 121.96875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-640.webp",
+      "complete": true,
+      "naturalWidth": 346,
+      "naturalHeight": 163,
+      "width": 329,
+      "height": 155.21875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-640.webp",
+      "complete": true,
+      "naturalWidth": 346,
+      "naturalHeight": 163,
+      "width": 329,
+      "height": 155.21875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-1280.webp",
+      "complete": true,
+      "naturalWidth": 698,
+      "naturalHeight": 329,
+      "width": 681.875,
+      "height": 322.828125,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-1280.webp",
+      "complete": true,
+      "naturalWidth": 698,
+      "naturalHeight": 329,
+      "width": 681.875,
+      "height": 322.828125,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-1600.webp",
+      "complete": true,
+      "naturalWidth": 1310,
+      "naturalHeight": 618,
+      "width": 1293.390625,
+      "height": 613.296875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "image": {
+      "src": "http://127.0.0.1:5173/images/hero/meu-caixa-1600.webp",
+      "complete": true,
+      "naturalWidth": 1310,
+      "naturalHeight": 618,
+      "width": 1293.390625,
+      "height": 613.296875,
+      "display": "block",
+      "visibility": "visible",
+      "opacity": "1"
+    }
+  }
+]

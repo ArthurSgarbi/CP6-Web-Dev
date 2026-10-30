@@ -1,9 +1,12 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Hero from '../components/Hero.jsx';
+import { StrictMode } from 'react';
+import userEvent from '@testing-library/user-event';
 
 beforeEach(() => {
-  vi.useFakeTimers(); sessionStorage.clear();
+  // Control only the carousel clock; keep user-event/RTL promise flushing real.
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] }); sessionStorage.clear();
   window.matchMedia.mockImplementation(query => ({ matches: false, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
 });
 afterEach(() => { vi.useRealTimers(); sessionStorage.clear(); vi.restoreAllMocks(); });
@@ -67,5 +70,129 @@ describe('carrossel de interfaces', () => {
     fireEvent.click(next());
     expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Reproduzir carrossel' })).toBeInTheDocument();
+  });
+
+  it('suspende durante hover e reinicia um intervalo inteiro ao sair', () => {
+    render(<Hero navigate={vi.fn()} />);
+    const region = screen.getByRole('region', { name: 'Amostras de interfaces' });
+    act(() => vi.advanceTimersByTime(6000));
+    fireEvent.mouseEnter(region);
+    expect(region).toHaveAttribute('data-paused', 'true');
+    expect(document.getElementById('project-reel-slides')).toHaveAttribute('aria-live', 'polite');
+    act(() => vi.advanceTimersByTime(21000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    expect(sessionStorage.getItem('portfolio-reel-paused')).toBeNull();
+    fireEvent.mouseLeave(region);
+    act(() => vi.advanceTimersByTime(6999));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+    expect(document.getElementById('project-reel-slides')).toHaveAttribute('aria-live', 'off');
+  });
+
+  it('sair do hover não desfaz pausa manual nem interrupção por foco', () => {
+    render(<Hero navigate={vi.fn()} />);
+    const region = screen.getByRole('region', { name: 'Amostras de interfaces' });
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar carrossel' }));
+    fireEvent.mouseEnter(region); fireEvent.mouseLeave(region);
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Reproduzir carrossel' }));
+    fireEvent.focus(next(), { relatedTarget: document.body });
+    fireEvent.blur(next(), { relatedTarget: document.body });
+    fireEvent.mouseEnter(region); fireEvent.mouseLeave(region);
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    expect(sessionStorage.getItem('portfolio-reel-paused')).toBe('true');
+  });
+
+  it.each(['{Enter}', ' '])('exige retomada explícita e permite reproduzir com %s mantendo foco', async key => {
+    const user = userEvent.setup();
+    render(<><Hero navigate={vi.fn()} /><input aria-label="Fora do carrossel" /></>);
+    const playback = screen.getByRole('button', { name: 'Pausar carrossel' });
+    act(() => playback.focus());
+    expect(playback).toHaveAccessibleName('Reproduzir carrossel');
+    act(() => screen.getByLabelText('Fora do carrossel').focus());
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    act(() => playback.focus());
+    await user.keyboard(key);
+    expect(playback).toHaveFocus();
+    expect(playback).toHaveAccessibleName('Pausar carrossel');
+    expect(sessionStorage.getItem('portfolio-reel-paused')).toBe('false');
+    act(() => vi.advanceTimersByTime(7000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+    await user.tab(); // Internal focus does not revoke the explicit authorization.
+    act(() => vi.advanceTimersByTime(7000));
+    expect(screen.getByRole('group', { name: '3 de 3: Memórias a dois' })).toBeInTheDocument();
+    act(() => screen.getByLabelText('Fora do carrossel').focus());
+    act(() => playback.focus());
+    expect(playback).toHaveAccessibleName('Reproduzir carrossel');
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '3 de 3: Memórias a dois' })).toBeInTheDocument();
+  });
+
+  it('o clique em Pausar mantém sua intenção mesmo quando o foco muda antes do click', async () => {
+    const user = userEvent.setup();
+    render(<Hero navigate={vi.fn()} />);
+    await user.click(screen.getByRole('button', { name: 'Pausar carrossel' }));
+    await user.unhover(screen.getByRole('region', { name: 'Amostras de interfaces' }));
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('button', { name: 'Reproduzir carrossel' })).toHaveFocus();
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Reproduzir carrossel' }));
+    act(() => vi.advanceTimersByTime(14000)); // Still hovered.
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    await user.unhover(screen.getByRole('region', { name: 'Amostras de interfaces' }));
+    act(() => vi.advanceTimersByTime(7000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+  });
+
+  it('suspende em aba oculta e não desfaz uma pausa quando volta a ficar visível', () => {
+    let hidden = true;
+    vi.spyOn(document, 'hidden', 'get').mockImplementation(() => hidden);
+    render(<Hero navigate={vi.fn()} />);
+    const visibility = value => {
+      hidden = value;
+      fireEvent(document, new Event('visibilitychange'));
+    };
+    act(() => vi.advanceTimersByTime(21000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    visibility(false);
+    act(() => vi.advanceTimersByTime(7000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+    visibility(true);
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar carrossel' }));
+    visibility(false);
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+  });
+
+  it('reage à preferência de movimento e limpa timers e listeners em StrictMode', () => {
+    const preference = new EventTarget();
+    preference.matches = false;
+    window.matchMedia.mockReturnValue(preference);
+    const motionAdd = vi.spyOn(preference, 'addEventListener');
+    const motionRemove = vi.spyOn(preference, 'removeEventListener');
+    const visibilityAdd = vi.spyOn(document, 'addEventListener');
+    const visibilityRemove = vi.spyOn(document, 'removeEventListener');
+    const view = render(<StrictMode><Hero navigate={vi.fn()} /></StrictMode>);
+    expect(vi.getTimerCount()).toBe(1);
+    act(() => { preference.matches = true; preference.dispatchEvent(new Event('change')); });
+    expect(vi.getTimerCount()).toBe(0);
+    act(() => vi.advanceTimersByTime(14000));
+    expect(screen.getByRole('group', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
+    act(() => { preference.matches = false; preference.dispatchEvent(new Event('change')); });
+    expect(vi.getTimerCount()).toBe(1);
+    act(() => vi.advanceTimersByTime(7000));
+    expect(screen.getByRole('group', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
+    view.unmount();
+    expect(vi.getTimerCount()).toBe(0);
+    for (const [type, listener] of motionAdd.mock.calls) expect(motionRemove).toHaveBeenCalledWith(type, listener);
+    for (const [type, listener] of visibilityAdd.mock.calls.filter(([type]) => type === 'visibilitychange')) {
+      expect(visibilityRemove).toHaveBeenCalledWith(type, listener);
+    }
   });
 });

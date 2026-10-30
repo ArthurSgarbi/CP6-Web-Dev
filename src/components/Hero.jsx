@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon.jsx';
 import TextLink from './TextLink.jsx';
 import './hero.css';
@@ -18,10 +18,12 @@ function readPause() {
 export default function Hero({ navigate }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(readPause);
-  const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const pauseBeforePointerFocus = useRef(null);
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [pageHidden, setPageHidden] = useState(false);
-  const autoPlaying = !paused && !focused && !reducedMotion && !pageHidden;
+  const [pageHidden, setPageHidden] = useState(() => document.hidden);
+  // Focus/manual navigation revoke playback; hover/visibility only suspend it.
+  const autoPlaying = !paused && !hovered && !reducedMotion && !pageHidden;
 
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -70,8 +72,11 @@ export default function Hero({ navigate }) {
         </div>
         <div className="project-reel" role="region" aria-roledescription="carrossel" aria-label="Amostras de interfaces"
           data-paused={!autoPlaying}
-          onFocus={() => setFocused(true)}
-          onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          onFocus={event => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setPlaybackPause(true);
+          }}
           onKeyDown={event => {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
               event.preventDefault();
@@ -97,7 +102,15 @@ export default function Hero({ navigate }) {
           </div>
           <div className="project-reel-controls">
             {reducedMotion ? <span className="project-reel-motion">Navegação manual · movimento reduzido</span> :
-              <button type="button" className="project-reel-playback" onClick={() => setPlaybackPause(!paused)} aria-controls="project-reel-slides">
+              <button type="button" className="project-reel-playback"
+                onPointerDown={() => { pauseBeforePointerFocus.current = paused; }}
+                onPointerCancel={() => { pauseBeforePointerFocus.current = null; }}
+                onClick={event => {
+                  // Pointer focus pauses before click: honor the action originally pressed.
+                  const wasPaused = event.detail > 0 ? pauseBeforePointerFocus.current ?? paused : paused;
+                  pauseBeforePointerFocus.current = null;
+                  setPlaybackPause(!wasPaused);
+                }} aria-controls="project-reel-slides">
                 {paused ? 'Reproduzir carrossel' : 'Pausar carrossel'}
               </button>}
             <div className="project-reel-navigation">
