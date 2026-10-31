@@ -18,7 +18,7 @@ Copie o exemplo somente se ainda não tiver um `.env`. O arquivo contém:
 VITE_GITHUB_USERNAME=ArthurSgarbi
 ```
 
-O endereço padrão é `http://127.0.0.1:5173/`. `npm run dev` serve o frontend e as rotas locais `/api` no mesmo processo, incluindo login, destaques e contato. Não é necessário iniciar outro terminal na porta 3001. Configure também as variáveis privadas de Supabase indicadas em `.env.example` para esses recursos. Reinicie o Vite depois de mudar o `.env`. `VITE_GITHUB_USERNAME` é pública, incluída durante o build; configure-a também no ambiente de build da Vercel. Sem ela, o desenvolvimento apresenta uma mensagem explicando como configurar a integração.
+O endereço padrão é `http://127.0.0.1:5173/`. `npm run dev` serve o frontend e as rotas locais `/api` no mesmo processo, incluindo login, destaques e contato. Não é necessário iniciar outro terminal na porta 3001. Configure também as variáveis privadas de Supabase indicadas em `.env.example` para esses recursos. Reinicie o Vite depois de mudar o `.env`. `VITE_GITHUB_USERNAME` é pública e incluída durante o build; é opcional e permite substituir o perfil padrão `ArthurSgarbi`. O portfólio funciona sem `.env` na Vercel: sem Supabase configurado, `/api/featured` usa a seleção editorial pública de `src/config/portfolio.js`. Com Supabase configurado, a seleção do painel tem prioridade, inclusive quando está vazia; falhas do banco continuam sendo informadas.
 
 `.env`, `.env.*`, `node_modules/` e `dist/` continuam ignorados pelo Git; `.env.example` é a exceção versionável. Não há credenciais no exemplo.
 

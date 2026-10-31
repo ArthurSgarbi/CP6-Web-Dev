@@ -82,3 +82,26 @@ it('endpoint público é somente leitura e consulta apenas nome e posição', as
   expect(response.body.projects).toEqual([{ repository_name: 'one', position: 0 }]); expect(fetch.mock.calls[0][0]).toContain('select=repository_name,position');
   const rejected = res(); await featured({ method: 'PUT' }, rejected); expect(rejected.code).toBe(405);
 });
+
+it('mantém os destaques públicos sem configuração do Supabase', async () => {
+  vi.stubEnv('SUPABASE_URL', '');
+  vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');
+  const response = res();
+  await featured({ method: 'GET' }, response);
+  expect(response.code).toBe(200);
+  expect(response.body.projects.map(item => item.repository_name)).toEqual([
+    'AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee',
+  ]);
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+it('preserva seleção vazia e informa falha quando o banco está configurado', async () => {
+  fetch.mockResolvedValueOnce(json([])).mockRejectedValueOnce(new Error('offline'));
+  const empty = res();
+  await featured({ method: 'GET' }, empty);
+  expect(empty.code).toBe(200);
+  expect(empty.body.projects).toEqual([]);
+  const failure = res();
+  await featured({ method: 'GET' }, failure);
+  expect(failure.code).toBe(503);
+});
