@@ -9,6 +9,9 @@ export default function ProjectImage({ project, width = 1200, height = 1500, cla
     <img
       className={className}
       src={usingFallback ? PROJECT_IMAGE_FALLBACK : project.image}
+      srcSet={usingFallback ? undefined : project.imageSrcSet}
+      sizes={project.imageSrcSet && !usingFallback ? '(max-width: 700px) calc(100vw - 44px), (max-width: 1100px) 46vw, 700px' : undefined}
+      decoding="async"
       alt={usingFallback
         ? `Composição abstrata usada como capa de ${project.title}`
         : project.imageAlt ?? `Imagem de apresentação de ${project.title}`}

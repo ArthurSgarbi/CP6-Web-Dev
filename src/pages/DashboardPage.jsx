@@ -7,6 +7,7 @@ import useGitHubProjects from '../hooks/useGitHubProjects.js';
 import ProjectImage from '../components/ProjectImage.jsx';
 import { projectCaseStudies } from '../data/projectCaseStudies.js';
 import './admin.css';
+import { setPageMetadata } from '../utils/pageMetadata.js';
 const labels = { new: 'Nova', read: 'Visualizada', responded: 'Respondida', archived: 'Arquivada' };
 const delivery = { sent: 'Aceita pelo serviço de e-mail; entrega não confirmada', not_configured: 'Não utilizada — serviço não configurado', pending: 'Sem confirmação de envio', unconfirmed: 'Sem confirmação de envio', failed: 'Falha na notificação' };
 export default function DashboardPage() {
@@ -45,7 +46,7 @@ export default function DashboardPage() {
   }, [selection]);
   const isSelected = name => selection.some(item => item.toLowerCase() === name.toLowerCase());
   const dirty = draft !== null && JSON.stringify(draft) !== JSON.stringify(saved);
-  useEffect(() => { document.title = 'Painel do portfólio — Arthur Sgarbi'; heading.current?.focus(); }, []);
+  useEffect(() => { heading.current?.focus(); return setPageMetadata({ title: 'Painel do portfólio — Arthur Sgarbi', description: 'Área de gestão do portfólio.', path: '/dashboard', noindex: true }); }, []);
   useEffect(() => {
     if (!dirty) return;
     const beforeUnload = event => { event.preventDefault(); event.returnValue = ''; };

@@ -9,11 +9,12 @@ import Footer from '../components/Footer.jsx';
 import StudyDialog from '../components/StudyDialog.jsx';
 import useReveal from '../hooks/useReveal.js';
 import useAnchorNavigation from '../hooks/useAnchorNavigation.js';
+import { homeMetadata, setPageMetadata } from '../utils/pageMetadata.js';
 
 export default function HomePage({ projects, projectsQuery, selectedProject, onSelect, onClose, onNext, onPrevious }) {
   const revealRef = useReveal(projects);
   const { activeSection, navigate } = useAnchorNavigation();
-  useEffect(() => { document.title = 'Arthur Sgarbi | Desenvolvimento de software'; }, []);
+  useEffect(() => setPageMetadata(homeMetadata), []);
 
   return (
     <div id="top" tabIndex="-1" ref={revealRef}>

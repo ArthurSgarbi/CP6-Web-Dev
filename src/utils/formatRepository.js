@@ -41,6 +41,7 @@ function getLiveUrl(homepage) {
 
 export function formatRepository(repository) {
   const presentation = projectPresentation[repository.name.toLowerCase()];
+  const coverName = repository.name.toLowerCase() === 'aether-front-end' ? 'AETHER-front-end' : repository.name.toLowerCase();
   return {
     id: repository.id,
     slug: repository.name,
@@ -59,7 +60,8 @@ export function formatRepository(repository) {
     topics: repository.topics,
     fork: repository.fork,
     archived: repository.archived,
-    image: `/images/${encodeURIComponent(repository.name)}.png`,
+    image: presentation ? `/images/covers/${coverName}-1200.webp` : `/images/${encodeURIComponent(repository.name)}.png`,
+    imageSrcSet: presentation ? [480, 800, 1200].map(width => `/images/covers/${coverName}-${width}.webp ${width}w`).join(', ') : undefined,
     detailsUrl: `/projetos/${encodeURIComponent(repository.name)}`,
   };
 }
