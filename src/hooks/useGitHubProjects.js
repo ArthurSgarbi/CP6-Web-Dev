@@ -2,8 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserRepositories } from '../services/githubApi.js';
 import { formatRepositories } from '../utils/formatRepository.js';
 import { getFeaturedProjects, selectFeatured } from '../services/adminApi.js';
+import { githubUsername } from '../config/portfolio.js';
 
-export const githubUsername = (import.meta.env.VITE_GITHUB_USERNAME ?? '').trim();
+export { githubUsername };
 export const githubKeys = {
   repositories: (username) => ['github', username.toLowerCase(), 'repositories'],
   repository: (username, name) => ['github', username.toLowerCase(), 'repository', name.toLowerCase()],
