@@ -10,7 +10,7 @@ export const projectCaseStudies = {
     "problem": "Em eventos climáticos severos, a perda de comunicação dificulta o acesso a informações. O desafio do portal é explicar esse cenário e tornar a proposta técnica compreensível para diferentes públicos.",
     "objective": "Apresentar a solução e orientar a navegação entre seus fundamentos. Monitoramento de sensores, retenção local e transmissão por rádio são conceitos descritos pelo portal; este frontend não implementa esses serviços.",
     "audience": "Defesa Civil, bombeiros, gestores públicos e pessoas em áreas de risco são os públicos declarados em objetivos.html. O portal também permite apresentar a proposta em contexto acadêmico.",
-    "role": "Trabalho em equipe; detalhamento da minha contribuição em preparação.",
+    "role": "Projeto em equipe. Fui responsável por toda a implementação em JavaScript do portal.",
     "process": [
       {
         "id": "discovery",
@@ -215,7 +215,7 @@ export const projectCaseStudies = {
       }
     ],
     "pending": [
-      "Papel individual e divisão de responsabilidades entre os participantes.",
+      "Divisão das responsabilidades não relacionadas a JavaScript entre os participantes.",
       "Duração e sequência real do desenvolvimento.",
       "Entrevistas, critérios de aceite e validações com o público, se realizados.",
       "Implementação e testes do ecossistema embarcado descrito pelo portal.",
@@ -234,7 +234,7 @@ export const projectCaseStudies = {
     "problem": "Uma previsão de despesa, uma reserva para uma meta e um gasto confirmado têm significados diferentes. Somá-los sem distinguir essas situações pode distorcer o saldo disponível.",
     "objective": "Permitir o registro e a consulta das finanças pessoais, mantendo distinção entre saldo, previsão e patrimônio. As contas são manuais: o README informa que não existe movimentação de contas bancárias reais.",
     "audience": "Pessoas que desejam acompanhar as próprias finanças em uma área individual. Essa caracterização é inferida das funcionalidades e do escopo declarado no README; não representa uma pesquisa de público comprovada.",
-    "role": "Detalhamento da minha contribuição em preparação.",
+    "role": "Desenvolvi esta aplicação individualmente para acompanhar e organizar gastos pessoais.",
     "process": [
       {
         "id": "discovery",
@@ -459,7 +459,7 @@ export const projectCaseStudies = {
       }
     ],
     "pending": [
-      "Papel individual, colaboradores e duração do desenvolvimento.",
+      "Duração do desenvolvimento.",
       "Origem da ideia, pesquisa de público e sequência real das decisões.",
       "Execução atual da suíte do produto e validação dos provedores externos.",
       "Capturas atuais das áreas autenticadas em desktop e celular, com dados fictícios.",
@@ -478,7 +478,7 @@ export const projectCaseStudies = {
     "problem": "Produtos, pedidos e entregas precisam permanecer relacionados. Ao apresentar o sistema, também é necessário proteger os cadastros administrativos e deixar claro que uma simulação não representa uma venda real.",
     "objective": "Centralizar o cadastro e a consulta da operação manual, protegendo a área administrativa e oferecendo uma demo com dados fictícios. O README informa que ainda não existe sincronização com Shopee ou transportadoras.",
     "audience": "Administradores de uma loja que registram e acompanham sua operação. Essa caracterização deriva do fluxo documentado; volume de vendas, número de operadores e uso comercial não foram comprovados.",
-    "role": "Detalhamento da minha contribuição em preparação.",
+    "role": "Desenvolvi este painel individualmente para acompanhar o estoque e os gastos da minha operação na Shopee.",
     "process": [
       {
         "id": "discovery",
@@ -700,7 +700,7 @@ export const projectCaseStudies = {
       }
     ],
     "pending": [
-      "Papel individual, colaboradores e duração do desenvolvimento.",
+      "Duração do desenvolvimento.",
       "Origem do projeto e validação do fluxo com operadores reais.",
       "Execução atual dos testes do produto e envio real do código de autenticação.",
       "Capturas em celular e das áreas administrativas com dados fictícios.",
@@ -719,7 +719,7 @@ export const projectCaseStudies = {
     "problem": "Quando uma coleção de fotografias cresce, fica mais difícil manter a continuidade da narrativa e encontrar uma memória. A galeria precisa permitir explorar as imagens sem perder a posição de origem.",
     "objective": "Apresentar uma homenagem pessoal com leitura contínua e exploração das imagens. O contador e as legendas fazem parte do conteúdo afetivo; não representam datas ou duração do trabalho de desenvolvimento.",
     "audience": "A destinatária da homenagem e pessoas que acessam a página compartilhada. Esse público é inferido do conteúdo, sem evidência de pesquisa ou testes com participantes.",
-    "role": "Projeto pessoal; detalhamento da minha contribuição em preparação.",
+    "role": "Desenvolvi este site individualmente como uma homenagem à minha namorada.",
     "process": [
       {
         "id": "discovery",
@@ -926,7 +926,7 @@ export const projectCaseStudies = {
       }
     ],
     "pending": [
-      "Papel individual, colaboradores e duração do desenvolvimento.",
+      "Duração do desenvolvimento.",
       "Motivação detalhada e sequência real das decisões de implementação.",
       "Captura atual da galeria e da visualização ampliada em celular.",
       "Validação do ciclo de foco, leitor de tela, datas e movimento reduzido no projeto original.",

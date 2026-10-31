@@ -206,3 +206,16 @@ it('distingue indisponibilidade do serviço de recusa de acesso no login', async
   await screen.findByText(/O serviço do painel está indisponível/);
   expect(router.state.location.pathname).toBe('/login');
 });
+
+it('avisa sobre 503 na abertura direta e remove o aviso após recuperação para 401', async () => {
+  let unavailable = true;
+  fetch.mockImplementation(async () => jsonResponse({}, unavailable ? 503 : 401));
+  const user = start('/login');
+  await screen.findByText(/O serviço do painel está indisponível/);
+  expect(screen.getByRole('button', { name: /Tentar verificar sessão/ })).toBeEnabled();
+  unavailable = false;
+  await user.click(screen.getByRole('button', { name: /Tentar verificar sessão/ }));
+  await waitFor(() => expect(screen.queryByText(/O serviço do painel está indisponível/)).not.toBeInTheDocument());
+  expect(screen.getByRole('button', { name: /Entrar/ })).toBeEnabled();
+  expect(screen.queryByText(/Não foi possível acessar o painel/)).not.toBeInTheDocument();
+});

@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { setPageMetadata } from '../utils/pageMetadata.js';
 
 export default function NotFoundPage({ repositoryName }) {
   const titleRef = useRef(null);
   useEffect(() => {
     document.title = 'Página não encontrada — Arthur Sgarbi';
     titleRef.current?.focus();
+    return setPageMetadata({ title: 'Página não encontrada — Arthur Sgarbi', description: 'Confira o endereço ou volte para explorar os projetos.', path: window.location.pathname, noindex: true });
   }, []);
   return (
     <main className="project-page page-width section-space">

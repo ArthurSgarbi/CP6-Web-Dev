@@ -8,6 +8,7 @@ import { ProjectChallenge } from '../components/project-details/ProjectNarrative
 import ProjectsError from '../components/ProjectsError.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
 import './project-case-study.css';
+import { setPageMetadata } from '../utils/pageMetadata.js';
 
 function CaseSkeleton() {
   return (
@@ -36,17 +37,8 @@ export default function ProjectDetailsPage() {
 
   useEffect(() => {
     if (!project) return undefined;
-    const description = document.querySelector('meta[name="description"]');
-    const previousDescription = description?.getAttribute('content');
-    description?.setAttribute('content', study?.summary ?? project.description);
-    const canonical = document.createElement('link');
-    canonical.rel = 'canonical';
-    canonical.href = `${window.location.origin}/projetos/${encodeURIComponent(project.slug)}`;
-    document.head.append(canonical);
-    return () => {
-      if (description && previousDescription !== null) description.setAttribute('content', previousDescription);
-      canonical.remove();
-    };
+    return setPageMetadata({ title: `${project.title} | Arthur Sgarbi`, description: study?.summary ?? project.description,
+      image: project.image, path: `/projetos/${encodeURIComponent(project.slug)}` });
   }, [project?.slug, project?.description, study?.summary]);
 
   if (error?.code === 'NOT_FOUND') {

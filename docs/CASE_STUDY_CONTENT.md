@@ -6,7 +6,7 @@ Fontes públicas consultadas em 23/10/2026 pelo conector GitHub, na branch padr�
 
 - As páginas continuam curtas, com apenas **Sobre o projeto** e **O desafio**. Contexto, problema, decisão, implementação, evidência e limites ficam dentro dessas seções.
 - Nomes de apresentação: Meu Caixa, SYNC Mobile — Gestão de loja, AETHER — Portal institucional e Memórias a dois. Os slugs e repositórios não foram renomeados.
-- Contribuição individual fica explicitamente em preparação, separada da finalidade do projeto. As durações específicas sem confirmação foram retiradas. Não se atribuem responsabilidades ou relatos pessoais de aprendizado sem evidência.
+- Contribuição individual confirmada pelo proprietário em 31/10/2026: desenvolvimento individual de Meu Caixa, SYNC Mobile e Memórias a dois; toda a implementação em JavaScript no AETHER, desenvolvido em equipe. As durações específicas sem confirmação foram retiradas. Não se atribuem responsabilidades adicionais ou relatos pessoais de aprendizado sem evidência.
 - SYNC Mobile aponta para `https://sync-mobile.vercel.app/demo`, com a ação **Abrir demonstração**. O endereço abriu no navegador em 30/10/2026; os exemplos são fictícios e a operação do produto é manual, sem sincronização com a Shopee.
 - A imagem principal usa a primeira captura real disponível da galeria, com legenda honesta. Meu Caixa ainda mostra a tela pública de acesso; não é apresentada como painel financeiro autenticado.
 - As páginas terminam com retorno aos projetos e contato. Zero estrelas deixa de ocupar espaço; metadados úteis permanecem.
@@ -18,7 +18,7 @@ Fontes públicas consultadas em 23/10/2026 pelo conector GitHub, na branch padr�
 - Decisões descrevem escolhas observáveis no código. Desafios são problemas técnicos identificáveis; soluções apontam os mecanismos encontrados, sem atribuir uma intenção histórica não documentada.
 - Resultados descrevem entregáveis presentes. Aprendizados são conclusões técnicas desta leitura, sem atribuir relatos pessoais ao proprietário.
 - Próximos passos são propostas, identificadas como tal. Não representam compromissos do autor nem funcionalidades existentes.
-- Papel individual e duração dependem de confirmação do proprietário. A página atual sinaliza contribuição em preparação e omite duração; datas de fotografias, do contador ou da API não são duração do projeto.
+- Papel individual usa a confirmação do proprietário registrada em 31/10/2026. A duração permanece sem confirmação e não é exibida; datas de fotografias, do contador ou da API não são duração do projeto.
 - Suítes dos projetos de origem foram inspecionadas, não executadas nesta revisão editorial. Testes do portfólio não comprovam funcionamento dos produtos externos.
 - Não foram pesquisadas métricas comerciais, números de usuários, receita ou ganhos de performance. Nenhum desses resultados é atribuído aos produtos.
 
@@ -65,9 +65,9 @@ Para Meu Caixa, a imagem extra deve usar somente dados fictícios em área auten
 
 ## Informações que o proprietário precisa confirmar
 
-O campo `pending` preserva o inventário interno abaixo. A página curta não renderiza esse inventário completo: mostra a contribuição em preparação e as limitações relevantes. Novas evidências devem ser verificadas antes de substituir os textos:
+O campo `pending` preserva o inventário interno abaixo. A página curta não renderiza esse inventário completo: mostra a contribuição confirmada e as limitações relevantes. Novas evidências devem ser verificadas antes de substituir os textos:
 
-- Papel individual, divisão de responsabilidades, colaboradores e duração dos quatro projetos. O AETHER identifica participantes no README, mas não detalha a contribuição individual.
+- Duração dos quatro projetos e divisão das responsabilidades não relacionadas a JavaScript no AETHER. A contribuição individual foi confirmada pelo proprietário em 31/10/2026; não se atribuem a ele os demais papéis do trabalho em equipe.
 - Origem da ideia, pesquisa, sequência real das decisões e metodologia adotada, caso se deseje narrar o processo histórico.
 - Critérios de aceite, testes com usuários, feedback e resultados medidos, caso existam.
 - AETHER: evidências do ecossistema embarcado e validação do portal em celular.

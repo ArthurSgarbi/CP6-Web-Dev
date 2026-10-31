@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAdminAuth.jsx';
 import './admin.css';
+import { setPageMetadata } from '../utils/pageMetadata.js';
 export default function LoginPage() {
   const auth = useAuth();
-  const location = useLocation();
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(location.state?.error || '');
+  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const password = useRef(null);
   const heading = useRef(null);
-  useEffect(() => { document.title = 'Acesso ao painel — Arthur Sgarbi'; heading.current?.focus(); }, []);
+  useEffect(() => { heading.current?.focus(); return setPageMetadata({ title: 'Acesso ao painel — Arthur Sgarbi', description: 'Área de gestão do portfólio.', path: '/login', noindex: true }); }, []);
   if (auth.user) return <Navigate to="/dashboard" replace />;
   async function login(event) {
     event.preventDefault();
@@ -33,6 +33,7 @@ export default function LoginPage() {
       <p className="muted admin-help" id="password-help">Acesso exclusivo do proprietário. Para recuperar o acesso, use o gerenciamento de usuários no projeto Supabase associado ao portfólio.</p>
       <button className="admin-button primary" disabled={busy || auth.loading}>{busy ? 'Entrando…' : 'Entrar'} <span aria-hidden="true">↗</span></button>
     </form>
-    <p role="status" aria-live="polite" className={`admin-feedback${error ? ' admin-error' : ''}`}>{error || (auth.loading ? 'Verificando sessão…' : '')}</p>
+    <p role="status" aria-live="polite" className={`admin-feedback${error || auth.error ? ' admin-error' : ''}`}>{auth.loading ? 'Verificando sessão…' : error || auth.error}</p>
+    {auth.error && <button type="button" className="admin-button" disabled={auth.loading || busy} onClick={() => { setError(''); auth.retrySession(); }}>Tentar verificar sessão novamente</button>}
   </main>;
 }

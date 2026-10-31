@@ -34,8 +34,9 @@ export default function useReveal(contentKey) {
         { threshold: 0.08, rootMargin: '0px 0px -24px 0px' },
       );
 
-      elements.forEach((element) => {
-        if (element.getBoundingClientRect().top < window.innerHeight) return;
+      // Read layout as a batch before changing attributes to avoid repeated reflow.
+      const offscreen = elements.filter(element => element.getBoundingClientRect().top >= window.innerHeight);
+      offscreen.forEach((element) => {
         element.dataset.revealState = 'pending';
         observer.observe(element);
       });

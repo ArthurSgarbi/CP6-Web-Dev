@@ -89,7 +89,7 @@ export default function Hero({ navigate }) {
           </div>
           <div id="project-reel-slides" className="project-reel-slides" aria-live={autoPlaying ? 'off' : 'polite'} aria-atomic="true">
             {projects.map((project, index) => (
-              <figure className="project-reel-slide" key={project.image} hidden={index !== active} role="group" aria-roledescription="slide" aria-label={`${index + 1} de ${projects.length}: ${project.title}`}>
+              <figure className="project-reel-slide" key={project.image} hidden={index !== active} aria-roledescription="slide" aria-label={`${index + 1} de ${projects.length}: ${project.title}`}>
                 <div className="project-reel-screen">
                   <img src={`/images/hero/${project.image}-1280.webp`}
                     srcSet={`/images/hero/${project.image}-640.webp 640w, /images/hero/${project.image}-1280.webp 1280w, /images/hero/${project.image}-1600.webp 1600w`}

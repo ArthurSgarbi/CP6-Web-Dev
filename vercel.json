@@ -3,6 +3,9 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/api/.*", "status": 404 },
-    { "src": "/.*", "dest": "/index.html" }
+    { "src": "/projetos/(?:AETHER|aether)-front-end/?", "dest": "/projetos/AETHER-front-end/index.html" },
+    { "src": "/projetos/(meu-caixa|anninha-site-novo|site-projeto-shopee)/?", "dest": "/projetos/$1/index.html" },
+    { "src": "/(login|dashboard)/?", "dest": "/$1/index.html" },
+    { "src": "/.*", "dest": "/404.html", "status": 404 }
   ]
 }

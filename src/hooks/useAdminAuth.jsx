@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState({ loading: true, user: null, error: '' });
   const client = useQueryClient();
   const generation = useRef(0);
+  const checkSession = useRef(() => Promise.resolve());
   function clear() { generation.current++; client.removeQueries({ queryKey: ['admin'] }); setSession({ loading: false, user: null, error: '' }); }
   useEffect(() => {
     let active = true;
@@ -16,6 +17,7 @@ export function AuthProvider({ children }) {
         if (active && current === generation.current) { client.removeQueries({ queryKey: ['admin'] }); setSession({ loading: false, user: null, error: [401, 403].includes(error.status) ? '' : error.message }); }
       });
     };
+    checkSession.current = check;
     check();
     const timer = setInterval(check, 60000);
     window.addEventListener('focus', check);
@@ -26,6 +28,7 @@ export function AuthProvider({ children }) {
     catch (error) { if ([401, 403].includes(error.status)) clear(); throw error; }
   }
   return <AuthContext.Provider value={{ ...session, clear, request,
+    retrySession: () => { setSession(current => ({ ...current, loading: true, error: '' })); return checkSession.current(); },
     login: async values => { generation.current++; const result = await adminRequest('resource=session', { method: 'POST', body: JSON.stringify(values) }); setSession({ loading: false, user: result.user, error: '' }); },
     logout: async () => { await request('resource=session', { method: 'DELETE' }); clear(); },
   }}>{children}</AuthContext.Provider>;
