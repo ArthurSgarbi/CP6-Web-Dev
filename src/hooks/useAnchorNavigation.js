@@ -22,7 +22,7 @@ export default function useAnchorNavigation() {
     if (!target) return;
 
     event?.preventDefault();
-    // Router owns history entries; the hash effect performs scrolling and focus.
+    // O roteador gerencia as entradas do histórico; o efeito do fragmento da URL controla a rolagem e o foco.
     const nextHash = `#${id}`;
     if (hash !== nextHash) {
       navigateRoute({ pathname: '/', hash: nextHash });
@@ -31,7 +31,7 @@ export default function useAnchorNavigation() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     target.scrollIntoView({ behavior: reducedMotion ? 'instant' : 'smooth', block: 'start' });
 
-    // Move keyboard focus along with the viewport, without an additional scroll.
+    // Mova o foco do teclado junto com a área visível, sem rolagem adicional.
     const temporaryTabIndex = !target.hasAttribute('tabindex');
     if (temporaryTabIndex) target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: true });

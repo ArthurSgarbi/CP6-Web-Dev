@@ -31,7 +31,7 @@ export default function Header({ activeSection, onNavigate }) {
         return;
       }
 
-      // Ignore small scroll jitter, but react promptly when direction changes.
+      // Ignore pequenas oscilações de rolagem, mas reaja prontamente quando a direção mudar.
       if (Math.sign(delta) !== Math.sign(accumulatedDelta)) accumulatedDelta = 0;
       accumulatedDelta += delta;
       if (Math.abs(accumulatedDelta) < 6) return;

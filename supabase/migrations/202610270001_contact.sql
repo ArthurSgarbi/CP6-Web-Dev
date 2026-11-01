@@ -20,7 +20,7 @@ alter table public.contact_rate_limits enable row level security;
 revoke all on public.contact_messages, public.contact_rate_limits from anon, authenticated;
 grant all on public.contact_messages, public.contact_rate_limits to service_role;
 
--- Locks e cooldown persistem entre instancias serverless. Retry usa a mesma mensagem.
+-- Os bloqueios e o intervalo entre envios persistem entre instâncias sem servidor. A nova tentativa usa a mesma mensagem.
 create function public.reserve_contact(p_request uuid, p_client text, p_fingerprint text, p_data jsonb)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare existing public.contact_messages; last_attempt timestamptz; message_id uuid;
@@ -30,7 +30,7 @@ begin
   if found then
     if existing.fingerprint <> p_fingerprint then return jsonb_build_object('result', 'conflict'); end if;
     if existing.email_status = 'sent' then return jsonb_build_object('result', 'sent'); end if;
-    -- Resend retains idempotency keys for 24h; never replay beyond that window.
+    -- O Resend mantém as chaves de idempotência por 24 horas; nunca repita o envio após esse prazo.
     if existing.created_at < now() - interval '23 hours' then return jsonb_build_object('result', 'conflict'); end if;
     if existing.last_attempt_at > now() - interval '60 seconds' then return jsonb_build_object('result', 'busy'); end if;
   end if;

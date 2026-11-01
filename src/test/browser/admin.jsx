@@ -1,4 +1,4 @@
-// Harness exclusivo de desenvolvimento. Nenhuma credencial, cookie ou serviço real.
+// Ambiente exclusivo de testes em desenvolvimento. Nenhuma credencial, cookie ou serviço real.
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

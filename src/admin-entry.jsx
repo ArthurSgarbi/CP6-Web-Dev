@@ -5,8 +5,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App.jsx';
 import './styles.css';
 
-// The panel keeps the data router (including unsaved-change blocking) in its own
-// entry bundle. Public visits do not need to initialize its loader/action engine.
+// O painel mantém o roteador de dados (incluindo o bloqueio por alterações não salvas) em seu próprio
+// pacote de entrada. Visitas públicas não precisam inicializar seu mecanismo de carregamento e ações.
 const client = new QueryClient();
 const router = createBrowserRouter([{ path: '*', element: <App /> }]);
 createRoot(document.getElementById('root')).render(<React.StrictMode>

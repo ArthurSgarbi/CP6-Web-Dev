@@ -5,8 +5,8 @@ import Contact from '../components/Contact.jsx';
 import { validateContact } from '../../shared/contactValidation.js';
 const valid = { name: 'Visitante Teste', email: 'teste@example.com', subject: 'Projeto de teste', message: 'Esta é uma mensagem de teste com tamanho válido.' };
 async function fill(user) {
-  // These tests exercise submission, not individual keystrokes. Paste still
-  // exercises the real input/change handlers without a timer for every letter.
+  // Estes testes verificam o envio, sem simular cada tecla. A colagem ainda
+  // executa os manipuladores reais de entrada e alteração sem um temporizador por letra.
   for (const [label, key] of [['Nome', 'name'], ['E-mail', 'email'], ['Assunto', 'subject'], ['Mensagem', 'message']]) {
     await user.click(screen.getByLabelText(label, { exact: true }));
     await user.paste(valid[key]);

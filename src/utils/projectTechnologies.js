@@ -1,5 +1,5 @@
 // Tecnologias principais de cada projeto, sem dependências auxiliares.
-// Atualizar esta lista quando a stack dos projetos mudar.
+// Atualizar esta lista quando o conjunto de tecnologias dos projetos mudar.
 const projectTechnologies = {
   'aether-front-end': ['HTML', 'CSS'],
   'meu-caixa': ['TypeScript', 'React', 'Next.js', 'Tailwind CSS', 'PostgreSQL'],

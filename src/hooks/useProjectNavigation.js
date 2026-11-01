@@ -1,7 +1,7 @@
 import useGitHubProjects from './useGitHubProjects.js';
 
-// The portfolio list owns filtering and ordering. Reuse its query so a direct
-// route and a route reached from the home page always have the same neighbors.
+// A lista do portfólio gerencia a filtragem e a ordenação. Reutilize sua consulta para que uma
+// rota direta e uma rota acessada pela página inicial sempre tenham os mesmos projetos vizinhos.
 export default function useProjectNavigation(repositoryName, { enabled = true } = {}) {
   const { data: projects = [], isPending, error } = useGitHubProjects({ enabled });
   const currentIndex = error ? -1 : projects.findIndex(

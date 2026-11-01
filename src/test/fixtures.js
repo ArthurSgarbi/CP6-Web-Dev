@@ -1,4 +1,4 @@
-// Deliberately isolated test data. Production never imports this module.
+// Dados de teste intencionalmente isolados. O código de produção nunca importa este módulo.
 export function repository(overrides = {}) {
   return {
     id: 1,

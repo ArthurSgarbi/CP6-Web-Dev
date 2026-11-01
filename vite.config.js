@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { handleApiRequest } from './server/localApi.js';
 
 export default defineConfig(({ mode }) => {
-  // These values stay in Node.js; only VITE_ variables reach the browser.
+  // Estes valores permanecem no Node.js; apenas variáveis VITE_ chegam ao navegador.
   Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
   const target = process.env.API_PROXY_TARGET;
   return {

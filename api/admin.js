@@ -4,7 +4,7 @@ const fields = 'id,name,email,subject,message,status,created_at,email_status,ema
 const statuses = ['new', 'read', 'responded', 'archived'];
 function presentMessage(row) {
   const { email_error, ...message } = row;
-  // Return only a fixed public state, never provider diagnostics or configuration values.
+  // Retorne apenas um estado público fixo, nunca diagnósticos do provedor ou valores de configuração.
   const notificationStatus = row.email_status === 'sent' ? 'sent'
     : email_error === 'not_configured' ? 'not_configured'
       : row.email_status === 'failed' ? 'failed'

@@ -1,4 +1,4 @@
-/* Case studies only. Home tokens, components and layout remain the reference. */
+/* Apenas estudos de caso. As variáveis de estilo, os componentes e o leiaute da página inicial continuam como referência. */
 .case-study { min-height: 100dvh; overflow-wrap: anywhere; }
 .case-study .case-hero { padding-top: clamp(34px, 5vw, 76px); }
 .case-study .project-back { margin-bottom: clamp(40px, 6vw, 90px); }

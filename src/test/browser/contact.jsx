@@ -1,4 +1,4 @@
-// Somente Vite dev: nao faz parte da entrada de producao.
+// Somente no desenvolvimento com Vite: não faz parte da entrada de produção.
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import Contact from '../../components/Contact.jsx';

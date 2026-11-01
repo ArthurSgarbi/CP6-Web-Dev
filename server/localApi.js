@@ -2,7 +2,7 @@ import contact from '../api/contact.js';
 import admin from '../api/admin.js';
 import featured from '../api/featured.js';
 
-// Shared by Vite development and the optional standalone API server.
+// Compartilhado pelo ambiente de desenvolvimento do Vite e pelo servidor de API independente opcional.
 export async function handleApiRequest(req, res) {
   res.status = (status) => { res.statusCode = status; return res; };
   res.json = (body) => { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(body)); };

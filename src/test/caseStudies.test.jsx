@@ -256,7 +256,7 @@ describe('páginas de estudo de caso', () => {
 
 });
 
-// Existing UI regressions isolate the public editorial configuration.
+// Os testes de regressão existentes da interface isolam a configuração editorial pública.
 vi.mock('../services/adminApi.js', async importOriginal => ({
   ...await importOriginal(),
   getFeaturedProjects: async () => ['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position })),

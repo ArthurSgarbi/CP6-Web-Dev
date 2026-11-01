@@ -1,5 +1,5 @@
-// Run with a local sharp installation and the original generated profile cover.
-// Originals are read only; only the four repository-name assets are written.
+// Execute com uma instalação local do sharp e a capa de perfil original gerada.
+// Os originais são apenas lidos; somente os quatro arquivos com nomes de repositórios são gravados.
 import { createRequire } from 'node:module';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';

@@ -5,7 +5,7 @@ import { StrictMode } from 'react';
 import userEvent from '@testing-library/user-event';
 
 beforeEach(() => {
-  // Control only the carousel clock; keep user-event/RTL promise flushing real.
+  // Controle apenas o relógio do carrossel; mantenha a resolução real das promessas do user-event e da RTL.
   vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] }); sessionStorage.clear();
   window.matchMedia.mockImplementation(query => ({ matches: false, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
 });
@@ -122,7 +122,7 @@ describe('carrossel de interfaces', () => {
     expect(sessionStorage.getItem('portfolio-reel-paused')).toBe('false');
     act(() => vi.advanceTimersByTime(7000));
     expect(screen.getByRole('figure', { name: '2 de 3: SYNC Mobile' })).toBeInTheDocument();
-    await user.tab(); // Internal focus does not revoke the explicit authorization.
+    await user.tab(); // O foco interno não revoga a autorização explícita.
     act(() => vi.advanceTimersByTime(7000));
     expect(screen.getByRole('figure', { name: '3 de 3: Memórias a dois' })).toBeInTheDocument();
     act(() => screen.getByLabelText('Fora do carrossel').focus());
@@ -141,7 +141,7 @@ describe('carrossel de interfaces', () => {
     expect(screen.getByRole('button', { name: 'Reproduzir carrossel' })).toHaveFocus();
     expect(screen.getByRole('figure', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Reproduzir carrossel' }));
-    act(() => vi.advanceTimersByTime(14000)); // Still hovered.
+    act(() => vi.advanceTimersByTime(14000)); // O cursor ainda está sobre o elemento.
     expect(screen.getByRole('figure', { name: '1 de 3: Meu Caixa' })).toBeInTheDocument();
     await user.unhover(screen.getByRole('region', { name: 'Amostras de interfaces' }));
     act(() => vi.advanceTimersByTime(7000));

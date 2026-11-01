@@ -25,8 +25,8 @@ function html({ title, description, image = homeMetadata.image, path, noindex = 
   return result.replace('</head>', `${tags.join('\n    ')}\n  </head>`);
 }
 async function page(file, data) { const destination = resolve(root, file); await mkdir(dirname(destination), { recursive: true }); await writeFile(destination, html(data)); }
-// Render the public shell at build time. GitHub data remains a live client query;
-// no admin data, credentials or fabricated repository metadata enter this HTML.
+// Renderize a estrutura pública durante a compilação. Os dados do GitHub continuam sendo consultados pelo cliente em tempo real;
+// nenhum dado administrativo, credencial ou metadado inventado de repositório entra neste HTML.
 const serverOutput = resolve(import.meta.dirname, '../.prerender');
 await build({ build: { ssr: 'src/entry-server.jsx', outDir: serverOutput, emptyOutDir: true } });
 const { renderHome } = await import(pathToFileURL(resolve(serverOutput, 'entry-server.js')).href);
@@ -36,8 +36,8 @@ for (const [slug, presentation] of Object.entries(projectPresentation)) {
   const name = slug === 'aether-front-end' ? 'AETHER-front-end' : slug;
   await page(`projetos/${name}/index.html`, { title: `${presentation.title} | Arthur Sgarbi`, description: projectCaseStudies[slug].summary, image: `/images/covers/${name}-1200.webp`, path: `/projetos/${name}` });
 }
-// Build the panel independently so its data-router engine is not part of the
-// public dependency graph. Admin navigation keeps the existing blocker behavior.
+// Compile o painel separadamente para que seu mecanismo de roteamento de dados não faça parte do
+// grafo de dependências público. A navegação administrativa mantém o comportamento de bloqueio existente.
 const adminOutput = resolve(root, 'admin-assets');
 await build({ base: '/admin-assets/', publicDir: false, build: { outDir: adminOutput, emptyOutDir: true, manifest: true,
   rollupOptions: { input: resolve(import.meta.dirname, '../src/admin-entry.jsx') } } });

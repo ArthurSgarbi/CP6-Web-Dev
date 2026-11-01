@@ -1,4 +1,4 @@
-// The production entry never imports this local verification fixture.
+// A entrada de produção nunca importa estes dados locais de verificação.
 import ProjectGallery from '../../components/project-details/ProjectGallery.jsx';
 import '../../pages/project-case-study.css';
 

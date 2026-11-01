@@ -36,7 +36,7 @@ export default function ThemeToggle() {
 
   const toggle = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem(storageKey, next); } catch { /* Keep the toggle usable without storage. */ }
+    try { localStorage.setItem(storageKey, next); } catch { /* Mantenha o seletor utilizável mesmo sem armazenamento. */ }
     document.documentElement.dataset.theme = next;
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#171a16' : '#f3f2ed');
     setTheme(next);

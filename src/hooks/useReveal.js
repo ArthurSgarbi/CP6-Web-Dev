@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-/** Content starts visible; only offscreen elements receive an entrance animation. */
+/** O conteúdo começa visível; apenas elementos fora da tela recebem animação de entrada. */
 export default function useReveal(contentKey) {
   const containerRef = useRef(null);
 
@@ -37,7 +37,7 @@ export default function useReveal(contentKey) {
         { threshold: 0.08, rootMargin: '0px 0px -24px 0px' },
       );
 
-      // The browser delivers geometry asynchronously; do not force layout during mount.
+      // O navegador fornece a geometria de forma assíncrona; não force o cálculo do leiaute durante a montagem.
       elements.forEach(element => observer.observe(element));
     };
 
