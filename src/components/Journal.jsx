@@ -33,14 +33,14 @@ const editorial = [
   },
 ];
 
-export default function Journal() {
+export default function Journal({ id = 'journal' }) {
   const [expanded, setExpanded] = useState(0);
   const activeIndex = expanded;
 
   return (
     <section
       className="journal page-width section-space"
-      id="journal"
+      id={id}
       tabIndex="-1"
       aria-labelledby="journal-title"
     >

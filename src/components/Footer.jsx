@@ -1,5 +1,4 @@
 import Icon from './Icon.jsx';
-import { Link } from 'react-router-dom';
 
 export default function Footer({ navigate }) {
   return (
@@ -31,7 +30,7 @@ export default function Footer({ navigate }) {
         <div className="footer-bottom">
           <span>Arthur Sgarbi © 2026</span>
           <span>Engenharia de Software · FIAP</span>
-          <Link to="/dashboard">Acessar painel <Icon name="arrow-up-right" /></Link>
+          <a href="/dashboard">Acessar painel <Icon name="arrow-up-right" /></a>
         </div>
       </div>
     </footer>

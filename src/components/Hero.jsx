@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Icon from './Icon.jsx';
 import TextLink from './TextLink.jsx';
 import './hero.css';
+import useHydrating from '../hooks/useHydrating.js';
 
 const PAUSE_KEY = 'portfolio-reel-paused';
 const projects = [
@@ -16,16 +17,18 @@ function readPause() {
 }
 
 export default function Hero({ navigate }) {
+  const hydrating = useHydrating();
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(readPause);
+  const [paused, setPaused] = useState(() => hydrating ? false : readPause());
   const [hovered, setHovered] = useState(false);
   const pauseBeforePointerFocus = useRef(null);
-  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [pageHidden, setPageHidden] = useState(() => document.hidden);
+  const [reducedMotion, setReducedMotion] = useState(() => hydrating ? false : window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [pageHidden, setPageHidden] = useState(() => hydrating ? false : document.hidden);
   // Focus/manual navigation revoke playback; hover/visibility only suspend it.
   const autoPlaying = !paused && !hovered && !reducedMotion && !pageHidden;
 
   useEffect(() => {
+    setPaused(readPause());
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const updateMotion = () => setReducedMotion(preference.matches);
     const updateVisibility = () => setPageHidden(document.hidden);

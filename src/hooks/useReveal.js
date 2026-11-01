@@ -26,20 +26,19 @@ export default function useReveal(contentKey) {
       observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.dataset.revealState = 'visible';
-            observer.unobserve(entry.target);
+            if (entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight) {
+              entry.target.dataset.revealState = 'visible';
+              observer.unobserve(entry.target);
+            } else {
+              entry.target.dataset.revealState = 'pending';
+            }
           });
         },
         { threshold: 0.08, rootMargin: '0px 0px -24px 0px' },
       );
 
-      // Read layout as a batch before changing attributes to avoid repeated reflow.
-      const offscreen = elements.filter(element => element.getBoundingClientRect().top >= window.innerHeight);
-      offscreen.forEach((element) => {
-        element.dataset.revealState = 'pending';
-        observer.observe(element);
-      });
+      // The browser delivers geometry asynchronously; do not force layout during mount.
+      elements.forEach(element => observer.observe(element));
     };
 
     observe();

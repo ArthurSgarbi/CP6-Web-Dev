@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import useHydrating from '../hooks/useHydrating.js';
 
 const storageKey = 'portfolio-theme';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme
+  const hydrating = useHydrating();
+  const [theme, setTheme] = useState(() => hydrating ? 'light' : document.documentElement.dataset.theme
     || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
   useEffect(() => {

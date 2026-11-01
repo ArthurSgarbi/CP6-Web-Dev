@@ -110,7 +110,7 @@ describe('projetos na página inicial', () => {
     const { user } = renderApp();
     const trigger = await screen.findByRole('button', { name: 'Abrir prévia de SYNC Mobile — Gestão de loja' });
     await user.click(trigger);
-    const dialog = screen.getByRole('dialog');
+    const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByRole('heading', { name: 'SYNC Mobile — Gestão de loja' })).toBeInTheDocument();
     expect(within(dialog).getByText(projectPresentation['site-projeto-shopee'].description)).toBeInTheDocument();
     expect(within(dialog).getByText('TypeScript')).toBeInTheDocument();
