@@ -158,6 +158,9 @@ describe('páginas de estudo de caso', () => {
     expect(screen.getByRole('navigation', { name: 'Continuar a navegação' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Conversar sobre um projeto/ })).toHaveAttribute('href', '/#contato');
     expect(screen.getByText('Contribuição individual')).toBeInTheDocument();
+    const cover = container.querySelector('.case-cover-image');
+    expect(cover).not.toHaveAttribute('srcset');
+    expect(cover.getAttribute('src')).toMatch(/^\/images\/projects\//);
     expect(screen.queryByText('Duração')).not.toBeInTheDocument();
     expect(container.textContent).not.toMatch(/O README|este estudo reconstrói|cronologia de desenvolvimento/i);
     expect(document.title).toBe(`${formatRepository(raw).title} | Arthur Sgarbi`);

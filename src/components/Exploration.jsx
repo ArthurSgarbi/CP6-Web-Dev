@@ -20,12 +20,12 @@ const steps = [
   },
 ];
 
-export default function Exploration({ navigate }) {
+export default function Exploration({ navigate, id = 'exploration' }) {
 
   return (
     <section
       className="exploration section-space"
-      id="exploration"
+      id={id}
       tabIndex="-1"
       aria-label="Processo / Do objetivo à interface"
     >

@@ -549,3 +549,6 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .study-caption .project-technologies { flex: 1 1 100%; }
 .project-technologies li { padding: 4px 7px; border: 1px solid currentColor; border-radius: 4px; line-height: 1.5; }
 .project-facts .project-technologies { font-size: 12px; }
+
+.deferred-section { display: flow-root; }
+.deferred-placeholder { min-block-size: 800px; }

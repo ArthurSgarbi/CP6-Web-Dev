@@ -7,7 +7,7 @@ import './contact.css';
 
 const empty = { name: '', email: '', subject: '', message: '', website: '' };
 const labels = { name: 'Nome', email: 'E-mail', subject: 'Assunto', message: 'Mensagem' };
-export default function Contact() {
+export default function Contact({ id = 'contato' }) {
   const [values, setValues] = useState(empty);
   const [errors, setErrors] = useState({});
   const [state, setState] = useState('idle');
@@ -44,7 +44,7 @@ export default function Contact() {
     } finally { locked.current = false; }
   }
   return (
-    <section id="contato" tabIndex="-1" className="contact page-width section-space" aria-labelledby="contact-title">
+    <section id={id} tabIndex="-1" className="contact page-width section-space" aria-labelledby="contact-title">
       <SectionLabel number="04">Contato</SectionLabel>
       <div className="contact-layout">
         <div className="contact-intro">

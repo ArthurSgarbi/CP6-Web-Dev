@@ -68,7 +68,7 @@ export default function ProjectHero({ project, study, headingRef }) {
       <figure className="case-cover">
         <div className="case-cover-frame">
           <ProjectImage
-            project={evidence ? { ...project, image: evidence.src, imageAlt: evidence.alt } : project}
+            project={evidence ? { ...project, image: evidence.src, imageSrcSet: undefined, imageAlt: evidence.alt } : project}
             width={evidence?.width ?? 1600}
             height={evidence?.height ?? 1100}
             className="case-cover-image"

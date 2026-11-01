@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { getUserRepositories } from '../services/githubApi.js';
 import { formatRepositories } from '../utils/formatRepository.js';
 import { getFeaturedProjects, selectFeatured } from '../services/adminApi.js';
@@ -23,6 +24,9 @@ export const githubQueryOptions = {
   retryDelay: 1000,
 };
 
+const formatProjectList = items => formatRepositories(items, { includeForks: true });
+const EMPTY = [];
+
 export default function useGitHubProjects({ enabled = true, all = false } = {}) {
   const repositories = useQuery({
     ...githubQueryOptions,
@@ -30,13 +34,14 @@ export default function useGitHubProjects({ enabled = true, all = false } = {}) 
     // Keep the in-flight request across StrictMode remounts for deduplication.
     // The service owns its timeout instead of consuming Query's abort signal.
     queryFn: () => getUserRepositories(githubUsername),
-    select: (items) => formatRepositories(items, { includeForks: true }),
+    select: formatProjectList,
     enabled,
   });
   const featured = useQuery({ queryKey: ['featured'], queryFn: getFeaturedProjects, enabled: enabled && !all,
     staleTime: 0, retry: false, refetchOnWindowFocus: true });
+  const selectedProjects = useMemo(() => selectFeatured(repositories.data ?? EMPTY, featured.data ?? EMPTY), [repositories.data, featured.data]);
   if (all) return repositories;
-  return { ...repositories, data: selectFeatured(repositories.data || [], featured.data || []),
+  return { ...repositories, data: selectedProjects,
     emptyReason: repositories.data?.length ? 'selection' : 'repositories',
     isLoading: repositories.isLoading || featured.isLoading,
     isPending: repositories.isPending || featured.isPending,

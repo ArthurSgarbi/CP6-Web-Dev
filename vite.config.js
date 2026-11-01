@@ -10,6 +10,12 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), {
       name: 'portfolio-local-api',
       apply: 'serve',
+      transformIndexHtml(html, context) {
+        const path = (context.originalUrl ?? context.path).split('?')[0];
+        return /^\/(login|dashboard)\/?$/.test(path)
+          ? html.replace('/src/main.jsx', '/src/admin-entry.jsx')
+          : html;
+      },
       configureServer(server) {
         if (target) return;
         server.middlewares.use((req, res, next) => {
