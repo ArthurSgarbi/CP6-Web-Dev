@@ -22,7 +22,7 @@ function requireUsername(username) {
   return encodeURIComponent(username.trim());
 }
 
-// Fail explicitly if GitHub changes its contract; never publish a partial list.
+// Falhe explicitamente se o GitHub alterar seu contrato; nunca publique uma lista parcial.
 function validateRepository(repository) {
   const nullableText = (value) => value === null || typeof value === 'string';
   if (
@@ -53,7 +53,7 @@ async function requestGitHub(url, notFoundMessage) {
     });
 
     if (!response.ok) {
-      // Error bodies may be HTML during an outage. Status and headers still work.
+      // O corpo do erro pode conter HTML durante uma indisponibilidade. O status e os cabeçalhos continuam válidos.
       const body = await response.json().catch(() => null);
       const rateLimited = response.status === 429 || (response.status === 403 && (
         response.headers.get('x-ratelimit-remaining') === '0' ||

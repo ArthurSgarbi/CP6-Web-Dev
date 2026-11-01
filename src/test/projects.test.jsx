@@ -13,7 +13,7 @@ import { jsonResponse, repository } from './fixtures.js';
 let clients = [];
 beforeEach(() => { vi.stubGlobal('fetch', vi.fn()); getFeaturedProjects.mockReset().mockResolvedValue(['AETHER-front-end', 'meu-caixa', 'anninha-site-novo', 'site-projeto-shopee'].map((repository_name, position) => ({ repository_name, position }))); });
 afterEach(() => {
-  // Unsubscribe React observers before clearing their cache, including on failure.
+  // Cancele as assinaturas dos observadores do React antes de limpar o cache, inclusive em caso de falha.
   cleanup();
   clients.forEach((client) => client.clear()); clients = [];
 });
@@ -186,7 +186,7 @@ describe('projetos na página inicial', () => {
     await user.click(within(screen.getByRole('navigation', { name: 'Navegação principal' })).getByRole('link', { name: 'Diário' }));
     await user.click(screen.getByRole('button', { name: 'Abrir prévia de Meu Caixa' }));
     await user.click(screen.getByRole('link', { name: /Ver estudo completo/ }));
-    // Wait for the real lazy import and React commit before polling the heading.
+    // Aguarde a importação real sob demanda e a atualização do React antes de consultar repetidamente o título.
     await act(async () => { await vi.dynamicImportSettled(); });
     expect(await screen.findByRole('heading', { level: 1, name: 'Meu Caixa' })).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: /Voltar aos projetos/ }));
@@ -260,7 +260,7 @@ describe('rotas individuais', () => {
   });
 });
 
-// Existing UI regressions isolate the public editorial configuration.
+// Os testes de regressão existentes da interface isolam a configuração editorial pública.
 vi.mock('../services/adminApi.js', async importOriginal => ({
   ...await importOriginal(),
   getFeaturedProjects: vi.fn(),

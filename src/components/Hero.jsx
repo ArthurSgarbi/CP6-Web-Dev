@@ -24,7 +24,7 @@ export default function Hero({ navigate }) {
   const pauseBeforePointerFocus = useRef(null);
   const [reducedMotion, setReducedMotion] = useState(() => hydrating ? false : window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [pageHidden, setPageHidden] = useState(() => hydrating ? false : document.hidden);
-  // Focus/manual navigation revoke playback; hover/visibility only suspend it.
+  // O foco e a navegação manual desativam a reprodução; a passagem do cursor e a visibilidade apenas a suspendem.
   const autoPlaying = !paused && !hovered && !reducedMotion && !pageHidden;
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Hero({ navigate }) {
 
   const setPlaybackPause = value => {
     setPaused(value);
-    try { sessionStorage.setItem(PAUSE_KEY, String(value)); } catch { /* Storage is optional. */ }
+    try { sessionStorage.setItem(PAUSE_KEY, String(value)); } catch { /* O armazenamento é opcional. */ }
   };
 
   const move = direction => {
@@ -109,7 +109,7 @@ export default function Hero({ navigate }) {
                 onPointerDown={() => { pauseBeforePointerFocus.current = paused; }}
                 onPointerCancel={() => { pauseBeforePointerFocus.current = null; }}
                 onClick={event => {
-                  // Pointer focus pauses before click: honor the action originally pressed.
+                  // O foco pelo ponteiro pausa antes do clique: respeite a ação originalmente acionada.
                   const wasPaused = event.detail > 0 ? pauseBeforePointerFocus.current ?? paused : paused;
                   pauseBeforePointerFocus.current = null;
                   setPlaybackPause(!wasPaused);

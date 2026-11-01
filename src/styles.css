@@ -1,4 +1,4 @@
-/* Foundations: a restrained palette, one typeface, and a shared spacing scale. */
+/* Fundamentos: paleta discreta, uma família tipográfica e uma escala de espaçamento compartilhada. */
 @font-face { font-family: Manrope; src: url('/fonts/manrope-latin.woff2') format('woff2'); font-style: normal; font-weight: 400 800; font-display: swap; }
 :root {
   color-scheme: light;
@@ -72,7 +72,7 @@ button, input, a { touch-action: manipulation; }
 .text-link:hover { color: #5b6d28; }
 .text-link:hover .icon { transform: translate(3px, -3px); }
 
-/* Navigation: real anchor links, with a separate compact mobile disclosure. */
+/* Navegação: links de âncora reais, com um menu compacto separado para dispositivos móveis. */
 .site-header { position: sticky; top: 0; z-index: 20; background: var(--paper); transform: translateY(0); transition: transform .25s var(--ease); }
 .site-header.is-hidden { transform: translateY(-100%); pointer-events: none; }
 .header-inner { width: min(calc(100% - var(--gutter) * 2), 1480px); min-height: 100px; margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 28px; border-bottom: 1px solid var(--line); }
@@ -96,7 +96,7 @@ button, input, a { touch-action: manipulation; }
 .mobile-nav-link { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 19px; border-bottom: 1px solid var(--line); font-size: 25px; letter-spacing: -.04em; }
 .mobile-nav-index { font-size: 11px; color: var(--muted); }
 
-/* Hero: oversized typography balanced by a quiet, deliberately offset caption. */
+/* Seção de destaque: tipografia ampliada equilibrada por uma legenda discreta e intencionalmente deslocada. */
 .hero { position: relative; padding-top: 33px; }
 .hero-overline { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 10px; }
 .status-label { display: inline-flex; align-items: center; gap: 9px; font-size: 12px; }
@@ -110,7 +110,7 @@ button, input, a { touch-action: manipulation; }
 .hero-index { display: none; font-size: 9px; letter-spacing: .06em; color: var(--muted); }
 .hero-description > p { max-width: 310px; color: var(--muted); font-size: 12px; line-height: 1.85; }
 .hero-description .text-link { margin-top: 9px; font-size: 12px; }
-/* Selected works: asymmetric pairs, alternating aspect ratios and open captions. */
+/* Trabalhos selecionados: pares assimétricos, proporções alternadas e legendas sem moldura. */
 .work {
   --work-muted: #a3a6a0;
   --work-line: #30332f;
@@ -197,8 +197,8 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .collection-line { flex: 1; height: 1px; background: var(--line); }
 .collection-end .icon { width: 22px; height: 22px; color: var(--ink); }
 
-/* The editorial interlude changes both scale and contrast. Orbital artwork is CSS. */
-/* GitHub projects share the original editorial grid and dark image frames. */
+/* O intervalo editorial altera a escala e o contraste. A ilustração orbital é feita em CSS. */
+/* Os projetos do GitHub compartilham a grade editorial original e as molduras escuras das imagens. */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .study-title-wrap { min-width: 0; }
 .study-title { min-width: 0; overflow-wrap: anywhere; }
@@ -387,7 +387,7 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   .journal .journal-footer { align-items: flex-start; flex-direction: column; margin-top: 38px; gap: 10px; }
 }
 
-/* Footer: a final typographic gesture, with page-local actions only. */
+/* Rodapé: um toque tipográfico final, apenas com ações locais à página. */
 .footer { padding-block: 39px 24px; background: var(--dark); color: var(--paper); }
 .footer-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .footer .status-dot { background: var(--accent); }
@@ -402,7 +402,7 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .footer-bottom > a { display: inline-flex; align-items: center; gap: 12px; min-height: 30px; }
 .footer-bottom .icon { width: 13px; height: 13px; }
 
-/* Native dialog supplies focus containment, Escape support, and top-layer rendering. */
+/* O diálogo nativo mantém o foco em seu interior, aceita Escape e é renderizado na camada superior. */
 .study-dialog { width: min(1050px, calc(100% - 40px)); max-height: calc(100dvh - 50px); margin: auto; padding: 0; overflow: auto; color: var(--ink); background: var(--paper); border: 0; overscroll-behavior: contain; }
 .study-dialog::backdrop { background: #151810c4; backdrop-filter: blur(7px); }
 .study-dialog-inner { padding: 25px 30px 30px; }
@@ -422,7 +422,7 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
 .dialog-nav-button:hover { color: #63752d; }
 .dialog-nav-button .icon { width: 17px; height: 17px; }
 
-/* Reveal is progressive: content is visible until the observer opts into motion. */
+/* A revelação é progressiva: o conteúdo fica visível até que o observador ative a animação. */
 [data-reveal] { transition: opacity .85s var(--ease), transform .85s var(--ease); }
 [data-reveal-state='pending'] { opacity: 0; transform: translateY(28px); }
 [data-reveal-state='visible'] { opacity: 1; transform: translateY(0); }
@@ -542,7 +542,7 @@ h2 { font-size: clamp(44px, 5.5vw, 86px); font-weight: 500; line-height: 1.08; l
   [data-reveal-state] { opacity: 1 !important; transform: none !important; }
 }
 
-/* A stack completa pode ocupar várias linhas sem comprimir a data. */
+/* O conjunto completo de tecnologias pode ocupar várias linhas sem comprimir a data. */
 .study-caption { flex-wrap: wrap; align-items: flex-start; }
 .study-caption > :last-child { flex-shrink: 0; }
 .project-technologies { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0; min-width: 0; }

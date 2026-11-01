@@ -1,4 +1,4 @@
-// Optimize existing covers; never alter their content or overwrite originals.
+// Otimize as capas existentes; nunca altere seu conteúdo nem sobrescreva os originais.
 import { createRequire } from 'node:module';
 import { mkdir, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';

@@ -1,5 +1,5 @@
-// Reproducible optimization of existing screenshots; originals remain unchanged.
-// Use SHARP_MODULE to point to an existing local sharp installation if needed.
+// Otimização reproduzível das capturas de tela existentes; os originais permanecem inalterados.
+// Use SHARP_MODULE para indicar uma instalação local existente do sharp, se necessário.
 import { createRequire } from 'node:module';
 import { mkdir, readFile, stat } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -27,7 +27,7 @@ for (const [source, name] of images) {
 }
 console.log(JSON.stringify({ originalBytes, optimizedBytes }));
 
-// A typographic social card, not a screenshot or a claim about project results.
+// Cartão tipográfico para redes sociais, sem representar uma captura de tela ou uma afirmação sobre resultados do projeto.
 const social = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
   <rect width="1200" height="630" fill="#f3f2ed"/>
   <rect x="64" y="64" width="66" height="66" fill="#d6eb78"/>

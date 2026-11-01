@@ -5,7 +5,7 @@ export const homeMetadata = {
   image: '/images/portfolio-social.png', path: '/',
 };
 
-// Used by the browser and the build so social crawlers receive the same metadata.
+// Usado pelo navegador e pela compilação para que os rastreadores de redes sociais recebam os mesmos metadados.
 export function setPageMetadata({ title, description, image = homeMetadata.image, path, noindex = false }) {
   const previous = [];
   function set(selector, tag, attributes, value, attribute = 'content') {
@@ -25,7 +25,7 @@ export function setPageMetadata({ title, description, image = homeMetadata.image
   for (const [property, content] of Object.entries({ 'og:title': title, 'og:description': description, 'og:image': absoluteImage, 'og:image:alt': title, 'og:url': url })) {
     set(`meta[property="${property}"]`, 'meta', { property }, content);
   }
-  // Cover sizes vary by project; avoid advertising the home image dimensions.
+  // Os tamanhos das capas variam por projeto; evite informar as dimensões da imagem da página inicial.
   for (const property of ['og:image:width', 'og:image:height']) {
     const element = document.querySelector(`meta[property="${property}"]`);
     if (element) { const old = element.content; element.remove(); previous.push(() => { element.content = old; document.head.append(element); }); }

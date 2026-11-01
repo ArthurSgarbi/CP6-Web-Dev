@@ -1,4 +1,4 @@
-// Dedicated development harness. Vite's production entry never imports it.
+// Ambiente exclusivo de testes em desenvolvimento. A entrada de produção do Vite nunca o importa.
 import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -46,7 +46,7 @@ window.fetch = (url, options) => {
   if (String(url).startsWith('/api/featured')) return Promise.resolve(
     scenario === 'featured-error' ? jsonResponse({}, 503) : jsonResponse({ projects: scenario === 'unselected' ? [] : samples.map((sample, position) => ({ repository_name: sample.name, position })) }),
   );
-  // This UI harness must never write to real contact or administrative services.
+  // Este ambiente de testes da interface nunca deve gravar em serviços reais de contato ou administração.
   if (String(url).startsWith('/api/')) return Promise.resolve(jsonResponse({ error: 'Use o cenário dedicado de contato ou administração.' }, 401));
   if (!String(url).startsWith('https://api.github.com/')) return realFetch(url, options);
   const requestUrl = String(url);
@@ -84,8 +84,8 @@ function Harness() {
   notifyCall = setRequestUrls;
 
   useEffect(() => {
-    // Passive mount effects run after the old subtree's subscription cleanup.
-    // Clearing a client while its App still observes it creates a fake refetch.
+    // Os efeitos passivos de montagem executam após a limpeza das assinaturas da subárvore anterior.
+    // Limpar um cliente enquanto seu App ainda o observa provoca uma nova busca artificial.
     for (const previous of retiredSessions.current.splice(0)) {
       previous.client.clear();
       previous.pendingLoads.forEach((complete) => complete());

@@ -62,7 +62,7 @@ with sync_playwright() as p:
         expect(page.get_by_role('heading', level=1)).to_be_visible()
 
     goto()
-    # Reconnaissance before interactions: capture the rendered page and labels.
+    # Inspeção antes das interações: capture a página renderizada e os rótulos.
     (OUT / 'rendered-controls.json').write_text(json.dumps(page.get_by_role('button').all_text_contents(), ensure_ascii=False, indent=2), encoding='utf-8')
     page.screenshot(path=str(OUT / 'initial.png'))
     page.clock.install()
@@ -168,7 +168,7 @@ with sync_playwright() as p:
         other.bring_to_front()
         actual_hidden = page.evaluate('document.hidden')
         other.close(); page.bring_to_front()
-        # Headless Chromium may keep both tabs visible. Explicitly label that limit.
+        # O Chromium sem interface pode manter ambas as abas visíveis. Indique explicitamente essa limitação.
         page.evaluate("""() => {
           window.testHidden = true;
           Object.defineProperty(document, 'hidden', { configurable:true, get:()=>window.testHidden });
@@ -193,7 +193,7 @@ with sync_playwright() as p:
     def layouts():
         global page, context
         context.close()
-        # Isolate visual evidence from the clock and viewport history of the probes.
+        # Isole as evidências visuais do relógio e do histórico da área visível das verificações.
         context = browser.new_context(viewport=dict(width=1440, height=900), reduced_motion='reduce')
         context.route('**/*', guard)
         page = context.new_page()
@@ -206,7 +206,7 @@ with sync_playwright() as p:
             expect(page.get_by_role('button', name=re.compile('Abrir prévia de'))).to_have_count(4, timeout=30000)
             for theme in ['light', 'dark']:
                 page.evaluate("theme=>{localStorage.setItem('portfolio-theme',theme);document.documentElement.dataset.theme=theme}", theme)
-                # Visit all sections to render lazy images/reveal animations.
+                # Visite todas as seções para renderizar imagens sob demanda e animações de revelação.
                 page.evaluate("""async()=>{
                   for(let y=0;y<document.body.scrollHeight;y+=600){scrollTo(0,y);await new Promise(r=>requestAnimationFrame(r))}
                   await Promise.all([...document.images].filter(i=>i.getBoundingClientRect().width>0).map(i=>i.decode().catch(()=>{})));

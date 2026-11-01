@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import useHydrating from '../hooks/useHydrating.js';
 
-// Stable anchor targets let direct hashes, menu links and focus activate a section
-// even when its module has not been requested yet.
+// Alvos de âncora estáveis permitem que fragmentos diretos da URL, links do menu e foco ativem uma seção
+// mesmo quando seu módulo ainda não foi solicitado.
 const sections = {
   exploration: lazy(() => import('./Exploration.jsx')),
   journal: lazy(() => import('./Journal.jsx')),

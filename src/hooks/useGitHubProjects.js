@@ -31,8 +31,8 @@ export default function useGitHubProjects({ enabled = true, all = false } = {}) 
   const repositories = useQuery({
     ...githubQueryOptions,
     queryKey: githubKeys.repositories(githubUsername),
-    // Keep the in-flight request across StrictMode remounts for deduplication.
-    // The service owns its timeout instead of consuming Query's abort signal.
+    // Mantenha a requisição em andamento entre remontagens do StrictMode para evitar duplicação.
+    // O serviço gerencia seu próprio tempo limite em vez de usar o sinal de cancelamento do Query.
     queryFn: () => getUserRepositories(githubUsername),
     select: formatProjectList,
     enabled,

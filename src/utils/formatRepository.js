@@ -2,7 +2,7 @@ import projectTechnologies from './projectTechnologies.js';
 
 export const PROJECT_IMAGE_FALLBACK = '/images/hero-abstract.jpg';
 
-// Editorial presentation is independent from repository identifiers and URLs.
+// A apresentação editorial é independente dos identificadores e das URLs dos repositórios.
 export const projectPresentation = {
   'meu-caixa': {
     title: 'Meu Caixa',
@@ -11,7 +11,7 @@ export const projectPresentation = {
   'site-projeto-shopee': {
     title: 'SYNC Mobile — Gestão de loja',
     description: 'Painel para registrar produtos, pedidos e entregas de uma loja que vende na Shopee. A operação é manual, sem sincronização com a plataforma.',
-    // Verified on 29/10/2026: the legacy repository homepage returns 404.
+    // Verificado em 29/10/2026: a página inicial antiga do repositório retorna 404.
     liveUrl: 'https://sync-mobile.vercel.app/demo',
     liveLabel: 'Abrir demonstração',
   },
@@ -25,7 +25,7 @@ export const projectPresentation = {
   },
 };
 
-// GitHub permits arbitrary homepage text. Only web URLs become clickable links.
+// O GitHub permite texto arbitrário no campo da página inicial. Apenas URLs da web se tornam links clicáveis.
 function getLiveUrl(homepage) {
   if (!homepage?.trim()) return null;
   const value = homepage.trim();

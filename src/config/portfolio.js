@@ -1,4 +1,4 @@
-// Public portfolio identity and editorial defaults; never put credentials here.
+// Identidade pública do portfólio e padrões editoriais; nunca coloque credenciais aqui.
 export const githubUsername = import.meta.env?.VITE_GITHUB_USERNAME?.trim() || 'ArthurSgarbi';
 
 export const defaultFeaturedProjects = [
